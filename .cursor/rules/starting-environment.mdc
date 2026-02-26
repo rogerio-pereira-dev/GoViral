@@ -51,3 +51,9 @@ grep -q "^APP_KEY=$" .env && \
 ```
 ./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel
 ```
+
+
+### Stopping Containers
+```
+./vendor/bin/sail down
+```
