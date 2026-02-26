@@ -1,34 +1,26 @@
 name: tests
 
 on:
-  push:
+  workflow_run:
+    workflows: ["linter"]
+    types:
+      - completed
     branches:
-      - develop
       - main
-      - master
-      - workos
-  pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version: ['8.4', '8.5']
+    environment: Testing
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: 8.4
           tools: composer:v2
           coverage: xdebug
 
@@ -36,9 +28,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: Install Node Dependencies
         run: npm i
+
+      - name: Add Flux Credentials Loaded From ENV
+        run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -53,4 +49,7 @@ jobs:
         run: npm run build
 
       - name: Tests
-        run: ./vendor/bin/pest
+        run: php artisan test --parallel --coverage --min=90
+
+      - name: Type Coverage
+        run: php artisan test --type-coverage --min=90 --parallel
