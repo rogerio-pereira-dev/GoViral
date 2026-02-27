@@ -45,7 +45,14 @@ grep -q "^APP_KEY=$" .env && \
 ```
 ./vendor/bin/sail artisan test --parallel --coverage --min=90
 ./vendor/bin/sail artisan test --type-coverage --min=90 --parallel
+./vendor/bin/sail artisan test tests/Browser --parallel
 ```
+
+### Testing policy (mandatory)
+- Keep smoke coverage in `tests/Browser/WebRoutesTest.php` for public and authenticated routes.
+- Add a dedicated browser test file for each page (for example, Landing, Form, Thank You).
+- Add translation tests for each page (en/es/pt), preferably in Feature tests asserting Inertia translations.
+- Ensure at least one complete E2E flow for critical journeys (landing -> form with validation -> success -> DB -> thank you).
 
 ### Running Linter
 ```
