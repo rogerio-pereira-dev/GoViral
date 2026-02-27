@@ -5,6 +5,10 @@ on:
     branches-ignore:
       - main
 
+concurrency:
+  group: lint-autofix-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
