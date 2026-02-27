@@ -30,6 +30,16 @@ return [
     'notes_label' => 'Notas (Opcional)',
     'notes_placeholder' => 'Cualquier contexto extra que quieras compartir',
     'submit_cta' => 'Comenzar mi crecimiento',
+    'payment_title' => 'Completar pago',
+    'payment_description' => 'Después de validar tus datos de perfil, ingresa tu tarjeta para finalizar el checkout.',
+    'payment_card_label' => 'Información de tarjeta',
+    'payment_submit_cta' => 'Pagar y enviar mi informe',
+    'payment_processing_cta' => 'Procesando pago...',
+    'payment_init_error' => 'No pudimos inicializar el pago ahora. Inténtalo de nuevo.',
+    'payment_confirm_error' => 'No se pudo confirmar el pago. Inténtalo de nuevo.',
+    'payment_declined_error' => 'Tu tarjeta fue rechazada. Usa otra tarjeta.',
+    'payment_insufficient_funds_error' => 'Tu tarjeta no tiene fondos suficientes.',
+    'payment_amount_label' => 'Importe',
 
     'validation' => [
         'required' => 'El campo :attribute es obligatorio.',

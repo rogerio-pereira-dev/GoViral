@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'price_in_cents' => env('STRIPE_PRICE_IN_CENTS', 2000),
+        'fake_intent_on_testing' => env('STRIPE_FAKE_INTENT_ON_TESTING', true),
+    ],
+
 ];

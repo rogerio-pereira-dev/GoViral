@@ -26,6 +26,7 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_2' => ['nullable', 'url', 'max:2048'],
             'video_url_3' => ['nullable', 'url', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
+            'payment_intent_id' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -57,6 +58,7 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_2' => __('form.video_url_2_label'),
             'video_url_3' => __('form.video_url_3_label'),
             'notes' => __('form.notes_label'),
+            'payment_intent_id' => __('form.payment_card_label'),
         ];
     }
 
@@ -72,6 +74,7 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_2' => $this->sanitizeInput($this->input('video_url_2')),
             'video_url_3' => $this->sanitizeInput($this->input('video_url_3')),
             'notes' => $this->sanitizeInput($this->input('notes')),
+            'payment_intent_id' => $this->sanitizeInput($this->input('payment_intent_id')),
         ]);
     }
 

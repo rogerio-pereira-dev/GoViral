@@ -30,6 +30,16 @@ return [
     'notes_label' => 'Notes (Optional)',
     'notes_placeholder' => 'Any extra context you want us to consider',
     'submit_cta' => 'Start My Growth',
+    'payment_title' => 'Complete payment',
+    'payment_description' => 'After validating your profile data, enter your card to finish checkout.',
+    'payment_card_label' => 'Card information',
+    'payment_submit_cta' => 'Pay and send my report',
+    'payment_processing_cta' => 'Processing payment...',
+    'payment_init_error' => 'We could not initialize payment right now. Please try again.',
+    'payment_confirm_error' => 'Payment could not be confirmed. Please try again.',
+    'payment_declined_error' => 'Your card was declined. Please use another card.',
+    'payment_insufficient_funds_error' => 'Your card has insufficient funds.',
+    'payment_amount_label' => 'Amount',
 
     'validation' => [
         'required' => 'The :attribute field is required.',

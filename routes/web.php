@@ -19,6 +19,9 @@ Route::get('/start-growth', [FormController::class, 'index'])
 Route::post('/start-growth', [FormController::class, 'store'])
     ->name('form.store');
 
+Route::get('/start-growth/payment-intent', [FormController::class, 'paymentIntent'])
+    ->name('form.payment-intent');
+
 Route::get('/thank-you', [ThankYouController::class, 'index'])
     ->name('form.thank-you');
 
