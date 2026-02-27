@@ -18,13 +18,13 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Apply CTAs and microcopy from Branding Manual (e.g. "Start My Growth", "Generate My Growth Blueprint"); ensure components inherit theme.
 - [x] Add favicon/logo with Teal→Pink gradient, clean geometry; ensure readable at small sizes.
 
-### Landing (FDR-002)
+### Landing (FDR-002) — done
 
-- Add Laravel localization: create `lang/en`, `lang/es`, `lang/pt` (or JSON) with keys for landing, form, and thank-you copy.
-- Add route/middleware or route parameter to set locale (en/es/pt) from user choice; persist in session; use `App::setLocale()` and pass to Inertia.
-- Replace Welcome page content with GoViral landing: tagline "Engineered for Viral Growth", subheadline "Turn insight into viral momentum in minutes", supporting copy; use Laravel translations.
-- Add language selector at top of landing; on change, set locale and re-render/reload with translated text.
-- Add primary CTA "Start My Growth" linking to route `/start-growth`; ensure CTA text is translated.
+- [x] Add Laravel localization: create `lang/en`, `lang/es`, `lang/pt` (or JSON) with keys for landing, form, and thank-you copy.
+- [x] Add route/middleware or route parameter to set locale (en/es/pt) from user choice; persist in session; use `App::setLocale()` and pass to Inertia.
+- [x] Replace Welcome page content with GoViral landing: tagline "Engineered for Viral Growth", subheadline "Turn insight into viral momentum in minutes", supporting copy; use Laravel translations.
+- [x] Add language selector at top of landing; on change, set locale and re-render/reload with translated text.
+- [x] Add primary CTA "Start My Growth" linking to route `/start-growth`; ensure CTA text is translated.
 
 ### Data layer (for Form and Payment)
 

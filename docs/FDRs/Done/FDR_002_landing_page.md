@@ -26,11 +26,11 @@
 
 ## Acceptance criteria
 
-- [ ] Landing displays tagline and subheadline from the manual; copy via Laravel localization (lang files or JSON).
-- [ ] Language selector (en, es, pt) at the **top** of the page; on selection, application locale is set and text updated.
-- [ ] Primary CTA visible; leads to the form via route `/start-growth`; CTA text per manual (translated).
-- [ ] Visual aligned with Branding (FDR-001).
-- [ ] No console errors or layout break in common viewports.
+- [x] Landing displays tagline and subheadline from the manual; copy via Laravel localization (lang files or JSON).
+- [x] Language selector (en, es, pt) at the **top** of the page; on selection, application locale is set and text updated.
+- [x] Primary CTA visible; leads to the form via route `/start-growth`; CTA text per manual (translated).
+- [x] Visual aligned with Branding (FDR-001).
+- [x] No console errors or layout break in common viewports.
 
 ---
 

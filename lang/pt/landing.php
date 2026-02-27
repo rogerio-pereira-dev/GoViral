@@ -1,0 +1,55 @@
+<?php
+
+return [
+    'app_name' => 'GoViral',
+    'tagline' => 'Feito para crescimento viral.',
+    'tagline_before' => 'Feito para',
+    'tagline_highlight' => 'crescimento viral.',
+    'subheadline' => 'Transforme insight em impulso viral em minutos.',
+    'hero_support' => 'Análise de perfil TikTok com IA. Recomendações claras. Plano de 30 dias. Sem curva de aprendizado.',
+    'cta_primary' => 'Começar meu crescimento',
+    'cta_blueprint' => 'Gerar meu plano de crescimento',
+    'delivery_in_minutes' => 'Entrega em minutos',
+
+    'section_algorithm_title' => 'Estratégia, não sorte.',
+    'section_algorithm_before' => 'Estratégia, não',
+    'section_algorithm_highlight' => 'sorte.',
+    'section_algorithm_lead' => 'A maioria dos criadores falha adivinhando o que vai viralizar. GoViral entrega direção clara em minutos.',
+    'section_algorithm_cta' => 'Quero meu plano',
+
+    'section_how_title' => 'Como funciona',
+    'section_how_step1' => 'Envie seu perfil',
+    'section_how_step1_desc' => 'Username, bio, nicho e alguns links de vídeos.',
+    'section_how_step2' => 'Análise com IA',
+    'section_how_step2_desc' => 'Processamos e estruturamos suas oportunidades de crescimento.',
+    'section_how_step3' => 'Relatório no seu email',
+    'section_how_step3_desc' => 'Relatório acionável entregue por email em minutos.',
+
+    'section_what_you_get_title' => 'O que você recebe no relatório',
+    'report_summary' => 'Resumo executivo',
+    'report_score' => 'Pontuação do perfil (0–100) com forças, fraqueza e maior oportunidade',
+    'report_niche' => 'Análise de nicho inferida',
+    'report_username' => '3–5 sugestões de nome de usuário',
+    'report_bio' => 'Bio otimizada (foco em monetização)',
+    'report_profile_tips' => 'Sugestões de otimização de perfil',
+    'report_content_ideas' => '10 ideias de conteúdo (ganchos, escalar, monetização)',
+    'report_30_plan' => 'Plano de conteúdo de 30 dias',
+    'report_viral_tips' => 'Dicas de viralização',
+    'report_action_plan' => 'Plano de ação de 30 dias',
+
+    'section_pains_title' => 'Soa familiar?',
+    'section_pains_lead' => 'Criamos o GoViral para quem quer clareza sem enrolação.',
+    'pain_monetization' => 'Você quer oportunidades rápidas de monetização',
+    'pain_viral' => 'Você não entende como criar conteúdo viral',
+    'pain_planning' => 'Você não tem planejamento de conteúdo',
+    'pain_strategy' => 'Você não tem uma estratégia clara de crescimento',
+    'pain_algorithm' => 'Você não entende como o algoritmo do TikTok funciona',
+    'pain_no_time' => 'Você não quer perder tempo com marketing complexo',
+
+    'section_final_title' => 'Clareza em minutos.',
+    'section_final_lead' => 'Um pagamento. Um relatório. Sua direção de crescimento por email.',
+    'section_final_cta' => 'Começar meu crescimento',
+
+    'footer_tagline' => 'Feito para crescimento viral.',
+    'footer_price' => 'Pagamento único. Relatório por email.',
+];

@@ -1,0 +1,55 @@
+<?php
+
+return [
+    'app_name' => 'GoViral',
+    'tagline' => 'Engineered for Viral Growth.',
+    'tagline_before' => 'Engineered for',
+    'tagline_highlight' => 'Viral Growth.',
+    'subheadline' => 'Turn insight into viral momentum in minutes.',
+    'hero_support' => 'AI-powered TikTok profile analysis. Clear recommendations. A 30-day plan. No learning curve.',
+    'cta_primary' => 'Start My Growth',
+    'cta_blueprint' => 'Generate My Growth Blueprint',
+    'delivery_in_minutes' => 'Delivery in minutes',
+
+    'section_algorithm_title' => 'Strategy, not luck.',
+    'section_algorithm_before' => 'Strategy, not',
+    'section_algorithm_highlight' => 'luck.',
+    'section_algorithm_lead' => 'Most creators fail by guessing what will go viral. GoViral gives you a sharp, AI-built direction in minutes.',
+    'section_algorithm_cta' => 'Get my blueprint',
+
+    'section_how_title' => 'How it works',
+    'section_how_step1' => 'Share your profile',
+    'section_how_step1_desc' => 'Username, bio, niche, and a few video links.',
+    'section_how_step2' => 'AI analysis',
+    'section_how_step2_desc' => 'We process and structure your growth opportunities.',
+    'section_how_step3' => 'Report in your inbox',
+    'section_how_step3_desc' => 'Actionable report delivered by email in minutes.',
+
+    'section_what_you_get_title' => 'What you get in your report',
+    'report_summary' => 'Executive Summary',
+    'report_score' => 'Profile Score (0–100) with strengths, weakness, and top opportunity',
+    'report_niche' => 'Inferred Niche Analysis',
+    'report_username' => '3–5 Username Suggestions',
+    'report_bio' => 'Optimized Bio (monetization-focused)',
+    'report_profile_tips' => 'Profile Optimization Suggestions',
+    'report_content_ideas' => '10 Content Ideas (hooks, scaling, monetization)',
+    'report_30_plan' => '30-Day Content Plan',
+    'report_viral_tips' => 'Viralization Tips',
+    'report_action_plan' => '30-Day Action Plan',
+
+    'section_pains_title' => 'Sound familiar?',
+    'section_pains_lead' => 'We built GoViral for creators who want clarity without the fluff.',
+    'pain_monetization' => 'You want fast monetization opportunities',
+    'pain_viral' => 'You don\'t understand how to create viral content',
+    'pain_planning' => 'You lack structured content planning',
+    'pain_strategy' => 'You don\'t have a clear growth strategy',
+    'pain_algorithm' => 'You don\'t understand how the TikTok algorithm works',
+    'pain_no_time' => 'You don\'t want to spend time on complex marketing',
+
+    'section_final_title' => 'Clarity in minutes.',
+    'section_final_lead' => 'One payment. One report. Your growth direction delivered by email.',
+    'section_final_cta' => 'Start My Growth',
+
+    'footer_tagline' => 'Engineered for Viral Growth.',
+    'footer_price' => 'Single payment. Report by email.',
+];
