@@ -14,7 +14,7 @@ return [
     'section_algorithm_title' => 'Estratégia, não sorte.',
     'section_algorithm_before' => 'Estratégia, não',
     'section_algorithm_highlight' => 'sorte.',
-    'section_algorithm_lead' => 'A maioria dos criadores falha adivinhando o que vai viralizar. GoViral entrega direção clara em minutos.',
+    'section_algorithm_lead' => 'Pare de adivinhar. Receba uma direção clara para seu perfil e conteúdo de uma vez—sem cursos, sem espera.',
     'section_algorithm_cta' => 'Quero meu plano',
 
     'section_how_title' => 'Como funciona',

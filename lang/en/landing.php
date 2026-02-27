@@ -14,7 +14,7 @@ return [
     'section_algorithm_title' => 'Strategy, not luck.',
     'section_algorithm_before' => 'Strategy, not',
     'section_algorithm_highlight' => 'luck.',
-    'section_algorithm_lead' => 'Most creators fail by guessing what will go viral. GoViral gives you a sharp, AI-built direction in minutes.',
+    'section_algorithm_lead' => 'Stop guessing. Get a clear direction for your profile and content in one go—no courses, no waiting.',
     'section_algorithm_cta' => 'Get my blueprint',
 
     'section_how_title' => 'How it works',

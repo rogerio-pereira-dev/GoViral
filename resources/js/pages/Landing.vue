@@ -37,9 +37,9 @@ function switchLocale(locale: string) {
 <template>
     <v-app theme="goviralDark">
         <v-app-bar flat color="rgba(18, 18, 18, 0.9)" class="px-4">
-            <v-toolbar-title class="text-h5 font-weight-bold">
+            <a href="#top" class="landing-logo font-weight-bold text-white text-decoration-none d-flex align-center">
                 Go<span class="text-primary">Viral</span>
-            </v-toolbar-title>
+            </a>
             <v-spacer />
             <v-btn-toggle
                 :model-value="locale"
@@ -61,217 +61,211 @@ function switchLocale(locale: string) {
             </v-btn-toggle>
         </v-app-bar>
 
-        <v-main>
+        <v-main id="top">
             <!-- 1. Hero -->
-            <v-container class="py-12 py-md-16 text-center">
-                <h1 class="text-h3 text-md-h2 font-weight-bold mb-4">
-                    {{ translations.tagline_before }}
-                    <span class="text-primary">{{ translations.tagline_highlight }}</span>
-                </h1>
-                <p class="text-h6 text-medium-emphasis mb-8 mx-auto" style="max-width: 560px">
-                    {{ translations.subheadline }}
-                </p>
-                <p class="text-body-2 text-medium-emphasis mb-8">
-                    {{ translations.hero_support }}
-                </p>
-                <v-btn
-                    :href="'/start-growth'"
-                    size="x-large"
-                    color="primary"
-                    class="goviral-cta-glow rounded-pill px-8"
-                    height="56"
-                >
-                    {{ translations.cta_primary }}
-                </v-btn>
-                <p class="text-caption text-secondary font-weight-medium mt-4">
-                    <v-icon start size="small" icon="mdi-timer-outline" />
-                    {{ translations.delivery_in_minutes }}
-                </p>
-            </v-container>
-
-            <!-- 2. Strategy not luck -->
-            <v-container class="py-12 py-md-16">
-                <v-row align="center">
-                    <v-col cols="12" md="6">
-                        <h2 class="text-h4 text-md-h3 font-weight-bold mb-4">
-                            {{ translations.section_algorithm_before }}
-                            <span class="text-secondary">{{ translations.section_algorithm_highlight }}</span>
-                        </h2>
-                        <p class="text-body-1 text-medium-emphasis mb-6">
-                            {{ translations.section_algorithm_lead }}
-                        </p>
-                        <v-btn
-                            :href="'/start-growth'"
-                            color="secondary"
-                            variant="outlined"
-                            class="rounded-pill"
-                        >
-                            {{ translations.section_algorithm_cta }}
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="12" md="6" class="text-center">
-                        <v-img
-                            :src="'https://placehold.co/600x400/121212/25F4EE?text=Strategy'"
-                            width="100%"
-                            max-width="400"
-                            aspect-ratio="1"
-                            class="mx-auto rounded-lg"
-                            cover
-                        />
-                    </v-col>
-                </v-row>
-            </v-container>
-
-            <!-- 3. How it works -->
-            <v-container class="py-12 py-md-16">
-                <h2 class="text-h4 text-center font-weight-bold mb-12">
-                    {{ translations.section_how_title }}
-                </h2>
-                <v-row>
-                    <v-col cols="12" md="4" class="text-center">
-                        <v-avatar color="primary" size="64" class="mb-4">
-                            <v-icon icon="mdi-account-edit-outline" size="32" />
-                        </v-avatar>
-                        <h3 class="text-h6 font-weight-bold mb-2">
-                            {{ translations.section_how_step1 }}
-                        </h3>
-                        <p class="text-body-2 text-medium-emphasis">
-                            {{ translations.section_how_step1_desc }}
-                        </p>
-                    </v-col>
-                    <v-col cols="12" md="4" class="text-center">
-                        <v-avatar color="secondary" size="64" class="mb-4">
-                            <v-icon icon="mdi-brain" size="32" color="surface" />
-                        </v-avatar>
-                        <h3 class="text-h6 font-weight-bold mb-2">
-                            {{ translations.section_how_step2 }}
-                        </h3>
-                        <p class="text-body-2 text-medium-emphasis">
-                            {{ translations.section_how_step2_desc }}
-                        </p>
-                    </v-col>
-                    <v-col cols="12" md="4" class="text-center">
-                        <v-avatar color="primary" size="64" class="mb-4">
-                            <v-icon icon="mdi-email-check-outline" size="32" />
-                        </v-avatar>
-                        <h3 class="text-h6 font-weight-bold mb-2">
-                            {{ translations.section_how_step3 }}
-                        </h3>
-                        <p class="text-body-2 text-medium-emphasis">
-                            {{ translations.section_how_step3_desc }}
-                        </p>
-                    </v-col>
-                </v-row>
-                <div class="text-center mt-8">
+            <section class="landing-section section-bg-pink">
+                <v-container class="landing-section-inner text-center landing-hero">
+                    <h1 class="landing-h1 font-weight-bold mb-6 section-on-pink">
+                        {{ translations.tagline_before }}
+                        <span class="text-secondary">{{ translations.tagline_highlight }}</span>
+                    </h1>
+                    <h2 class="landing-hero-sub mb-6 mx-auto section-on-pink" style="max-width: 620px">
+                        {{ translations.subheadline }}
+                    </h2>
+                    <p class="landing-text mb-10 mx-auto section-on-pink" style="max-width: 560px">
+                        {{ translations.hero_support }}
+                    </p>
                     <v-btn
                         :href="'/start-growth'"
-                        color="primary"
-                        variant="outlined"
-                        class="rounded-pill"
+                        class="landing-btn goviral-cta-glow section-btn-on-pink"
                     >
                         {{ translations.cta_primary }}
                     </v-btn>
-                </div>
-            </v-container>
+                </v-container>
+            </section>
+
+            <!-- 2. Strategy not luck -->
+            <section class="landing-section section-bg-blue">
+                <v-container class="landing-section-inner">
+                    <v-row justify="center">
+                        <v-col cols="12" md="8" class="text-center">
+                            <h2 class="landing-h2 font-weight-bold mb-5 section-on-blue">
+                                {{ translations.section_algorithm_before }}
+                                <span class="text-primary">{{ translations.section_algorithm_highlight }}</span>
+                            </h2>
+                            <p class="landing-text mb-8 mx-auto section-on-blue" style="max-width: 520px">
+                                {{ translations.section_algorithm_lead }}
+                            </p>
+                            <v-btn
+                                :href="'/start-growth'"
+                                class="landing-btn goviral-cta-glow section-btn-on-blue"
+                            >
+                                {{ translations.section_algorithm_cta }}
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </section>
+
+            <!-- 3. How it works -->
+            <section class="landing-section section-bg-pink">
+                <v-container class="landing-section-inner">
+                    <h2 class="landing-h2 text-center font-weight-bold mb-12 section-on-pink">
+                        {{ translations.section_how_title }}
+                    </h2>
+                    <v-row>
+                        <v-col cols="12" md="4" class="text-center">
+                            <v-avatar color="primary" size="72" class="mb-4">
+                                <v-icon icon="mdi-account-edit-outline" size="36" />
+                            </v-avatar>
+                            <h3 class="landing-h4 font-weight-bold mb-3 section-on-pink">
+                                {{ translations.section_how_step1 }}
+                            </h3>
+                            <p class="landing-text-small section-on-pink">
+                                {{ translations.section_how_step1_desc }}
+                            </p>
+                        </v-col>
+                        <v-col cols="12" md="4" class="text-center">
+                            <v-avatar color="secondary" size="72" class="mb-4">
+                                <v-icon icon="mdi-brain" size="36" color="surface" />
+                            </v-avatar>
+                            <h3 class="landing-h4 font-weight-bold mb-3 section-on-pink">
+                                {{ translations.section_how_step2 }}
+                            </h3>
+                            <p class="landing-text-small section-on-pink">
+                                {{ translations.section_how_step2_desc }}
+                            </p>
+                        </v-col>
+                        <v-col cols="12" md="4" class="text-center">
+                            <v-avatar color="primary" size="72" class="mb-4">
+                                <v-icon icon="mdi-email-check-outline" size="36" />
+                            </v-avatar>
+                            <h3 class="landing-h4 font-weight-bold mb-3 section-on-pink">
+                                {{ translations.section_how_step3 }}
+                            </h3>
+                            <p class="landing-text-small section-on-pink">
+                                {{ translations.section_how_step3_desc }}
+                            </p>
+                        </v-col>
+                    </v-row>
+                    <div class="text-center mt-10">
+                        <v-btn
+                            :href="'/start-growth'"
+                            class="landing-btn goviral-cta-glow section-btn-on-pink"
+                        >
+                            {{ translations.cta_primary }}
+                        </v-btn>
+                    </div>
+                </v-container>
+            </section>
 
             <!-- 4. What you get (full report) -->
-            <v-container class="py-12 py-md-16">
-                <v-sheet color="rgba(255,255,255,0.03)" class="pa-8 pa-md-12 rounded-xl">
-                    <h2 class="text-h4 text-center font-weight-bold mb-8">
+            <section class="landing-section section-bg-blue">
+                <v-container class="landing-section-inner">
+                    <h2 class="landing-h2 text-center font-weight-bold mb-10 section-on-blue">
                         {{ translations.section_what_you_get_title }}
                     </h2>
-                    <v-list bg-color="transparent" class="mb-8">
-                        <v-list-item
-                            v-for="key in reportItems"
-                            :key="key"
-                            class="px-0"
-                            border
-                        >
-                            <template #prepend>
-                                <v-icon color="secondary" icon="mdi-check-circle-outline" />
-                            </template>
-                            <v-list-item-title class="text-body-2">
-                                {{ translations[key] }}
-                            </v-list-item-title>
-                        </v-list-item>
-                    </v-list>
+                    <v-row class="report-list mb-10 justify-center">
+                        <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                            <div
+                                v-for="key in reportItems.slice(0, 5)"
+                                :key="key"
+                                class="d-flex align-center justify-center gap-2 py-2 report-item"
+                            >
+                                <v-icon color="primary" size="small" icon="mdi-check-circle-outline" />
+                                <span class="landing-text section-on-blue">{{ translations[key] }}</span>
+                            </div>
+                        </v-col>
+                        <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                            <div
+                                v-for="key in reportItems.slice(5, 10)"
+                                :key="key"
+                                class="d-flex align-center justify-center gap-2 py-2 report-item"
+                            >
+                                <v-icon color="primary" size="small" icon="mdi-check-circle-outline" />
+                                <span class="landing-text section-on-blue">{{ translations[key] }}</span>
+                            </div>
+                        </v-col>
+                    </v-row>
                     <div class="text-center">
                         <v-btn
                             :href="'/start-growth'"
-                            size="x-large"
-                            color="primary"
-                            class="goviral-cta-glow rounded-pill px-8"
+                            class="landing-btn goviral-cta-glow section-btn-on-blue"
                         >
                             {{ translations.cta_blueprint }}
                         </v-btn>
                     </div>
-                </v-sheet>
-            </v-container>
+                </v-container>
+            </section>
 
             <!-- 5. Pains -->
-            <v-container class="py-12 py-md-16">
-                <h2 class="text-h4 text-center font-weight-bold mb-4">
-                    {{ translations.section_pains_title }}
-                </h2>
-                <p class="text-body-1 text-medium-emphasis text-center mb-8 mx-auto" style="max-width: 480px">
-                    {{ translations.section_pains_lead }}
-                </p>
-                <v-row dense>
-                    <v-col
-                        v-for="key in painItems"
-                        :key="key"
-                        cols="12"
-                        sm="6"
-                        md="4"
-                    >
-                        <v-card variant="outlined" color="rgba(255,255,255,0.06)" class="pa-4 h-100">
-                            <div class="d-flex align-center">
-                                <v-icon color="primary" size="small" class="mr-2" icon="mdi-alert-circle-outline" />
-                                <span class="text-body-2">{{ translations[key] }}</span>
+            <section class="landing-section section-bg-pink pains-section">
+                <v-container class="landing-section-inner">
+                    <h2 class="landing-h2 text-center font-weight-bold mb-4 section-on-pink">
+                        {{ translations.section_pains_title }}
+                    </h2>
+                    <p class="landing-text text-center mb-8 mx-auto section-on-pink" style="max-width: 520px">
+                        {{ translations.section_pains_lead }}
+                    </p>
+                    <v-row justify="center">
+                        <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                            <div
+                                v-for="key in painItems.slice(0, 3)"
+                                :key="key"
+                                class="d-flex align-center justify-center gap-2 py-2 pain-item"
+                            >
+                                <v-icon color="secondary" size="small" icon="mdi-alert-circle-outline" />
+                                <span class="landing-text-small section-on-pink">{{ translations[key] }}</span>
                             </div>
-                        </v-card>
-                    </v-col>
-                </v-row>
-                <div class="text-center mt-8">
-                    <v-btn
-                        :href="'/start-growth'"
-                        color="secondary"
-                        class="rounded-pill"
-                    >
-                        {{ translations.cta_primary }}
-                    </v-btn>
-                </div>
-            </v-container>
+                        </v-col>
+                        <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                            <div
+                                v-for="key in painItems.slice(3, 6)"
+                                :key="key"
+                                class="d-flex align-center justify-center gap-2 py-2 pain-item"
+                            >
+                                <v-icon color="secondary" size="small" icon="mdi-alert-circle-outline" />
+                                <span class="landing-text-small section-on-pink">{{ translations[key] }}</span>
+                            </div>
+                        </v-col>
+                    </v-row>
+                    <div class="text-center mt-10">
+                        <v-btn
+                            :href="'/start-growth'"
+                            class="landing-btn goviral-cta-glow section-btn-on-pink"
+                        >
+                            {{ translations.cta_primary }}
+                        </v-btn>
+                    </div>
+                </v-container>
+            </section>
 
-            <!-- 6. Final CTA -->
-            <v-container class="py-12 py-md-16">
-                <v-sheet color="primary" class="pa-10 pa-md-16 rounded-xl text-center">
-                    <h2 class="text-h4 text-md-h3 font-weight-bold mb-4">
+            <!-- 6. Final CTA (Clarity in minutes) -->
+            <section class="landing-section section-bg-blue">
+                <v-container class="landing-section-inner text-center">
+                    <h2 class="landing-h2 font-weight-bold mb-4 section-on-blue">
                         {{ translations.section_final_title }}
                     </h2>
-                    <p class="text-h6 text-medium-emphasis mb-8 mx-auto" style="max-width: 480px">
+                    <p class="landing-text mb-8 mx-auto section-on-blue" style="max-width: 480px">
                         {{ translations.section_final_lead }}
                     </p>
                     <v-btn
                         :href="'/start-growth'"
-                        size="x-large"
-                        color="surface"
-                        class="text-primary rounded-pill px-10"
-                        height="56"
+                        class="landing-btn goviral-cta-glow section-btn-on-blue"
                     >
                         {{ translations.section_final_cta }}
                     </v-btn>
-                </v-sheet>
-            </v-container>
+                </v-container>
+            </section>
 
             <!-- 7. Footer -->
-            <v-footer class="py-8">
+            <v-footer class="py-6 landing-footer">
                 <v-container class="text-center">
-                    <div class="text-h6 font-weight-bold mb-2">
+                    <div class="landing-h4 font-weight-bold mb-1">
                         Go<span class="text-primary">Viral</span>
                     </div>
-                    <div class="text-caption text-medium-emphasis">
-                        {{ translations.footer_tagline }} · {{ translations.footer_price }}
+                    <div class="landing-footer-tagline text-medium-emphasis">
+                        {{ translations.footer_tagline }}
                     </div>
                 </v-container>
             </v-footer>
@@ -280,6 +274,57 @@ function switchLocale(locale: string) {
 </template>
 
 <style scoped>
+/* Typography: fixed sizes (no Vuetify text-h*) */
+.landing-text { font-size: 18px; line-height: 1.5; }
+.landing-text-small { font-size: 16px; line-height: 1.5; }
+.landing-h1 { font-size: 34px; line-height: 1.2; }
+.landing-h2 { font-size: 30px; line-height: 1.25; }
+.landing-h3 { font-size: 26px; line-height: 1.3; }
+.landing-h4, .landing-h5, .landing-h6 { font-size: 22px; line-height: 1.35; }
+.landing-logo { font-size: 22px; }
+.landing-hero-sub { font-size: 26px; line-height: 1.4; opacity: 0.95; }
+.landing-footer-tagline { font-size: 13px; }
+
+.report-list .gap-2 { gap: 0.5rem; }
+
+/* Sections: tall, no lines between */
+.landing-section {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+}
+.landing-section-inner {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    width: 100%;
+}
+@media (min-width: 960px) {
+    .landing-section-inner { padding-top: 4rem; padding-bottom: 4rem; }
+}
+
+/* Section backgrounds: alternate rosa (detalhes azul) / azul (detalhes rosa) */
+.section-bg-pink {
+    background-color: #121212;
+}
+.section-bg-blue {
+    background: linear-gradient(135deg, rgba(18, 18, 18, 0.96) 0%, rgba(25, 45, 50, 0.95) 40%, rgba(37, 244, 238, 0.12) 100%) !important;
+    border: 1px solid rgba(254, 44, 85, 0.22);
+}
+.section-on-pink { color: rgba(255, 255, 255, 0.92); }
+.section-on-blue { color: rgba(255, 255, 255, 0.92); }
+.section-btn-on-pink { background-color: #25F4EE !important; color: #121212 !important; }
+.section-btn-on-blue { background-color: #FE2C55 !important; color: #fff !important; }
+
+/* All buttons: filled, same size and glow */
+.landing-btn {
+    min-width: 220px;
+    height: 56px;
+    border-radius: 9999px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 18px;
+    text-transform: none;
+}
 .goviral-cta-glow {
     box-shadow: 0 0 20px rgba(254, 44, 85, 0.4);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -288,8 +333,17 @@ function switchLocale(locale: string) {
     box-shadow: 0 0 28px rgba(254, 44, 85, 0.55);
     transform: scale(1.02);
 }
+.landing-btn.section-btn-on-blue.goviral-cta-glow {
+    box-shadow: 0 0 20px rgba(254, 44, 85, 0.4);
+}
+.landing-btn.section-btn-on-pink.goviral-cta-glow {
+    box-shadow: 0 0 18px rgba(37, 244, 238, 0.45);
+}
+
 .goviral-lang-toggle :deep(.v-btn--active) {
     color: rgb(var(--v-theme-secondary));
     font-weight: 700;
 }
+
+.landing-footer { border-top: none; background: #121212; }
 </style>

@@ -14,7 +14,7 @@ return [
     'section_algorithm_title' => 'Estrategia, no suerte.',
     'section_algorithm_before' => 'Estrategia, no',
     'section_algorithm_highlight' => 'suerte.',
-    'section_algorithm_lead' => 'La mayoría de los creadores fallan adivinando qué viralizará. GoViral te da una dirección clara en minutos.',
+    'section_algorithm_lead' => 'Deja de adivinar. Obtén una dirección clara para tu perfil y contenido de una vez—sin cursos, sin esperas.',
     'section_algorithm_cta' => 'Obtener mi plan',
 
     'section_how_title' => 'Cómo funciona',
