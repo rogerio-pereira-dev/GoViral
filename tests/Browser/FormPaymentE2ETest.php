@@ -43,7 +43,7 @@ it('shows declined card message and does not persist analysis request', function
         ->assertSee('Your card was declined. Please use another card.')
         ->assertNoSmoke();
 
-    expect(AnalysisRequest::query()->where('email', 'declined-payment@gmail.com')->count())->toBe(0);
+    expect(AnalysisRequest::where('email', 'declined-payment@gmail.com')->count())->toBe(0);
 });
 
 it('shows insufficient funds message and does not persist analysis request', function () {
@@ -63,5 +63,5 @@ it('shows insufficient funds message and does not persist analysis request', fun
         ->assertSee('Your card has insufficient funds.')
         ->assertNoSmoke();
 
-    expect(AnalysisRequest::query()->where('email', 'insufficient-payment@gmail.com')->count())->toBe(0);
+    expect(AnalysisRequest::where('email', 'insufficient-payment@gmail.com')->count())->toBe(0);
 });

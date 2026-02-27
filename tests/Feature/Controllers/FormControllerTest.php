@@ -46,6 +46,7 @@ it('stores a new analysis request and returns checkout payload', function () {
         'notes' => 'Optional notes here',
         'locale' => 'es',
         'payment_status' => 'pending',
+        'processing_status' => 'waiting_payment_confirmation',
     ]);
 });
 
@@ -76,6 +77,7 @@ it('stores not informed placeholders for optional empty profile fields', functio
         'video_url_3' => '<Not Informed>',
         'locale' => 'pt',
         'payment_status' => 'pending',
+        'processing_status' => 'waiting_payment_confirmation',
     ]);
 });
 
@@ -92,7 +94,7 @@ it('does not store analysis request when payload is invalid', function () {
         ->assertStatus(422)
         ->assertJsonValidationErrors(['email', 'video_url_1']);
 
-    expect(AnalysisRequest::query()->count())->toBe(0);
+    expect(AnalysisRequest::count())->toBe(0);
 });
 
 it('renders thank you page with translated content', function () {

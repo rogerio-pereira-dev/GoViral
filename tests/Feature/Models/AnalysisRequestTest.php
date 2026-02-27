@@ -66,9 +66,7 @@ test('analysis request paid scope returns only paid records', function () {
             'payment_status' => 'pending',
         ]);
 
-    $paidRecords = AnalysisRequest::query()
-                        ->paid()
-                        ->pluck('id');
+    $paidRecords = AnalysisRequest::paid()->pluck('id');
     $paidRecordCount = $paidRecords->count();
     $firstPaidRecordId = $paidRecords->first();
 
@@ -89,9 +87,7 @@ test('analysis request pending payment scope returns only pending records', func
             'payment_status' => 'paid',
         ]);
 
-    $pendingRecords = AnalysisRequest::query()
-                        ->pendingPayment()
-                        ->pluck('id');
+    $pendingRecords = AnalysisRequest::pendingPayment()->pluck('id');
     $pendingRecordCount = $pendingRecords->count();
     $firstPendingRecordId = $pendingRecords->first();
 
@@ -112,9 +108,7 @@ test('analysis request processing status scope filters by status', function () {
             'processing_status' => 'queued',
         ]);
 
-    $processingRecords = AnalysisRequest::query()
-                            ->processingStatus('processing')
-                            ->pluck('id');
+    $processingRecords = AnalysisRequest::processingStatus('processing')->pluck('id');
     $processingRecordCount = $processingRecords->count();
     $firstProcessingRecordId = $processingRecords->first();
 
