@@ -28,7 +28,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Data layer (for Form and Payment)
 
-- Create migration for `analysis_requests` table per HLD (id UUID, email, tiktok_username, bio, aspiring_niche, video_url_1/2/3, notes, locale, stripe_checkout_session_id, stripe_payment_intent_id, payment_status, processing_status, attempt_count, last_error, timestamps).
+- [x] Create migration for `analysis_requests` table per HLD (id UUID, email, tiktok_username, bio, aspiring_niche, video_url_1/2/3, notes, locale, stripe_checkout_session_id, stripe_payment_intent_id, payment_status, processing_status, attempt_count, last_error, timestamps).
 - Create `AnalysisRequest` model with fillable, casts (e.g. uuid), and any scopes needed.
 
 ### Form (FDR-003)
