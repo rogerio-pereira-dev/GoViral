@@ -68,9 +68,9 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Webhook (FDR-004.3)
 
-- Add POST route for Stripe webhook (e.g. `/stripe/webhook`); validate signature with STRIPE_WEBHOOK_SECRET (ADR-016); reject with 4xx if invalid.
-- Handle `checkout.session.completed`: find AnalysisRequest by session_id or metadata; set payment_status=paid, processing_status=queued; dispatch ProcessAnalysisRequest job with record id; return 200 quickly.
-- Handle Stripe retries idempotently (e.g. skip if record already paid); if session_id not found, log and return 200.
+- [x] Add POST route for Stripe webhook (`/webhooks/stripe`); validate signature with STRIPE_WEBHOOK_SECRET (ADR-016); reject with 4xx if invalid.
+- [x] Handle `payment_intent.succeeded`: find AnalysisRequest by stripe_payment_intent_id; set payment_status=paid, processing_status=queued; dispatch ProcessAnalysisRequest job with record id; return 200 quickly.
+- [x] Handle Stripe retries idempotently (e.g. skip if record already paid); if payment_intent_id not found, log and return 200.
 
 ### Queue and worker (FDR-006)
 

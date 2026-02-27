@@ -59,7 +59,7 @@ Webhooks allow Stripe to notify your application when important events happen (s
             -c "
             sleep 10 &&
             stripe listen 
-            --forward-to http://laravel.test/stripe/webhook 
+            --forward-to http://laravel.test/webhooks/stripe 
             --api-key $${STRIPE_SECRET}
             --skip-verify
             "
@@ -127,7 +127,7 @@ If you prefer using Stripe CLI locally instead of the container:
 
 3. **Start webhook forwarding:**
    ```bash
-   stripe listen --forward-to http://localhost/stripe/webhook
+   stripe listen --forward-to http://localhost/webhooks/stripe
    ```
 
 ### 4.2. Configure Webhook in Production
@@ -135,7 +135,7 @@ If you prefer using Stripe CLI locally instead of the container:
 1. In the Stripe Dashboard, go to **Developers** → **Webhooks**
 2. Click **Add endpoint**
 3. Configure:
-   - **Endpoint URL**: `https://yourdomain.com/stripe/webhook`
+   - **Endpoint URL**: `https://yourdomain.com/webhooks/stripe`
    - **Events to send**: Select the following events:
      - `payment_intent.succeeded`
      - `payment_intent.payment_failed`
@@ -259,7 +259,7 @@ Before going live, make sure you:
 - Check that `stripe-cli` container is running: `./vendor/bin/sail ps`
 - Check real-time logs: `./vendor/bin/sail logs stripe-cli -f`
 - Make sure `STRIPE_WEBHOOK_SECRET` in `.env` matches the secret shown in logs
-- Verify `/stripe/webhook` route is accessible
+- Verify `/webhooks/stripe` route is accessible
 
 **Authentication error:**
 - Verify `STRIPE_SECRET` is configured in `.env`

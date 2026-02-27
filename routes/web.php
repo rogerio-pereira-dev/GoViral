@@ -4,6 +4,7 @@ use App\Http\Controllers\Core\DashboardController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\ThankYouController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,9 @@ Route::get('/start-growth/payment-intent', [FormController::class, 'paymentInten
 
 Route::get('/thank-you', [ThankYouController::class, 'index'])
     ->name('form.thank-you');
+
+Route::post('/webhooks/stripe', StripeWebhookController::class)
+    ->name('stripe.webhook');
 
 /*
  * =====================================================================================================================

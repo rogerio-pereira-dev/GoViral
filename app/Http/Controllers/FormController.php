@@ -132,6 +132,7 @@ class FormController extends Controller
             'locale' => app()->getLocale(),
             'stripe_payment_intent_id' => $validatedData['payment_intent_id'],
             'payment_status' => 'pending',
+            'processing_status' => 'waiting_payment_confirmation',
         ]);
 
         return response()->json([

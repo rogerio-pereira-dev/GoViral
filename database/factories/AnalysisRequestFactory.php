@@ -30,7 +30,7 @@ class AnalysisRequestFactory extends Factory
             'stripe_checkout_session_id' => null,
             'stripe_payment_intent_id' => null,
             'payment_status' => 'pending',
-            'processing_status' => 'queued',
+            'processing_status' => 'waiting_payment_confirmation',
             'attempt_count' => 0,
             'last_error' => null,
         ];

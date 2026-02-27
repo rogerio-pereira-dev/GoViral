@@ -95,7 +95,7 @@ services:
             -c "
             sleep 10 &&
             stripe listen 
-            --forward-to http://laravel.test/stripe/webhook 
+            --forward-to http://laravel.test/webhooks/stripe 
             --api-key $${STRIPE_SECRET}
             --skip-verify
             "
