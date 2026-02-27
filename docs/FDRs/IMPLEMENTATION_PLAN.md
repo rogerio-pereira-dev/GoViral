@@ -12,7 +12,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Foundation (FDR-001: Vue + Vuetify + Branding)
 
-- Add Vuetify to the project (npm) and configure it alongside or replacing current UI (Tailwind/reka-ui) for GoViral pages.
+- [x] Add Vuetify to the project (npm) and configure it alongside or replacing current UI (Tailwind/reka-ui) for GoViral pages.
 - Create Vuetify theme: dark mode, background #121212, primary Pink #FE2C55, Teal #25F4EE, neon/glow on CTAs (docs/03 - Branding Manual.md).
 - Load and apply typography: Space Grotesk (headlines), Inter (body) per Branding Manual.
 - Apply CTAs and microcopy from Branding Manual (e.g. "Start My Growth", "Generate My Growth Blueprint"); ensure components inherit theme.
