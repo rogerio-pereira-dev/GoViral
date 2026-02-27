@@ -1,6 +1,6 @@
 ---
 name: ralph-cursor
-description: Run the Ralph Loop (Planning or Building) in Cursor using docs/FDRs/ToDo and IMPLEMENTATION_PLAN; one task per Building run, move completed FDRs to docs/FDRs/Done.
+description: Run the Ralph Loop (Planning or Building) in Cursor using docs/FDRs/ToDo and IMPLEMENTATION_PLAN; one task per Building run, move completed FDRs to docs/FDRs/Done, then push the feature branch and open a PR to main automatically when a feature is complete.
 ---
 
 # Ralph Loop with Cursor
@@ -12,6 +12,7 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 - **Planning:** Analyze gap between FDRs in `docs/FDRs/ToDo/` and the codebase; output is an updated `docs/FDRs/IMPLEMENTATION_PLAN.md` only (no code changes, no commits).
 - **Building:** Pick the single most important task from `docs/FDRs/IMPLEMENTATION_PLAN.md`, implement it, run tests and Pint, update the plan, move the FDR to `docs/FDRs/Done/` if the whole feature is done, then commit. One task per agent run.
 - **Branching:** Use one branch per feature (reuse across tasks of that feature), not one branch per task.
+- **PR flow:** After a feature is marked as complete, push the feature branch and open a pull request to `main` automatically after local checks pass.
 
 ## How to run
 
@@ -23,8 +24,15 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 2. **Building**
    - Open or paste the contents of `.cursor/ralph/PROMPT_build.md` into the chat, or say "Run Ralph Building" or "Do one Ralph task".
    - Follow the prompt: choose one task from the plan, implement it, test, lint, update plan, move FDR to Done if applicable, commit.
+   - Before creating/switching feature branch, sync `main` (`checkout`, `fetch`, `pull`).
    - Keep all tasks of the same feature on the same branch; create a branch only when the feature starts.
    - Do not do a second task in the same run.
+
+3. **Finalize feature (automatic)**
+   - Ensure the branch is pushed to remote.
+   - Open a PR targeting `main` with a concise summary and test plan.
+   - After push + PR, checkout `main` and delete the local feature branch.
+   - Confirm lint and test checks passed before merge.
 
 ## Key paths
 
@@ -45,3 +53,4 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 - Do not assume something is not implemented — search the code first.
 - Use Sail for all commands (tests, Pint); see `.cursor/rules/starting-environment.mdc`.
 - When an FDR is fully done, move its file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/`.
+- When a feature is marked complete, push the branch and open PR automatically.

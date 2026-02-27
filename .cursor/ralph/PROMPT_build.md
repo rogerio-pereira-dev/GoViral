@@ -8,7 +8,8 @@ You are running **one iteration** of the Ralph Loop in **BUILDING** mode. Do **e
 2. Study `docs/FDRs/ToDo/` (feature specs) and `docs/ADRs/` (decisions). Use the rule in `.cursor/rules/starting-environment.mdc` for Sail and test commands.
 3. Read `docs/FDRs/IMPLEMENTATION_PLAN.md` and choose the **single most important** task that is not yet done.
 4. Before implementing: search the codebase to confirm the current state. Do **not** assume something is not implemented — verify first.
-5. Before implementing: use **one branch per feature** (not per task). If the feature branch already exists in `docs/FDRs/IMPLEMENTATION_PLAN.md`, switch to it. If not, create it (for example `feat/<feature-name>`), switch to it, and register it in the plan before coding.
+5. Before implementing: sync `main` first (`git checkout main && git fetch && git pull`).
+6. Before implementing: use **one branch per feature** (not per task). If the feature branch already exists in `docs/FDRs/IMPLEMENTATION_PLAN.md`, switch to it. If not, create it from updated `main` (for example `feat/<feature-name>`), switch to it, and register it in the plan before coding.
 
 ## Phase 1 — Implement
 
@@ -41,8 +42,9 @@ Run Pint
 1. Update `docs/FDRs/IMPLEMENTATION_PLAN.md`: mark the task you did as done (e.g. strikethrough or "- [x]"), keep the feature→branch mapping updated, and add any discoveries or follow-up tasks.
 2. If an entire FDR is now complete (all acceptance criteria met), **move** that FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (e.g. move `FDR_001_configure_vue_vuetify_branding.md` to `docs/FDRs/Done/`).
 3. If you learned something operational (how to run/build/test), update `.cursor/AGENTS.md` briefly.
-4. Stage all changes and commit with a clear message describing the work: `git add -A && git commit -m "feat: <short description>"`. Do **not** push unless the user prefers that; the instructions say not to run the loop automatically.
+4. Stage all changes and commit with a clear message describing the work: `git add -A && git commit -m "feat: <short description>"`.
 5. Keep the work on the feature branch from Phase 0. Do not create a new branch for another task of the same feature. Do not commit directly on `main`.
+6. If the feature is marked complete in this run: push the feature branch, create a PR targeting `main`, then checkout `main` and delete the local feature branch.
 
 ## Guardrails
 
@@ -54,4 +56,4 @@ Run Pint
 
 ## Output
 
-When done, state: (1) which task you completed, (2) that tests and Pint passed, (3) whether you moved an FDR to Done, and (4) the commit hash or message.
+When done, state: (1) which task you completed, (2) that tests and Pint passed, (3) whether you moved an FDR to Done, (4) the commit hash or message, and (5) if feature-complete, the PR URL and confirmation that local branch cleanup was done.
