@@ -13,4 +13,3 @@ it('renders the dashboard page for authenticated users', function () {
             ->component('Dashboard')
         );
 });
-

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Session;
 
 uses(WithFaker::class);
 
@@ -22,4 +21,3 @@ it('stores the locale in session and redirects back for supported locales', func
 
     $this->assertSame('en', session('locale'));
 });
-

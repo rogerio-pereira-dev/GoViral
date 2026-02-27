@@ -14,4 +14,3 @@ it('renders the landing page with expected shared data', function () {
             ->has('translations')
         );
 });
-

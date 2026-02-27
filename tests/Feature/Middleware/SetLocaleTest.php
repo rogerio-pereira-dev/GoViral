@@ -25,4 +25,3 @@ it('ignores unsupported session locale and keeps current locale', function () {
 
     expect(App::getLocale())->toBe('en');
 });
-
