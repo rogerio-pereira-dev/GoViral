@@ -1,0 +1,11 @@
+---
+description: Feature specs live in docs/FDRs/ToDo; when complete, move FDR to docs/FDRs/Done.
+alwaysApply: true
+---
+
+# FDR ToDo and Done
+
+- **Feature specs (FDRs)** are in `docs/FDRs/ToDo/`. Each file describes one feature with "How it works", "How to test", and "Acceptance criteria".
+- When a feature is **fully implemented** (all acceptance criteria satisfied), **move** the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (keep the same filename). This marks the feature as done.
+- Do not delete FDRs; do not duplicate them. Moving is the only transition from ToDo to Done.
+- Dependencies between features are in `docs/04 - Features.md`; implement in dependency order when possible.

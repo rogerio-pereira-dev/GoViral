@@ -1,0 +1,21 @@
+---
+description: Ralph Loop workflow and FDR lifecycle. Apply when user runs Planning/Building or works on features from docs/FDRs.
+globs: .cursor/ralph/**/*.md,docs/FDRs/**/*.md
+alwaysApply: false
+---
+
+# Ralph Loop and FDR Workflow
+
+## Ralph Loop (Cursor)
+
+- **Prompts:** Planning uses `.cursor/ralph/PROMPT_plan.md`; Building uses `.cursor/ralph/PROMPT_build.md`. State is kept in `docs/FDRs/IMPLEMENTATION_PLAN.md`.
+- **One task per Building run.** Do not implement multiple tasks in one go. After each run: update the plan, run tests and Pint, then commit.
+- **Sources of truth:** Feature specs = `docs/FDRs/ToDo/*.md` (FDRs). Architecture decisions = `docs/ADRs/*.md`. Product/design = `docs/01 - Product Requirement Document.md`, `docs/02 - High Level Design.md`, `docs/04 - Features.md`, `docs/03 - Branding Manual.md`.
+- **Do not assume "not implemented".** Always search/read the codebase before concluding something is missing.
+- **Commands:** Use Sail for all PHP/artisan/npm commands. See `.cursor/rules/starting-environment.mdc` for test and lint commands.
+
+## FDR lifecycle
+
+- **To do:** Features to implement are listed as FDR documents in `docs/FDRs/ToDo/` (e.g. `FDR_001_configure_vue_vuetify_branding.md`).
+- **Done:** When **all** acceptance criteria of an FDR are met, **move** the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename). Do not delete; moving marks the feature as complete.
+- Dependencies between features are described in `docs/04 - Features.md`; respect that order when planning and implementing.
