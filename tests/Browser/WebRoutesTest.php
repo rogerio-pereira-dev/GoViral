@@ -3,6 +3,7 @@
 it('loads all public web routes without JavaScript errors', function () {
     $pages = visit([
         '/',
+        '/start-growth',
         '/locale/en',
         '/locale/it',
     ]);
