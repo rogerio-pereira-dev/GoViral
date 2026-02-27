@@ -15,6 +15,9 @@ Route::get('/', [LandingController::class, 'index'])
 Route::get('/start-growth', [FormController::class, 'index'])
     ->name('form.index');
 
+Route::post('/start-growth', [FormController::class, 'store'])
+    ->name('form.store');
+
 /*
  * =====================================================================================================================
  * Core Routes (Admin)

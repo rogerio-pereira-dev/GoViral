@@ -19,12 +19,12 @@ class StoreAnalysisRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
-            'tiktok_username' => ['required', 'string', 'max:255'],
-            'bio' => ['required', 'string', 'max:5000'],
+            'tiktok_username' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:5000'],
             'aspiring_niche' => ['required', 'string', 'max:255'],
-            'video_url_1' => ['required', 'url', 'max:2048'],
-            'video_url_2' => ['required', 'url', 'max:2048'],
-            'video_url_3' => ['required', 'url', 'max:2048'],
+            'video_url_1' => ['nullable', 'url', 'max:2048'],
+            'video_url_2' => ['nullable', 'url', 'max:2048'],
+            'video_url_3' => ['nullable', 'url', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
         ];
     }
