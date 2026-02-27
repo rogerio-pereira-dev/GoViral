@@ -19,14 +19,14 @@
             })();
         </script>
 
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
+        {{-- Inline style: GoViral branding uses #121212 for dark (FDR-001) --}}
         <style>
             html {
                 background-color: oklch(1 0 0);
             }
 
             html.dark {
-                background-color: oklch(0.145 0 0);
+                background-color: #121212;
             }
         </style>
 
@@ -37,7 +37,7 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|inter:400,500,600,700|space-grotesk:400,500,600,700" rel="stylesheet" />
 
         @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         @inertiaHead

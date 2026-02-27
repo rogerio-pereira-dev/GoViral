@@ -170,3 +170,44 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* GoViral branding (FDR-001): theme, typography, CTA glow */
+@layer base {
+    :root,
+    .dark {
+        --goviral-headline-font: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        --goviral-body-font: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        --goviral-primary: #fe2c55;
+        --goviral-secondary: #25f4ee;
+    }
+    .dark {
+        --background: #121212;
+        --background-hover: #1e1e1e;
+    }
+    body {
+        font-family: var(--goviral-body-font);
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--goviral-headline-font);
+    }
+}
+
+@layer utilities {
+    .goviral-headline {
+        font-family: var(--goviral-headline-font);
+    }
+    .goviral-body {
+        font-family: var(--goviral-body-font);
+    }
+    .goviral-cta-glow {
+        box-shadow:
+            0 0 12px rgba(254, 44, 85, 0.5),
+            0 0 24px rgba(37, 244, 238, 0.25);
+        transition: box-shadow 0.2s ease;
+    }
+    .goviral-cta-glow:hover {
+        box-shadow:
+            0 0 16px rgba(254, 44, 85, 0.6),
+            0 0 32px rgba(37, 244, 238, 0.35);
+    }
+}
