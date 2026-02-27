@@ -13,9 +13,13 @@ You are running **one iteration** of the Ralph Loop in **BUILDING** mode. Do **e
 ## Phase 1 — Implement
 
 1. Implement **only** the chosen task. Do not do extra tasks in this run.
-2. Follow project standards: English code, PSR, thin controllers, Form Requests for validation, services for business logic. Use Sail for all commands (see `.cursor/rules/starting-environment.mdc`).
-3. When the change is done, run the relevant tests (e.g. `./vendor/bin/sail artisan test --parallel` or targeted tests). If tests fail, fix the code until they pass.
-4. Run the linter: `./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel`.
+2. Follow project standards: English code, PSR, thin controllers, Form Requests for validation, services for business logic, and an equivalent factory for every Eloquent model.
+3. In fluent method chains, keep one method call per line and keep indentation consistent.
+4. For assigned fluent chains, use a deeper continuation indent for `->` lines; for standalone chains, use one continuation indent level.
+5. In tests, chained expectations are acceptable when each method call stays on its own line.
+6. Use Sail for all commands (see `.cursor/rules/starting-environment.mdc`).
+7. When the change is done, run the relevant tests (e.g. `./vendor/bin/sail artisan test --parallel` or targeted tests). If tests fail, fix the code until they pass.
+8. Run the linter: `./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel`.
 
 ### Phase 1.2 — Testing
 Run all tests

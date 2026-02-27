@@ -33,12 +33,17 @@ Primary value proposition:
 
 - All code must be in English.
 - Follow PSR standards (one statement per line).
+- For fluent chains, put one method call per line and keep indentation consistent.
+- For assigned fluent chains, use a deeper continuation indent for `->` lines.
+- For standalone fluent chains, use a single continuation indent level for `->` lines.
+- In tests, chained expectations are allowed when each method call is on its own line.
 - Follow Clean code and you have the motto: 
     > Any idiot can write code a computer understand, but only good developer write code that idiots can understand.
 - Prefer readable code over cleverness
 - Keep controllers thin and move business logic to services.
 - Prefer Form Requests for validation.
 - Use interfaces for services when appropriate.
+- Every Eloquent model must have an equivalent factory in `database/factories`.
 - Although i can write instructions to you (ai) in portguese all code should be in english
 
 ## Environment and Commands
