@@ -105,6 +105,7 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-text-field
                                                 v-model="form.email"
+                                                name="email"
                                                 :label="translations.email_label"
                                                 type="email"
                                                 autocomplete="email"
@@ -119,6 +120,7 @@ function submit(): void {
                                         <v-col cols="12" sm="6">
                                             <v-text-field
                                                 v-model="form.tiktok_username"
+                                                name="tiktok_username"
                                                 :label="translations.tiktok_username_label"
                                                 :placeholder="translations.tiktok_username_placeholder"
                                                 :error-messages="form.errors.tiktok_username"
@@ -128,6 +130,7 @@ function submit(): void {
                                         <v-col cols="12" sm="6">
                                             <v-text-field
                                                 v-model="form.aspiring_niche"
+                                                name="aspiring_niche"
                                                 :label="translations.aspiring_niche_label"
                                                 :placeholder="translations.aspiring_niche_placeholder"
                                                 :error-messages="form.errors.aspiring_niche"
@@ -138,6 +141,7 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-textarea
                                                 v-model="form.bio"
+                                                name="bio"
                                                 :label="translations.bio_label"
                                                 :placeholder="translations.bio_placeholder"
                                                 :error-messages="form.errors.bio"
@@ -149,6 +153,7 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_1"
+                                                name="video_url_1"
                                                 :label="translations.video_url_1_label"
                                                 type="url"
                                                 :placeholder="translations.video_url_placeholder"
@@ -159,6 +164,7 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_2"
+                                                name="video_url_2"
                                                 :label="translations.video_url_2_label"
                                                 type="url"
                                                 :placeholder="translations.video_url_placeholder"
@@ -169,6 +175,7 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_3"
+                                                name="video_url_3"
                                                 :label="translations.video_url_3_label"
                                                 type="url"
                                                 :placeholder="translations.video_url_placeholder"
@@ -179,6 +186,7 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-textarea
                                                 v-model="form.notes"
+                                                name="notes"
                                                 :label="translations.notes_label"
                                                 :placeholder="translations.notes_placeholder"
                                                 :error-messages="form.errors.notes"
@@ -189,6 +197,7 @@ function submit(): void {
                                     </v-row>
 
                                     <v-btn
+                                        dusk="start-growth-submit"
                                         type="submit"
                                         color="primary"
                                         variant="flat"
