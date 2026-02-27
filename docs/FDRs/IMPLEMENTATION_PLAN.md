@@ -6,6 +6,15 @@ Run Planning (see `.cursor/ralph/README.md`) to populate this list from `docs/FD
 
 ---
 
+## Feature branches (active)
+
+Use one branch per feature. Create the branch when starting the first task of that feature, then reuse it for all remaining tasks of the same feature.
+
+- Format: `<feature section name> -> <branch name>`
+- Example: `Data layer (for Form and Payment) -> feat/data-layer`
+
+---
+
 ## Tasks
 
 Prioritized by dependency and value (docs/04 - Features.md). One line per task. Do not assume something is missing — confirm in code first.

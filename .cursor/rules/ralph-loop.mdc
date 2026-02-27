@@ -10,6 +10,8 @@ alwaysApply: false
 
 - **Prompts:** Planning uses `.cursor/ralph/PROMPT_plan.md`; Building uses `.cursor/ralph/PROMPT_build.md`. State is kept in `docs/FDRs/IMPLEMENTATION_PLAN.md`.
 - **One task per Building run.** Do not implement multiple tasks in one go. After each run: update the plan, run tests and Pint, then commit.
+- **One branch per feature.** Reuse the same branch for all tasks of a feature; do not create one branch per subtask.
+- **Track feature branches in the plan.** When a feature branch is created, register it in `docs/FDRs/IMPLEMENTATION_PLAN.md` and keep it updated.
 - **Sources of truth:** Feature specs = `docs/FDRs/ToDo/*.md` (FDRs). Architecture decisions = `docs/ADRs/*.md`. Product/design = `docs/01 - Product Requirement Document.md`, `docs/02 - High Level Design.md`, `docs/04 - Features.md`, `docs/03 - Branding Manual.md`.
 - **Do not assume "not implemented".** Always search/read the codebase before concluding something is missing.
 - **Commands:** Use Sail for all PHP/artisan/npm commands. See `.cursor/rules/starting-environment.mdc` for test and lint commands.

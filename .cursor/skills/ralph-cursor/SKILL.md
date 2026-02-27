@@ -11,6 +11,7 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 
 - **Planning:** Analyze gap between FDRs in `docs/FDRs/ToDo/` and the codebase; output is an updated `docs/FDRs/IMPLEMENTATION_PLAN.md` only (no code changes, no commits).
 - **Building:** Pick the single most important task from `docs/FDRs/IMPLEMENTATION_PLAN.md`, implement it, run tests and Pint, update the plan, move the FDR to `docs/FDRs/Done/` if the whole feature is done, then commit. One task per agent run.
+- **Branching:** Use one branch per feature (reuse across tasks of that feature), not one branch per task.
 
 ## How to run
 
@@ -22,6 +23,7 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 2. **Building**
    - Open or paste the contents of `.cursor/ralph/PROMPT_build.md` into the chat, or say "Run Ralph Building" or "Do one Ralph task".
    - Follow the prompt: choose one task from the plan, implement it, test, lint, update plan, move FDR to Done if applicable, commit.
+   - Keep all tasks of the same feature on the same branch; create a branch only when the feature starts.
    - Do not do a second task in the same run.
 
 ## Key paths
@@ -39,6 +41,7 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 ## Rules to respect
 
 - One task per Building run.
+- One branch per feature; do not create a new branch for each task.
 - Do not assume something is not implemented — search the code first.
 - Use Sail for all commands (tests, Pint); see `.cursor/rules/starting-environment.mdc`.
 - When an FDR is fully done, move its file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/`.
