@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Core\DashboardController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\ThankYouController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/locale/{locale}', [LocaleController::class, 'index'])
@@ -10,6 +12,15 @@ Route::get('/locale/{locale}', [LocaleController::class, 'index'])
 
 Route::get('/', [LandingController::class, 'index'])
     ->name('home');
+
+Route::get('/start-growth', [FormController::class, 'index'])
+    ->name('form.index');
+
+Route::post('/start-growth', [FormController::class, 'store'])
+    ->name('form.store');
+
+Route::get('/thank-you', [ThankYouController::class, 'index'])
+    ->name('form.thank-you');
 
 /*
  * =====================================================================================================================

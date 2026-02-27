@@ -44,6 +44,11 @@ Primary value proposition:
 - Prefer Form Requests for validation.
 - Use interfaces for services when appropriate.
 - Every Eloquent model must have an equivalent factory in `database/factories`.
+- All frontend pages must use Vuetify only (components and styling primitives); do not use Tailwind, Bootstrap, or other UI component libraries.
+- All pages must have dedicated browser tests and be included in smoke route checks (`tests/Browser/WebRoutesTest.php`).
+- Every new public page (ignore Core Routes (Admin) Group) must also have translation coverage tests (en/es/pt), preferably via Feature tests asserting Inertia props.
+- Critical user journeys must include at least one end-to-end browser test covering validation, successful submit, and expected persistence/redirect outcomes.
+- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors (for example, `dusk` attributes) and/or explicit form field names.
 - Although i can write instructions to you (ai) in portguese all code should be in english
 
 ## Environment and Commands

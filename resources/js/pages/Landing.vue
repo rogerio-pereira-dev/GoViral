@@ -77,6 +77,7 @@ function switchLocale(locale: string) {
                     </p>
                     <v-btn
                         :href="'/start-growth'"
+                        dusk="landing-start-growth-button"
                         class="landing-btn goviral-cta-glow section-btn-on-pink"
                     >
                         {{ translations.cta_primary }}

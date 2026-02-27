@@ -12,6 +12,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 
 - Format: `<feature section name> -> <branch name>`
 - Example: `Data layer (for Form and Payment) -> feat/data-layer`
+- `Form (FDR-003) -> feat/form`
 
 ---
 
@@ -42,12 +43,12 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Form (FDR-003)
 
-- Add route `GET /start-growth` (and optional locale segment or query); controller returns Inertia form page with locale from session.
-- Create form page (Vue): fields email (with explicit help text that report is sent by email — valid email required), username, bio, aspiring_niche, video_url_1, video_url_2, video_url_3, notes (optional); no locale field (use page locale).
-- Add backend validation (Form Request): email format, valid URLs, max lengths; sanitize input per ADR-017 (XSS/injection).
-- Add POST endpoint for form submit: validate, create `AnalysisRequest` with payment_status=pending; redirect to Thank You page (for now, without payment — FDR-003 allows testing form without card).
-- Create Thank You page: route `/thank-you`, message "report by email within 30 minutes"; content translated (lang); optional link back to home.
-- Add form validation messages and labels in lang files (en, es, pt) for the form page locale.
+- [x] Add route `GET /start-growth` (and optional locale segment or query); controller returns Inertia form page with locale from session.
+- [x] Create form page (Vue): fields email (with explicit help text that report is sent by email — valid email required), username, bio, aspiring_niche, video_url_1, video_url_2, video_url_3, notes (optional); no locale field (use page locale).
+- [x] Add backend validation (Form Request): email format, valid URLs, max lengths; sanitize input per ADR-017 (XSS/injection).
+- [x] Add POST endpoint for form submit: validate, create `AnalysisRequest` with payment_status=pending; redirect to Thank You page (for now, without payment — FDR-003 allows testing form without card).
+- [x] Create Thank You page: route `/thank-you`, message "report by email within 30 minutes"; content translated (lang); optional link back to home.
+- [x] Add form validation messages and labels in lang files (en, es, pt) for the form page locale.
 
 ### Stripe setup (FDR-004.1)
 
