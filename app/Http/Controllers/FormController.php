@@ -65,7 +65,20 @@ class FormController extends Controller
             'payment_status' => 'pending',
         ]);
 
-        return redirect('/thank-you');
+        return redirect()->route('form.thank-you');
+    }
+
+    public function thankYou(): Response
+    {
+        $translations = [
+            'title' => __('thank_you.title'),
+            'message' => __('thank_you.message'),
+            'cta' => __('thank_you.cta'),
+        ];
+
+        return Inertia::render('Form/ThankYou', [
+            'translations' => $translations,
+        ]);
     }
 
     private function normalizeNotInformed(?string $value): string

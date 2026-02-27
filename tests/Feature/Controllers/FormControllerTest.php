@@ -83,6 +83,21 @@ it('does not store analysis request when payload is invalid', function () {
     expect(AnalysisRequest::query()->count())->toBe(0);
 });
 
+it('renders thank you page with translated content', function () {
+    $response = $this
+        ->withSession(['locale' => 'es'])
+        ->get(route('form.thank-you'));
+
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Form/ThankYou')
+            ->where('translations.title', '¡Gracias! Tu solicitud está confirmada.')
+            ->where('translations.message', 'Tu informe de crecimiento será enviado a tu correo en un plazo de 30 minutos.')
+            ->where('translations.cta', 'Volver al inicio')
+        );
+});
+
 function validFormPayload(): array
 {
     return [
