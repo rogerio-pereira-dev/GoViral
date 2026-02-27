@@ -14,8 +14,6 @@ class LocaleController extends Controller
      */
     private const SUPPORTED_LOCALES = ['en', 'es', 'pt'];
 
-
-
     public function index(Request $request, string $locale): RedirectResponse
     {
         if (! in_array($locale, self::SUPPORTED_LOCALES, true)) {

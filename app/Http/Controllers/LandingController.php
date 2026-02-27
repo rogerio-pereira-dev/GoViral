@@ -14,8 +14,6 @@ class LandingController extends Controller
      */
     private const SUPPORTED_LOCALES = ['en', 'es', 'pt'];
 
-
-    
     public function index(): Response
     {
         $translations = [

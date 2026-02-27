@@ -22,6 +22,5 @@ Route::middleware(['auth', 'verified'])
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
     });
-    
 
 require __DIR__.'/settings.php';
