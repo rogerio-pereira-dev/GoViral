@@ -45,6 +45,7 @@ Primary value proposition:
 - Use interfaces for services when appropriate.
 - Every Eloquent model must have an equivalent factory in `database/factories`.
 - All frontend pages must use Vuetify only (components and styling primitives); do not use Tailwind, Bootstrap, or other UI component libraries.
+- All pages must have dedicated browser tests and be included in smoke route checks (`tests/Browser/WebRoutesTest.php`).
 - Although i can write instructions to you (ai) in portguese all code should be in english
 
 ## Environment and Commands
