@@ -22,6 +22,7 @@ it('defines validation rules for analysis request input', function () {
         'video_url_2' => ['nullable', 'url', 'max:2048'],
         'video_url_3' => ['nullable', 'url', 'max:2048'],
         'notes' => ['nullable', 'string', 'max:5000'],
+        'payment_intent_id' => ['required', 'string', 'max:255'],
     ]);
 });
 
@@ -47,6 +48,7 @@ it('defines localized validation messages and attributes', function () {
         'video_url_2' => trans('form.video_url_2_label'),
         'video_url_3' => trans('form.video_url_3_label'),
         'notes' => trans('form.notes_label'),
+        'payment_intent_id' => trans('form.payment_card_label'),
     ]);
 });
 
@@ -62,6 +64,7 @@ it('validates required fields and expected error messages', function () {
     $requiredFields = [
         'email',
         'aspiring_niche',
+        'payment_intent_id',
     ];
 
     foreach ($requiredFields as $field) {
@@ -82,6 +85,7 @@ it('validates format, max length and nullable notes with expected messages', fun
         'video_url_2' => 'also-not-a-url',
         'video_url_3' => 'still-not-a-url',
         'notes' => null,
+        'payment_intent_id' => null,
     ];
 
     $request = new StoreAnalysisRequest;
@@ -112,6 +116,7 @@ it('accepts nullable profile fields when omitted', function () {
         'email' => 'jane@gmail.com',
         'aspiring_niche' => 'Fitness',
         'notes' => null,
+        'payment_intent_id' => 'pi_test_init',
     ];
 
     $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
@@ -173,6 +178,7 @@ it('sanitizes potentially unsafe fields before validation', function () {
         'video_url_2' => '  https://example.com/video-2  ',
         'video_url_3' => '  https://example.com/video-3  ',
         'notes' => '  <iframe src="javascript:alert(1)"></iframe>note  ',
+        'payment_intent_id' => '  <b>pi_test_init</b>  ',
     ]);
 
     $method = new ReflectionMethod(StoreAnalysisRequest::class, 'prepareForValidation');
@@ -186,7 +192,8 @@ it('sanitizes potentially unsafe fields before validation', function () {
         ->and($request->input('video_url_1'))->toBe('https://example.com/video-1')
         ->and($request->input('video_url_2'))->toBe('https://example.com/video-2')
         ->and($request->input('video_url_3'))->toBe('https://example.com/video-3')
-        ->and($request->input('notes'))->toBe('note');
+        ->and($request->input('notes'))->toBe('note')
+        ->and($request->input('payment_intent_id'))->toBe('pi_test_init');
 });
 
 it('converts non-string values to null during sanitization', function () {
@@ -201,6 +208,7 @@ it('converts non-string values to null during sanitization', function () {
         'video_url_2' => ['array'],
         'video_url_3' => true,
         'notes' => null,
+        'payment_intent_id' => ['array'],
     ]);
 
     $method = new ReflectionMethod(StoreAnalysisRequest::class, 'prepareForValidation');
@@ -214,7 +222,8 @@ it('converts non-string values to null during sanitization', function () {
         ->and($request->input('video_url_1'))->toBeNull()
         ->and($request->input('video_url_2'))->toBeNull()
         ->and($request->input('video_url_3'))->toBeNull()
-        ->and($request->input('notes'))->toBeNull();
+        ->and($request->input('notes'))->toBeNull()
+        ->and($request->input('payment_intent_id'))->toBeNull();
 });
 
 function validPayload(): array
@@ -228,5 +237,6 @@ function validPayload(): array
         'video_url_2' => 'https://example.com/video-2',
         'video_url_3' => 'https://example.com/video-3',
         'notes' => 'Optional notes',
+        'payment_intent_id' => 'pi_test_init',
     ];
 }

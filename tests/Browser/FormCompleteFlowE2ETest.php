@@ -37,5 +37,5 @@ it('runs complete flow from landing to form validation, successful submit, datab
         'payment_status' => 'pending',
     ]);
 
-    expect(AnalysisRequest::query()->count())->toBe(1);
+    expect(AnalysisRequest::count())->toBe(1);
 });

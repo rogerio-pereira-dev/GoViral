@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { nextTick, onMounted, ref } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     locale: string;
+    paymentScenario: string | null;
     translations: {
         title: string;
         subtitle: string;
@@ -33,6 +35,16 @@ defineProps<{
         notes_label: string;
         notes_placeholder: string;
         submit_cta: string;
+        payment_title: string;
+        payment_description: string;
+        payment_card_label: string;
+        payment_submit_cta: string;
+        payment_processing_cta: string;
+        payment_init_error: string;
+        payment_confirm_error: string;
+        payment_declined_error: string;
+        payment_insufficient_funds_error: string;
+        payment_amount_label: string;
     };
 }>();
 
@@ -47,9 +59,244 @@ const form = useForm({
     notes: '',
 });
 
-function submit(): void {
-    form.post('/start-growth');
+const paymentInitialized = ref(false);
+const paymentLoading = ref(false);
+const paymentError = ref('');
+const stripeClient = ref<any>(null);
+const cardElement = ref<any>(null);
+const clientSecret = ref('');
+const thankYouUrl = ref('/thank-you');
+const paymentIntentId = ref('');
+const skipPayment = ref(false);
+const amountDisplay = ref('');
+const testScenario = ref<string | null>(null);
+
+function csrfToken(): string {
+    const tokenFromMeta = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content') ?? '';
+
+    if (tokenFromMeta) {
+        return tokenFromMeta;
+    }
+
+    const xsrfCookie = document.cookie
+        .split('; ')
+        .find((item) => item.startsWith('XSRF-TOKEN='));
+
+    if (! xsrfCookie) {
+        return '';
+    }
+
+    return decodeURIComponent(xsrfCookie.split('=')[1] ?? '');
 }
+
+async function loadStripeLibrary(): Promise<void> {
+    if ((window as any).Stripe) {
+        return;
+    }
+
+    await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://js.stripe.com/v3/';
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Stripe load error'));
+        document.head.appendChild(script);
+    });
+}
+
+function formatAmount(cents: number, currency: string): string {
+    const normalizedCurrency = currency.toUpperCase();
+
+    return new Intl.NumberFormat(props.locale, {
+        style: 'currency',
+        currency: normalizedCurrency,
+    }).format(cents / 100);
+}
+
+async function initializePayment(): Promise<void> {
+    paymentError.value = '';
+    paymentLoading.value = true;
+    const paymentIntentUrl = new URL('/start-growth/payment-intent', window.location.origin);
+
+    if (props.paymentScenario) {
+        paymentIntentUrl.searchParams.set('payment_scenario', props.paymentScenario);
+    }
+
+    const response = await fetch(paymentIntentUrl.toString(), {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+        },
+    });
+
+    if (! response.ok) {
+        const data = await response.json().catch(() => ({}));
+        paymentError.value = data.message ?? props.translations.payment_init_error;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    const data = await response.json();
+
+    paymentIntentId.value = data.paymentIntentId;
+    clientSecret.value = data.clientSecret;
+    skipPayment.value = Boolean(data.skipPayment);
+    testScenario.value = data.testScenario ?? props.paymentScenario;
+    amountDisplay.value = formatAmount(data.amountCents, data.currency);
+
+    if (skipPayment.value || testScenario.value) {
+        paymentInitialized.value = true;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    await loadStripeLibrary();
+
+    stripeClient.value = (window as any).Stripe(data.publishableKey);
+    const elements = stripeClient.value.elements();
+    cardElement.value = elements.create('card', {
+        hidePostalCode: true,
+        style: {
+            base: {
+                color: '#f5f7fa',
+                fontSize: '16px',
+                fontFamily: 'Inter, sans-serif',
+                iconColor: '#25f4ee',
+                '::placeholder': {
+                    color: 'rgba(245, 247, 250, 0.55)',
+                },
+            },
+            invalid: {
+                color: '#ff6b81',
+                iconColor: '#ff6b81',
+            },
+        },
+    });
+
+    paymentInitialized.value = true;
+    await nextTick();
+    cardElement.value.mount('#stripe-card-element');
+    paymentLoading.value = false;
+}
+
+async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<void> {
+    const response = await fetch('/start-growth', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'X-CSRF-TOKEN': csrfToken(),
+        },
+        body: JSON.stringify({
+            ...form.data(),
+            payment_intent_id: finalPaymentIntentId,
+        }),
+    });
+
+    if (response.status === 422) {
+        const data = await response.json();
+        form.setError(data.errors ?? {});
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    if (! response.ok) {
+        const data = await response.json().catch(() => ({}));
+        paymentError.value = data.message ?? props.translations.payment_confirm_error;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    const data = await response.json();
+    thankYouUrl.value = data.thankYouUrl;
+    window.location.href = thankYouUrl.value;
+}
+
+async function submit(): Promise<void> {
+    await submitPayment();
+}
+
+async function submitPayment(): Promise<void> {
+    form.clearErrors();
+    paymentError.value = '';
+    paymentLoading.value = true;
+
+    if (skipPayment.value) {
+        await persistAnalysisRequest(paymentIntentId.value || 'pi_test_init');
+
+        return;
+    }
+
+    if (testScenario.value === 'valid') {
+        await persistAnalysisRequest(paymentIntentId.value || 'pi_test_init_valid');
+
+        return;
+    }
+
+    if (testScenario.value === 'declined') {
+        paymentError.value = props.translations.payment_declined_error;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    if (testScenario.value === 'insufficient_funds') {
+        paymentError.value = props.translations.payment_insufficient_funds_error;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    if (! stripeClient.value || ! cardElement.value || ! clientSecret.value) {
+        paymentError.value = props.translations.payment_confirm_error;
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    const result = await stripeClient.value.confirmCardPayment(clientSecret.value, {
+        payment_method: {
+            card: cardElement.value,
+            billing_details: {
+                email: form.email,
+            },
+        },
+    });
+
+    if (result.error || result.paymentIntent?.status !== 'succeeded') {
+        const stripeErrorCode = result.error?.code;
+        const stripeDeclineCode = result.error?.decline_code;
+
+        if (stripeDeclineCode === 'insufficient_funds' || stripeErrorCode === 'insufficient_funds') {
+            paymentError.value = props.translations.payment_insufficient_funds_error;
+        } else if (
+            stripeErrorCode === 'card_declined'
+            || stripeDeclineCode === 'card_declined'
+            || stripeDeclineCode === 'do_not_honor'
+        ) {
+            paymentError.value = props.translations.payment_declined_error;
+        } else {
+            paymentError.value = props.translations.payment_confirm_error;
+        }
+        paymentLoading.value = false;
+
+        return;
+    }
+
+    await persistAnalysisRequest(result.paymentIntent.id);
+}
+
+onMounted(async () => {
+    await initializePayment();
+});
 </script>
 
 <template>
@@ -194,6 +441,16 @@ function submit(): void {
                                                 auto-grow
                                             />
                                         </v-col>
+
+                                        <v-col v-if="paymentInitialized" cols="12">
+                                            <label class="payment-card-label mb-2 d-block">
+                                                {{ translations.payment_card_label }}
+                                            </label>
+                                            <div id="stripe-card-element" class="stripe-card-element" />
+                                            <p class="payment-amount-highlight mt-3 text-right">
+                                                {{ amountDisplay }}
+                                            </p>
+                                        </v-col>
                                     </v-row>
 
                                     <v-btn
@@ -203,13 +460,27 @@ function submit(): void {
                                         variant="flat"
                                         size="x-large"
                                         block
-                                        :loading="form.processing"
-                                        :disabled="form.processing"
+                                        :loading="paymentLoading"
+                                        :disabled="paymentLoading"
                                         class="mt-4 cta-button"
                                     >
-                                        {{ translations.submit_cta }}
+                                        {{
+                                            paymentLoading
+                                                ? translations.payment_processing_cta
+                                                : translations.payment_submit_cta
+                                        }}
                                     </v-btn>
+
+                                    <v-alert
+                                        v-if="paymentError"
+                                        type="error"
+                                        variant="tonal"
+                                        class="mt-4"
+                                    >
+                                        {{ paymentError }}
+                                    </v-alert>
                                 </v-form>
+
                             </v-card-text>
                         </v-card>
                     </v-col>
@@ -270,6 +541,27 @@ function submit(): void {
 
 .form-card-body {
     padding-bottom: 3rem !important;
+}
+
+.payment-card-label {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.payment-amount-highlight {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #25f4ee;
+    padding-top: 14px;
+    padding-bottom: 10px;
+}
+
+.stripe-card-element {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .copy-list :deep(.v-list-item-title) {

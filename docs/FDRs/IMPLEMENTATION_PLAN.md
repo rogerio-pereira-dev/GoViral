@@ -13,6 +13,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - Format: `<feature section name> -> <branch name>`
 - Example: `Data layer (for Form and Payment) -> feat/data-layer`
 - `Form (FDR-003) -> feat/form`
+- `Stripe setup (FDR-004.1) -> feat/stripe-setup`
 
 ---
 
@@ -52,22 +53,24 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Stripe setup (FDR-004.1)
 
-- Install and configure Laravel Cashier (Stripe): composer require laravel/cashier; run Cashier migrations if any.
-- Add env vars: STRIPE_KEY, STRIPE_SECRET, STRIPE_WEBHOOK_SECRET, CASHIER_CURRENCY=usd; document in .env.example.
-- Configure Stripe product and one-time price (USD, e.g. $20) in Stripe Dashboard; document for team.
+- [x] Install and configure Laravel Cashier (Stripe): composer require laravel/cashier; run Cashier migrations if any.
+- [x] Add env vars: STRIPE_KEY, STRIPE_SECRET, STRIPE_WEBHOOK_SECRET; document in .env.example.
+- [x] Document local Stripe CLI container flow in compose/setup docs for webhook forwarding.
+- [x] Do not require preconfigured product/price in Stripe Dashboard; checkout defines item and amount dynamically.
 - Register webhook in Stripe for `checkout.session.completed` (or event used by in-page flow); set success/cancel URLs (success = Thank You page).
 
 ### Checkout on form page and Thank You (FDR-004.2)
 
-- Integrate Stripe Payment Element (or Checkout Session with mode payment) on the same page as the form; no redirect to external Stripe Hosted Checkout.
-- Flow: form submit creates AnalysisRequest (pending), backend returns client secret or session ID; user pays on same page; on success redirect to `/thank-you`.
-- Ensure Thank You page shows message "report by email within 30 minutes" in correct locale (en/es/pt); Thank You route uses session locale.
+- [x] Integrate Stripe Payment Element (or Checkout Session with mode payment) on the same page as the form; no redirect to external Stripe Hosted Checkout.
+- [x] Flow: form submit creates AnalysisRequest (pending), backend returns client secret or session ID; user pays on same page; on success redirect to `/thank-you`.
+- [x] Ensure Thank You page shows message "report by email within 30 minutes" in correct locale (en/es/pt); Thank You route uses session locale.
+- [x] Add browser/E2E coverage for payment scenarios: valid payment, declined card, and insufficient funds.
 
 ### Webhook (FDR-004.3)
 
-- Add POST route for Stripe webhook (e.g. `/stripe/webhook`); validate signature with STRIPE_WEBHOOK_SECRET (ADR-016); reject with 4xx if invalid.
-- Handle `checkout.session.completed`: find AnalysisRequest by session_id or metadata; set payment_status=paid, processing_status=queued; dispatch ProcessAnalysisRequest job with record id; return 200 quickly.
-- Handle Stripe retries idempotently (e.g. skip if record already paid); if session_id not found, log and return 200.
+- [x] Add POST route for Stripe webhook (`/webhooks/stripe`); validate signature with STRIPE_WEBHOOK_SECRET (ADR-016); reject with 4xx if invalid.
+- [x] Handle `payment_intent.succeeded`: find AnalysisRequest by stripe_payment_intent_id; set payment_status=paid, processing_status=queued; dispatch ProcessAnalysisRequest job with record id; return 200 quickly.
+- [x] Handle Stripe retries idempotently (e.g. skip if record already paid); if payment_intent_id not found, log and return 200.
 
 ### Queue and worker (FDR-006)
 

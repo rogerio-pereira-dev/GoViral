@@ -87,6 +87,28 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    stripe-cli:
+        image: stripe/stripe-cli:latest
+        container_name: stripe-cli
+        entrypoint: /bin/sh
+        command: >
+            -c "
+            sleep 10 &&
+            stripe listen 
+            --forward-to http://laravel.test/webhooks/stripe 
+            --api-key $${STRIPE_SECRET}
+            --skip-verify
+            "
+        environment:
+            STRIPE_API_KEY: "${STRIPE_SECRET}"
+        volumes:
+            - './.docker/stripe:/root/.config/stripe'
+        networks:
+            - sail
+        restart: unless-stopped
+        depends_on:
+            laravel.test:
+                condition: service_started
 volumes:
     pgadmin_data:
         driver: local
