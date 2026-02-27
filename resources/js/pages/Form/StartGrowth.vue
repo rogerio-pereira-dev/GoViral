@@ -1,6 +1,41 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 
+defineProps<{
+    locale: string;
+    translations: {
+        title: string;
+        subtitle: string;
+        copy_title: string;
+        copy_lead: string;
+        what_you_get_title: string;
+        report_item_1: string;
+        report_item_2: string;
+        report_item_3: string;
+        report_item_4: string;
+        report_item_5: string;
+        report_item_6: string;
+        report_item_7: string;
+        report_item_8: string;
+        email_label: string;
+        email_placeholder: string;
+        email_hint: string;
+        tiktok_username_label: string;
+        tiktok_username_placeholder: string;
+        aspiring_niche_label: string;
+        aspiring_niche_placeholder: string;
+        bio_label: string;
+        bio_placeholder: string;
+        video_url_1_label: string;
+        video_url_2_label: string;
+        video_url_3_label: string;
+        video_url_placeholder: string;
+        notes_label: string;
+        notes_placeholder: string;
+        submit_cta: string;
+    };
+}>();
+
 const form = useForm({
     email: '',
     tiktok_username: '',
@@ -18,7 +53,7 @@ function submit(): void {
 </script>
 
 <template>
-    <Head title="Start My Growth" />
+    <Head :title="translations.title" />
 
     <v-app theme="goviralDark">
         <v-main class="start-growth-main">
@@ -28,26 +63,26 @@ function submit(): void {
                         <v-card class="copy-panel" elevation="12">
                             <v-card-text class="d-flex flex-column fill-height">
                                 <h1 class="copy-title text-h3 font-weight-bold mb-4">
-                                    Turn your TikTok profile into a growth machine
+                                    {{ translations.copy_title }}
                                 </h1>
 
                                 <p class="copy-lead text-medium-emphasis mb-8">
-                                    In minutes, get a practical growth diagnosis with clear next steps, content opportunities, and a 30-day direction made for your niche.
+                                    {{ translations.copy_lead }}
                                 </p>
 
                                 <h3 class="copy-section-title mb-3">
-                                    What you get in your report
+                                    {{ translations.what_you_get_title }}
                                 </h3>
 
                                 <v-list class="copy-list mb-6" bg-color="transparent">
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Personalized profile and positioning diagnosis" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Username and bio optimization suggestions" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Niche clarity and audience direction" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Content opportunities from your current profile" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Practical hooks and video angle ideas" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Step-by-step 30-day action plan" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Fast-win recommendations you can apply today" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" title="Report delivered by email in about 30 minutes" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_1" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_2" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_3" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_4" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_5" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_6" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_7" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_8" />
                                 </v-list>
                             </v-card-text>
                         </v-card>
@@ -57,10 +92,10 @@ function submit(): void {
                         <v-card elevation="12" class="form-panel">
                             <v-card-item>
                                 <v-card-title class="form-title font-weight-bold">
-                                    Start My Growth
+                                    {{ translations.title }}
                                 </v-card-title>
                                 <v-card-subtitle class="form-subtitle mt-2">
-                                    Fill in your details to generate your personalized growth report.
+                                    {{ translations.subtitle }}
                                 </v-card-subtitle>
                             </v-card-item>
 
@@ -70,22 +105,22 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-text-field
                                                 v-model="form.email"
-                                                label="Email"
+                                                :label="translations.email_label"
                                                 type="email"
                                                 autocomplete="email"
-                                                placeholder="you@gmail.com"
+                                                :placeholder="translations.email_placeholder"
                                                 :error-messages="form.errors.email"
                                                 required
                                                 persistent-hint
-                                                hint="Use a valid email address. Your report will be sent there."
+                                                :hint="translations.email_hint"
                                             />
                                         </v-col>
 
                                         <v-col cols="12" sm="6">
                                             <v-text-field
                                                 v-model="form.tiktok_username"
-                                                label="TikTok Username"
-                                                placeholder="@yourusername"
+                                                :label="translations.tiktok_username_label"
+                                                :placeholder="translations.tiktok_username_placeholder"
                                                 :error-messages="form.errors.tiktok_username"
                                             />
                                         </v-col>
@@ -93,8 +128,8 @@ function submit(): void {
                                         <v-col cols="12" sm="6">
                                             <v-text-field
                                                 v-model="form.aspiring_niche"
-                                                label="Aspiring Niche"
-                                                placeholder="Fitness, Beauty, Cooking, etc."
+                                                :label="translations.aspiring_niche_label"
+                                                :placeholder="translations.aspiring_niche_placeholder"
                                                 :error-messages="form.errors.aspiring_niche"
                                                 required
                                             />
@@ -103,8 +138,8 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-textarea
                                                 v-model="form.bio"
-                                                label="Current Bio"
-                                                placeholder="Paste your current TikTok bio"
+                                                :label="translations.bio_label"
+                                                :placeholder="translations.bio_placeholder"
                                                 :error-messages="form.errors.bio"
                                                 rows="3"
                                                 auto-grow
@@ -114,9 +149,9 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_1"
-                                                label="Video URL 1"
+                                                :label="translations.video_url_1_label"
                                                 type="url"
-                                                placeholder="https://..."
+                                                :placeholder="translations.video_url_placeholder"
                                                 :error-messages="form.errors.video_url_1"
                                             />
                                         </v-col>
@@ -124,9 +159,9 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_2"
-                                                label="Video URL 2"
+                                                :label="translations.video_url_2_label"
                                                 type="url"
-                                                placeholder="https://..."
+                                                :placeholder="translations.video_url_placeholder"
                                                 :error-messages="form.errors.video_url_2"
                                             />
                                         </v-col>
@@ -134,9 +169,9 @@ function submit(): void {
                                         <v-col cols="12" sm="4">
                                             <v-text-field
                                                 v-model="form.video_url_3"
-                                                label="Video URL 3"
+                                                :label="translations.video_url_3_label"
                                                 type="url"
-                                                placeholder="https://..."
+                                                :placeholder="translations.video_url_placeholder"
                                                 :error-messages="form.errors.video_url_3"
                                             />
                                         </v-col>
@@ -144,8 +179,8 @@ function submit(): void {
                                         <v-col cols="12">
                                             <v-textarea
                                                 v-model="form.notes"
-                                                label="Notes (Optional)"
-                                                placeholder="Any extra context you want us to consider"
+                                                :label="translations.notes_label"
+                                                :placeholder="translations.notes_placeholder"
                                                 :error-messages="form.errors.notes"
                                                 rows="3"
                                                 auto-grow
@@ -163,7 +198,7 @@ function submit(): void {
                                         :disabled="form.processing"
                                         class="mt-4 cta-button"
                                     >
-                                        Start My Growth
+                                        {{ translations.submit_cta }}
                                     </v-btn>
                                 </v-form>
                             </v-card-text>
