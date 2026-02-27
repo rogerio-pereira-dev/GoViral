@@ -8,8 +8,9 @@
 ## How it works
 
 - **Laravel Cashier (Stripe)** installed and configured in the project.
-- **Environment variables:** `STRIPE_KEY` (publishable), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
-- **Stripe Dashboard:** product and price configured (one-time payment, USD; target amount e.g. $20). For payment embedded on the form page, use **Stripe Elements** (or Payment Element) with Payment Intents or Checkout Session with `mode: payment` per chosen approach; success and cancel URLs point to the app (e.g. success = Thank You page, cancel = back to form).
+- **Environment variables:** `STRIPE_KEY` (publishable), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
+- **Stripe CLI in Docker:** local webhook forwarding runs through a dedicated `stripe-cli` service in `compose.yaml`, forwarding events to `http://laravel.test/stripe/webhook`.
+- **Checkout behavior:** amount and item details are defined dynamically at checkout time; no mandatory pre-created product/price in Stripe Dashboard.
 - **Webhook:** application endpoint registered in Stripe for the `checkout.session.completed` event (or equivalent if using Payment Intent); signing secret in `STRIPE_WEBHOOK_SECRET`.
 
 ---
@@ -17,15 +18,16 @@
 ## How to test
 
 - `php artisan` lists Cashier commands; config loads without error.
-- Keys and webhook secret in env; locally, use Stripe CLI to forward webhooks (`stripe listen --forward-to ...`).
-- Product/price exist in Stripe; amount in USD.
+- Keys and webhook secret in env; locally, `stripe-cli` container forwards webhooks and logs the signing secret.
+- Run `php artisan vendor:publish --tag="cashier-migrations"` and `php artisan vendor:publish --tag="cashier-config"` successfully.
 
 ---
 
 ## Acceptance criteria
 
-- [ ] Cashier installed; env with `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
-- [ ] Product and price (one-time, USD) configured in Stripe.
+- [ ] Cashier installed; env with `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
+- [ ] Stripe CLI service documented in `compose.yaml` and usable for local webhook forwarding.
+- [ ] Cashier migrations and configuration are published in the project.
 - [ ] Webhook configured in Stripe with event `checkout.session.completed` (or the event used by the in-page payment flow).
 - [ ] Success/cancel URLs configured (success = Thank You page).
 
