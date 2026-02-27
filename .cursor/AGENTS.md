@@ -44,6 +44,7 @@ Primary value proposition:
 - Prefer Form Requests for validation.
 - Use interfaces for services when appropriate.
 - Every Eloquent model must have an equivalent factory in `database/factories`.
+- All frontend pages must use Vuetify only (components and styling primitives); do not use Tailwind, Bootstrap, or other UI component libraries.
 - Although i can write instructions to you (ai) in portguese all code should be in english
 
 ## Environment and Commands
