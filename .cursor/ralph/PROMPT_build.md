@@ -16,6 +16,21 @@ You are running **one iteration** of the Ralph Loop in **BUILDING** mode. Do **e
 3. When the change is done, run the relevant tests (e.g. `./vendor/bin/sail artisan test --parallel` or targeted tests). If tests fail, fix the code until they pass.
 4. Run the linter: `./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel`.
 
+### Phase 1.2 — Testing
+Run all tests
+```
+./vendor/bin/sail artisan test --parallel --coverage --min=90
+./vendor/bin/sail artisan test --type-coverage --min=90 --parallel
+```
+
+### Phase 1.3 — Linting
+Run Pint
+```
+./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel
+```
+
+**IMPORTANT**: Do not move forward before Phase 1.2 and 1.3 are passing
+
 ## Phase 2 — Update plan and repo
 
 1. Update `docs/FDRs/IMPLEMENTATION_PLAN.md`: mark the task you did as done (e.g. strikethrough or "- [x]") and add any discoveries or follow-up tasks.
