@@ -26,11 +26,11 @@
 
 ## Acceptance criteria
 
-- [ ] Fields: email (with explicit text that it must be valid for report delivery), username, bio, niche, 3 URLs, notes optional; **no** locale field (page locale).
-- [ ] Format validation (email, URLs) on frontend and backend; max lengths applied.
-- [ ] Backend input sanitization (ADR-017).
-- [ ] Branding microcopy; error messages in the locale language (Laravel translations).
-- [ ] After valid submit: redirect to Thank You page with message "report by email within 30 minutes" (implemented in this feature; allows testing the form without payment during development).
+- [x] Fields: email (with explicit text that it must be valid for report delivery), username, bio, niche, 3 URLs, notes optional; **no** locale field (page locale).
+- [x] Format validation (email, URLs) on frontend and backend; max lengths applied.
+- [x] Backend input sanitization (ADR-017).
+- [x] Branding microcopy; error messages in the locale language (Laravel translations).
+- [x] After valid submit: redirect to Thank You page with message "report by email within 30 minutes" (implemented in this feature; allows testing the form without payment during development).
 
 ---
 

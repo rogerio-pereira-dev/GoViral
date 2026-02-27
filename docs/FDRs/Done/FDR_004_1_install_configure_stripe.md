@@ -9,9 +9,9 @@
 
 - **Laravel Cashier (Stripe)** installed and configured in the project.
 - **Environment variables:** `STRIPE_KEY` (publishable), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
-- **Stripe CLI in Docker:** local webhook forwarding runs through a dedicated `stripe-cli` service in `compose.yaml`, forwarding events to `http://laravel.test/stripe/webhook`.
+- **Stripe CLI in Docker:** local webhook forwarding runs through a dedicated `stripe-cli` service in `compose.yaml`, forwarding events to the application webhook URL (e.g. `/webhooks/stripe`).
 - **Checkout behavior:** amount and item details are defined dynamically at checkout time; no mandatory pre-created product/price in Stripe Dashboard.
-- **Webhook:** application endpoint registered in Stripe for the `checkout.session.completed` event (or equivalent if using Payment Intent); signing secret in `STRIPE_WEBHOOK_SECRET`.
+- **Webhook:** application endpoint registered in Stripe for the event used by the in-page flow (e.g. `payment_intent.succeeded`); signing secret in `STRIPE_WEBHOOK_SECRET`.
 
 ---
 
@@ -25,10 +25,10 @@
 
 ## Acceptance criteria
 
-- [ ] Cashier installed; env with `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
-- [ ] Stripe CLI service documented in `compose.yaml` and usable for local webhook forwarding.
-- [ ] Cashier migrations and configuration are published in the project.
-- [ ] Webhook configured in Stripe with event `checkout.session.completed` (or the event used by the in-page payment flow).
+- [x] Cashier installed; env with `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`.
+- [x] Stripe CLI service documented in `compose.yaml` and usable for local webhook forwarding.
+- [x] Cashier migrations and configuration are published in the project.
+- [ ] Webhook configured in Stripe with event used by the in-page payment flow (e.g. `payment_intent.succeeded`).
 - [ ] Success/cancel URLs configured (success = Thank You page).
 
 ---

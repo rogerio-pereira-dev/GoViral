@@ -25,10 +25,10 @@
 
 ## Acceptance criteria
 
-- [ ] Payment field (Stripe) on the **same page** as the form; no redirect to external Stripe page.
-- [ ] After successful payment: redirect to Thank You page.
-- [ ] Thank You page displays message that the report will be sent by email within 30 minutes; text translated (Laravel lang).
-- [ ] Thank You page locale consistent with session/page locale (en/es/pt).
+- [x] Payment field (Stripe) on the **same page** as the form; no redirect to external Stripe page.
+- [x] After successful payment: redirect to Thank You page.
+- [x] Thank You page displays message that the report will be sent by email within 30 minutes; text translated (Laravel lang).
+- [x] Thank You page locale consistent with session/page locale (en/es/pt).
 
 ---
 
