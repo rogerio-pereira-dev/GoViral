@@ -8,6 +8,7 @@ You are running **one iteration** of the Ralph Loop in **BUILDING** mode. Do **e
 2. Study `docs/FDRs/ToDo/` (feature specs) and `docs/ADRs/` (decisions). Use the rule in `.cursor/rules/starting-environment.mdc` for Sail and test commands.
 3. Read `docs/FDRs/IMPLEMENTATION_PLAN.md` and choose the **single most important** task that is not yet done.
 4. Before implementing: search the codebase to confirm the current state. Do **not** assume something is not implemented — verify first.
+5. Before implementing: create and switch to a **new branch** for the chosen task (for example: `feat/<short-task-name>` or `chore/<short-task-name>`).
 
 ## Phase 1 — Implement
 
@@ -37,6 +38,7 @@ Run Pint
 2. If an entire FDR is now complete (all acceptance criteria met), **move** that FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (e.g. move `FDR_001_configure_vue_vuetify_branding.md` to `docs/FDRs/Done/`).
 3. If you learned something operational (how to run/build/test), update `.cursor/AGENTS.md` briefly.
 4. Stage all changes and commit with a clear message describing the work: `git add -A && git commit -m "feat: <short description>"`. Do **not** push unless the user prefers that; the instructions say not to run the loop automatically.
+5. Keep the work on the branch created in Phase 0. Do not commit directly on `main`.
 
 ## Guardrails
 

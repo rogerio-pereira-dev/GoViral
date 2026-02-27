@@ -26,7 +26,7 @@ Este projeto usa o **Ralph Loop** adaptado para o **Cursor**: você (humano) ini
 2. **Implementar tarefas (Building)**
    - Abra um chat no Cursor (Agent).
    - Cole o conteúdo de `.cursor/ralph/PROMPT_build.md` ou peça: *“Rode o Ralph em modo Building”* ou *“Faça uma tarefa do Ralph”*.
-   - O agente lê o plano, escolhe **uma** tarefa, implementa, roda testes e Pint, atualiza o plano e commita.
+   - O agente lê o plano, escolhe **uma** tarefa, cria uma **branch nova** para a tarefa, implementa, roda testes e Pint, atualiza o plano e commita.
    - Se uma FDR inteira ficar pronta (todos os critérios de aceite), o agente move o arquivo da FDR de `docs/FDRs/ToDo/` para `docs/FDRs/Done/`.
    - Para a **próxima** tarefa, inicie **outro** chat e repita (novo contexto = próxima iteração do “loop”).
 
