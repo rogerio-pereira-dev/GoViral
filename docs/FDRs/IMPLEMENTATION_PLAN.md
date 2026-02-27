@@ -48,7 +48,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Add backend validation (Form Request): email format, valid URLs, max lengths; sanitize input per ADR-017 (XSS/injection).
 - [x] Add POST endpoint for form submit: validate, create `AnalysisRequest` with payment_status=pending; redirect to Thank You page (for now, without payment — FDR-003 allows testing form without card).
 - [x] Create Thank You page: route `/thank-you`, message "report by email within 30 minutes"; content translated (lang); optional link back to home.
-- Add form validation messages and labels in lang files (en, es, pt) for the form page locale.
+- [x] Add form validation messages and labels in lang files (en, es, pt) for the form page locale.
 
 ### Stripe setup (FDR-004.1)
 

@@ -30,4 +30,12 @@ return [
     'notes_label' => 'Notes (Optional)',
     'notes_placeholder' => 'Any extra context you want us to consider',
     'submit_cta' => 'Start My Growth',
+
+    'validation' => [
+        'required' => 'The :attribute field is required.',
+        'string' => 'The :attribute field must be a string.',
+        'email' => 'The :attribute field must be a valid email address.',
+        'url' => 'The :attribute field must be a valid URL.',
+        'max' => 'The :attribute field must not be greater than :max characters.',
+    ],
 ];

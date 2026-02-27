@@ -25,10 +25,37 @@ it('defines validation rules for analysis request input', function () {
     ]);
 });
 
+it('defines localized validation messages and attributes', function () {
+    $request = new StoreAnalysisRequest;
+
+    app()->setLocale('en');
+
+    expect($request->messages())->toBe([
+        'required' => trans('form.validation.required'),
+        'string' => trans('form.validation.string'),
+        'email' => trans('form.validation.email'),
+        'url' => trans('form.validation.url'),
+        'max' => trans('form.validation.max'),
+    ]);
+
+    expect($request->attributes())->toBe([
+        'email' => trans('form.email_label'),
+        'tiktok_username' => trans('form.tiktok_username_label'),
+        'bio' => trans('form.bio_label'),
+        'aspiring_niche' => trans('form.aspiring_niche_label'),
+        'video_url_1' => trans('form.video_url_1_label'),
+        'video_url_2' => trans('form.video_url_2_label'),
+        'video_url_3' => trans('form.video_url_3_label'),
+        'notes' => trans('form.notes_label'),
+    ]);
+});
+
 it('validates required fields and expected error messages', function () {
     app()->setLocale('en');
 
-    $validator = Validator::make([], (new StoreAnalysisRequest)->rules());
+    $request = new StoreAnalysisRequest;
+
+    $validator = Validator::make([], $request->rules(), $request->messages(), $request->attributes());
 
     expect($validator->fails())->toBeTrue();
 
@@ -39,7 +66,7 @@ it('validates required fields and expected error messages', function () {
 
     foreach ($requiredFields as $field) {
         expect($validator->errors()->first($field))
-            ->toBe(trans('validation.required', ['attribute' => str_replace('_', ' ', $field)]));
+            ->toBe(trans('form.validation.required', ['attribute' => $request->attributes()[$field]]));
     }
 });
 
@@ -57,23 +84,25 @@ it('validates format, max length and nullable notes with expected messages', fun
         'notes' => null,
     ];
 
-    $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
+    $request = new StoreAnalysisRequest;
+
+    $validator = Validator::make($payload, $request->rules(), $request->messages(), $request->attributes());
 
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->first('email'))
-        ->toBe(trans('validation.email', ['attribute' => 'email']))
+        ->toBe(trans('form.validation.email', ['attribute' => $request->attributes()['email']]))
         ->and($validator->errors()->first('tiktok_username'))
-        ->toBe(trans('validation.max.string', ['attribute' => 'tiktok username', 'max' => 255]))
+        ->toBe(trans('form.validation.max', ['attribute' => $request->attributes()['tiktok_username'], 'max' => 255]))
         ->and($validator->errors()->first('bio'))
-        ->toBe(trans('validation.max.string', ['attribute' => 'bio', 'max' => 5000]))
+        ->toBe(trans('form.validation.max', ['attribute' => $request->attributes()['bio'], 'max' => 5000]))
         ->and($validator->errors()->first('aspiring_niche'))
-        ->toBe(trans('validation.max.string', ['attribute' => 'aspiring niche', 'max' => 255]))
+        ->toBe(trans('form.validation.max', ['attribute' => $request->attributes()['aspiring_niche'], 'max' => 255]))
         ->and($validator->errors()->first('video_url_1'))
-        ->toBe(trans('validation.url', ['attribute' => 'video url 1']))
+        ->toBe(trans('form.validation.url', ['attribute' => $request->attributes()['video_url_1']]))
         ->and($validator->errors()->first('video_url_2'))
-        ->toBe(trans('validation.url', ['attribute' => 'video url 2']))
+        ->toBe(trans('form.validation.url', ['attribute' => $request->attributes()['video_url_2']]))
         ->and($validator->errors()->first('video_url_3'))
-        ->toBe(trans('validation.url', ['attribute' => 'video url 3']))
+        ->toBe(trans('form.validation.url', ['attribute' => $request->attributes()['video_url_3']]))
         ->and($validator->errors()->has('notes'))
         ->toBeFalse();
 });
@@ -96,11 +125,13 @@ it('validates max length for video_url_2 with expected error message', function 
     $payload = validPayload();
     $payload['video_url_2'] = 'https://example.com/'.Str::repeat('a', 2100);
 
-    $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
+    $request = new StoreAnalysisRequest;
+
+    $validator = Validator::make($payload, $request->rules(), $request->messages(), $request->attributes());
 
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->first('video_url_2'))
-        ->toBe(trans('validation.max.string', ['attribute' => 'video url 2', 'max' => 2048]));
+        ->toBe(trans('form.validation.max', ['attribute' => $request->attributes()['video_url_2'], 'max' => 2048]));
 });
 
 it('validates string rule and expected error messages', function () {
@@ -113,19 +144,21 @@ it('validates string rule and expected error messages', function () {
     $payload['aspiring_niche'] = ['not', 'a', 'string'];
     $payload['notes'] = ['not', 'a', 'string'];
 
-    $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
+    $request = new StoreAnalysisRequest;
+
+    $validator = Validator::make($payload, $request->rules(), $request->messages(), $request->attributes());
 
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->first('email'))
-        ->toBe(trans('validation.string', ['attribute' => 'email']))
+        ->toBe(trans('form.validation.string', ['attribute' => $request->attributes()['email']]))
         ->and($validator->errors()->first('tiktok_username'))
-        ->toBe(trans('validation.string', ['attribute' => 'tiktok username']))
+        ->toBe(trans('form.validation.string', ['attribute' => $request->attributes()['tiktok_username']]))
         ->and($validator->errors()->first('bio'))
-        ->toBe(trans('validation.string', ['attribute' => 'bio']))
+        ->toBe(trans('form.validation.string', ['attribute' => $request->attributes()['bio']]))
         ->and($validator->errors()->first('aspiring_niche'))
-        ->toBe(trans('validation.string', ['attribute' => 'aspiring niche']))
+        ->toBe(trans('form.validation.string', ['attribute' => $request->attributes()['aspiring_niche']]))
         ->and($validator->errors()->first('notes'))
-        ->toBe(trans('validation.string', ['attribute' => 'notes']));
+        ->toBe(trans('form.validation.string', ['attribute' => $request->attributes()['notes']]));
 });
 
 it('sanitizes potentially unsafe fields before validation', function () {

@@ -29,6 +29,37 @@ class StoreAnalysisRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'required' => __('form.validation.required'),
+            'string' => __('form.validation.string'),
+            'email' => __('form.validation.email'),
+            'url' => __('form.validation.url'),
+            'max' => __('form.validation.max'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'email' => __('form.email_label'),
+            'tiktok_username' => __('form.tiktok_username_label'),
+            'bio' => __('form.bio_label'),
+            'aspiring_niche' => __('form.aspiring_niche_label'),
+            'video_url_1' => __('form.video_url_1_label'),
+            'video_url_2' => __('form.video_url_2_label'),
+            'video_url_3' => __('form.video_url_3_label'),
+            'notes' => __('form.notes_label'),
+        ];
+    }
+
     protected function prepareForValidation(): void
     {
         // Sanitize before validation to reduce XSS/injection risk (ADR-017).

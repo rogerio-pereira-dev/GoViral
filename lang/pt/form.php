@@ -30,4 +30,12 @@ return [
     'notes_label' => 'Notas (Opcional)',
     'notes_placeholder' => 'Qualquer contexto extra que você queira compartilhar',
     'submit_cta' => 'Começar meu crescimento',
+
+    'validation' => [
+        'required' => 'O campo :attribute é obrigatório.',
+        'string' => 'O campo :attribute deve ser um texto.',
+        'email' => 'O campo :attribute deve ser um email válido.',
+        'url' => 'O campo :attribute deve ser uma URL válida.',
+        'max' => 'O campo :attribute não pode ter mais de :max caracteres.',
+    ],
 ];
