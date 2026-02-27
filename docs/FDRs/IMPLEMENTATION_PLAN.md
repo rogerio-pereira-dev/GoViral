@@ -55,15 +55,16 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 - [x] Install and configure Laravel Cashier (Stripe): composer require laravel/cashier; run Cashier migrations if any.
 - [x] Add env vars: STRIPE_KEY, STRIPE_SECRET, STRIPE_WEBHOOK_SECRET; document in .env.example.
-- Document local Stripe CLI container flow in compose/setup docs for webhook forwarding.
-- Do not require preconfigured product/price in Stripe Dashboard; checkout defines item and amount dynamically.
+- [x] Document local Stripe CLI container flow in compose/setup docs for webhook forwarding.
+- [x] Do not require preconfigured product/price in Stripe Dashboard; checkout defines item and amount dynamically.
 - Register webhook in Stripe for `checkout.session.completed` (or event used by in-page flow); set success/cancel URLs (success = Thank You page).
 
 ### Checkout on form page and Thank You (FDR-004.2)
 
-- Integrate Stripe Payment Element (or Checkout Session with mode payment) on the same page as the form; no redirect to external Stripe Hosted Checkout.
-- Flow: form submit creates AnalysisRequest (pending), backend returns client secret or session ID; user pays on same page; on success redirect to `/thank-you`.
-- Ensure Thank You page shows message "report by email within 30 minutes" in correct locale (en/es/pt); Thank You route uses session locale.
+- [x] Integrate Stripe Payment Element (or Checkout Session with mode payment) on the same page as the form; no redirect to external Stripe Hosted Checkout.
+- [x] Flow: form submit creates AnalysisRequest (pending), backend returns client secret or session ID; user pays on same page; on success redirect to `/thank-you`.
+- [x] Ensure Thank You page shows message "report by email within 30 minutes" in correct locale (en/es/pt); Thank You route uses session locale.
+- [x] Add browser/E2E coverage for payment scenarios: valid payment, declined card, and insufficient funds.
 
 ### Webhook (FDR-004.3)
 
