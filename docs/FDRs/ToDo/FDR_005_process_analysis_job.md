@@ -8,7 +8,38 @@
 ## Como funciona
 
 - Job `ProcessAnalysisRequest` recebe o UUID da requisição de análise. É enfileirado pelo webhook Stripe (FDR-004) quando `checkout.session.completed` é confirmado.
-- **Fluxo:** (1) Carregar registro de `analysis_requests` onde `payment_status = paid`; se não existir ou não estiver paid, falhar o job (release/fail). (2) Atualizar `processing_status = processing`, incrementar `attempt_count`. (3) Chamar integração LLM (FDR-007) com dados do registro e locale; obter conteúdo estruturado. (4) Montar HTML do relatório (seções: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan). (5) Enviar e-mail com esse HTML (FDR-008). (6) Em sucesso: atualizar `processing_status = sent`. Em falha: gravar `last_error`; fazer release do job para retry (backoff 5 min); após 12 tentativas totais, marcar como failed e deletar o registro (conforme ADR-011).
+- **Fluxo:** 
+    1. Carregar registro de `analysis_requests` onde `payment_status = paid`; se não existir ou não estiver paid, falhar o job (release/fail). 
+    2. Atualizar `processing_status = processing`, incrementar `attempt_count`. 
+    3. Chamar integração LLM (FDR-007) com dados do registro e locale; obter conteúdo estruturado. 
+    4. Montar HTML do relatório (seções: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan). 
+    5. Enviar e-mail com esse HTML (FDR-008). 
+    6. Em sucesso: atualizar `processing_status = sent`. Em falha: gravar `last_error`; fazer release do job para retry (backoff 5 min); após 12 tentativas totais, marcar como failed e deletar o registro (conforme ADR-011).
+
+Diagrama do fluxo (Mermaid):
+
+```mermaid
+flowchart TD
+    A[Job recebe UUID] --> B{Registro existe e paid?}
+    B -->|Não| C[Falhar job]
+    B -->|Sim| D["processing_status = processing"]
+    D --> E["attempt_count++"]
+    E --> F[Chamar LLM]
+    F --> G[Montar HTML do relatório]
+    G --> H[Enviar e-mail]
+    H --> I{Envio sucesso?}
+    I -->|Sim| J["processing_status = sent"]
+    J --> K[Deletar registro]
+    K --> L[Fim]
+    I -->|Não| M[Gravar last_error]
+    M --> N{attempt_count >= 12?}
+    N -->|Sim| O[Deletar registro]
+    O --> L
+    N -->|Não| P[Release / retry backoff 5 min]
+    P --> L
+```
+
+Referência: [Mermaid Flowcharts](https://mermaid.ai/open-source/syntax/flowchart.html).
 
 ---
 
