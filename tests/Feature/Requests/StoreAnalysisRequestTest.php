@@ -15,12 +15,12 @@ it('defines validation rules for analysis request input', function () {
 
     expect($request->rules())->toBe([
         'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
-        'tiktok_username' => ['required', 'string', 'max:255'],
-        'bio' => ['required', 'string', 'max:5000'],
+        'tiktok_username' => ['nullable', 'string', 'max:255'],
+        'bio' => ['nullable', 'string', 'max:5000'],
         'aspiring_niche' => ['required', 'string', 'max:255'],
-        'video_url_1' => ['required', 'url', 'max:2048'],
-        'video_url_2' => ['required', 'url', 'max:2048'],
-        'video_url_3' => ['required', 'url', 'max:2048'],
+        'video_url_1' => ['nullable', 'url', 'max:2048'],
+        'video_url_2' => ['nullable', 'url', 'max:2048'],
+        'video_url_3' => ['nullable', 'url', 'max:2048'],
         'notes' => ['nullable', 'string', 'max:5000'],
     ]);
 });
@@ -34,12 +34,7 @@ it('validates required fields and expected error messages', function () {
 
     $requiredFields = [
         'email',
-        'tiktok_username',
-        'bio',
         'aspiring_niche',
-        'video_url_1',
-        'video_url_2',
-        'video_url_3',
     ];
 
     foreach ($requiredFields as $field) {
@@ -81,6 +76,18 @@ it('validates format, max length and nullable notes with expected messages', fun
         ->toBe(trans('validation.url', ['attribute' => 'video url 3']))
         ->and($validator->errors()->has('notes'))
         ->toBeFalse();
+});
+
+it('accepts nullable profile fields when omitted', function () {
+    $payload = [
+        'email' => 'jane@gmail.com',
+        'aspiring_niche' => 'Fitness',
+        'notes' => null,
+    ];
+
+    $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
+
+    expect($validator->fails())->toBeFalse();
 });
 
 it('validates max length for video_url_2 with expected error message', function () {
