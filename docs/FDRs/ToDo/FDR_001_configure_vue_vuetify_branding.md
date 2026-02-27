@@ -1,43 +1,41 @@
-# FDR-001: Configurar Vue + Vuetify conforme Branding Manual
+# FDR-001: Configure Vue + Vuetify per Branding Manual
 
 **Feature:** 1  
-**Referência:** docs/03 - Branding Manual.md, docs/04 - Features.md
+**Reference:** docs/03 - Branding Manual.md, docs/04 - Features.md
 
 ---
 
-## Como funciona
+## How it works
 
-- Aplicação Vue (Inertia) usa Vuetify com tema customizado.
-- **Tema:** dark mode; background base `#121212`; cores primárias Pink `#FE2C55`, Teal `#25F4EE`; acentos com efeito de neon/glow em CTAs e destaques.
-- **Tipografia:** Space Grotesk para headlines, Inter para body; hierarquia clara e alto contraste.
-- **UI:** transições suaves em hover, glow sutil em elementos interativos, micro-interações; layout limpo, sem poluição visual.
-- **Microcopy/CTAs** usam textos do manual `docs/03 - Branding Manual.md` (ex.: "Start My Growth", "Generate My Growth Blueprint", "Analyzing Your Growth Potential...").
-- **Favicon/logo:** gradiente Teal→Pink, geometria limpa; conceito viral/relâmpago quando aplicável; escalável para favicon e ícone.
-
----
-
-## Como testar
-
-- **Happy path:** Carregar landing e formulário; verificar que fundo é #121212, CTAs usam pink/teal e têm glow; headlines em Space Grotesk, body em Inter; textos de CTA batem com o manual.
-- **Edge cases:** 
-    - Componentes Vuetify customizados (inputs, botões): garantir que herdam cores e não quebram contraste. 
-    - Favicon em múltiplos tamanhos (tab, bookmark): exibição correta.
-- **Acessibilidade:** contraste de texto/fundo dentro de limites (WCAG AA quando aplicável).
+- Vue (Inertia) application uses Vuetify with a custom theme.
+- **Theme:** dark mode; base background `#121212`; primary colors Pink `#FE2C55`, Teal `#25F4EE`; accents with neon/glow effect on CTAs and highlights.
+- **Typography:** Space Grotesk for headlines, Inter for body; clear hierarchy and high contrast.
+- **UI:** smooth hover transitions, subtle glow on interactive elements, micro-interactions; clean layout, no visual clutter.
+- **Microcopy/CTAs** use copy from `docs/03 - Branding Manual.md` (e.g. "Start My Growth", "Generate My Growth Blueprint", "Analyzing Your Growth Potential...").
+- **Favicon/logo:** Teal→Pink gradient, clean geometry; viral/lightning concept when applicable; scalable for favicon and icon.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Tema Vuetify dark com #121212, #FE2C55, #25F4EE aplicados globalmente onde definido no manual.
-- [ ] Space Grotesk e Inter carregados e usados conforme manual (headlines vs body).
-- [ ] CTAs e microcopy do manual presentes onde a feature 1 se aplica (ex.: botão principal "Start My Growth").
-- [ ] Glow/neon sutil em CTAs e elementos interativos; transições suaves.
-- [ ] Favicon/logo com gradiente Teal→Pink, legível em tamanhos pequenos.
-- [ ] Nenhum estilo que viole explicitamente o manual (ex.: fundo claro na raiz).
+- **Happy path:** Load landing and form; verify background is #121212, CTAs use pink/teal and have glow; headlines in Space Grotesk, body in Inter; CTA text matches the manual.
+- **Edge cases:** (1) Custom Vuetify components (inputs, buttons): ensure they inherit colors and do not break contrast. (2) Favicon at multiple sizes (tab, bookmark): correct display.
+- **Accessibility:** text/background contrast within limits (WCAG AA where applicable).
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Fontes (Space Grotesk, Inter): garantir que são carregadas (Google Fonts) em todos os ambientes.
-- Variáveis de tema (cores) podem ficar em um único arquivo de tema Vuetify para facilitar manutenção.
+- [ ] Vuetify dark theme with #121212, #FE2C55, #25F4EE applied globally where defined in the manual.
+- [ ] Space Grotesk and Inter loaded and used per manual (headlines vs body).
+- [ ] CTAs and microcopy from the manual present where feature 1 applies (e.g. primary button "Start My Growth").
+- [ ] Subtle glow/neon on CTAs and interactive elements; smooth transitions.
+- [ ] Favicon/logo with Teal→Pink gradient, readable at small sizes.
+- [ ] No styles that explicitly violate the manual (e.g. light background at root).
+
+---
+
+## Deployment notes
+
+- Fonts (Space Grotesk, Inter): ensure they are loaded (e.g. Google Fonts) in all environments.
+- Theme variables (colors) can live in a single Vuetify theme file for easier maintenance.

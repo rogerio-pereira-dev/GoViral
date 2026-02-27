@@ -1,43 +1,39 @@
 # FDR-002: Landing Page
 
 **Feature:** 2  
-**Referência:** docs/03 - Branding Manual.md, docs/04 - Features.md
+**Reference:** docs/03 - Branding Manual.md, docs/04 - Features.md
 
 ---
 
-## Como funciona
+## How it works
 
-- Uma página de entrada (`/`) exibe o posicionamento do produto e um CTA para o formulário.
-- **Conteúdo:** tagline "Engineered for Viral Growth"; subheadline "Turn insight into viral momentum in minutes"; texto de apoio (análise de perfil TikTok, recomendações, plano de 30 dias); tom sharp, fast, smart. Textos da landing devem usar **traduções do Laravel** (localization) para suportar en, es, pt.
-- **Locale no topo da página:** o seletor de idioma fica no topo da página (ex.: header). Ao escolher en, es ou pt, o locale da aplicação é definido (ex.: `App::setLocale($locale)` no backend e persistido em session ou query; frontend usa o mesmo valor). A página re-renderiza ou recarrega com os textos no idioma escolhido. O locale definido aqui é o da sessão/página e será usado no formulário e no relatório — não há campo de locale dentro do formulário.
-- **Configuração de locale:** usar [Laravel Localization](https://laravel.com/docs/12.x/localization): arquivos em `lang/en`, `lang/es`, `lang/pt` (ou `lang/*.json`); helper `__('key')` ou `@lang` nas views; locale configurável via `config/app.php` e `App::setLocale()` por request. Rotas ou middleware podem definir o locale a partir da escolha do usuário no topo.
-- **CTA principal:** leva ao formulário. URL alinhada ao Branding Manual: rota `/start-growth` (reflete o CTA "Start My Growth"). Texto do CTA conforme manual (ex.: "Start My Growth").
-- **Visual:** segue FDR-001 (Vue + Vuetify + Branding). Sem formulário de coleta na landing; apenas apresentação + seletor de idioma no topo + CTA.
-
----
-
-## Como testar
-
-- **Happy path:** Acessar `/`; ver tagline e subheadline; seletor de idioma no topo; ao trocar idioma, textos da página mudam (Laravel translations); clicar no CTA e ir para `/start-growth` (formulário) com o locale já definido.
-- **Edge cases:** 
-    - Locale padrão quando usuário não escolhe (ex.: `APP_LOCALE` ou fallback en). 
-    - Persistência do locale ao navegar para formulário e página de obrigado. 
-    - Todas as strings da landing traduzidas em en, es, pt. 
-    - CTA e rotas funcionando; sem quebra de layout.
-- **Responsividade:** layout utilizável em mobile e desktop.
+- An entry page (`/`) displays the product positioning and a CTA to the form.
+- **Content:** tagline "Engineered for Viral Growth"; subheadline "Turn insight into viral momentum in minutes"; supporting copy (TikTok profile analysis, recommendations, 30-day plan); tone sharp, fast, smart. Landing copy must use **Laravel translations** (localization) to support en, es, pt.
+- **Locale at top of page:** the language selector is at the top of the page (e.g. header). When the user chooses en, es, or pt, the application locale is set (e.g. `App::setLocale($locale)` in the backend and persisted in session or query; frontend uses the same value). The page re-renders or reloads with text in the chosen language. The locale set here is the session/page locale and will be used in the form and report — there is no locale field inside the form.
+- **Locale configuration:** use [Laravel Localization](https://laravel.com/docs/12.x/localization): files in `lang/en`, `lang/es`, `lang/pt` (or `lang/*.json`); helper `__('key')` or `@lang` in views; locale configurable via `config/app.php` and `App::setLocale()` per request. Routes or middleware can set the locale from the user's top-of-page choice.
+- **Primary CTA:** leads to the form. URL aligned with the Branding Manual: route `/start-growth` (reflects the CTA "Start My Growth"). CTA text per manual (e.g. "Start My Growth").
+- **Visual:** follows FDR-001 (Vue + Vuetify + Branding). No collection form on the landing; presentation + top language selector + CTA only.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Landing exibe tagline e subheadline do manual; textos via Laravel localization (lang files ou JSON).
-- [ ] Seletor de idioma (en, es, pt) no **topo** da página; ao selecionar, locale da aplicação é definido e textos atualizados.
-- [ ] CTA principal visível; leva ao formulário pela rota `/start-growth`; texto do CTA conforme manual (traduzido).
-- [ ] Visual alinhado ao Branding (FDR-001).
-- [ ] Sem erros de console ou quebra de layout em viewport comum.
+- **Happy path:** Visit `/`; see tagline and subheadline; language selector at top; when changing language, page text updates (Laravel translations); click CTA and go to `/start-growth` (form) with locale already set.
+- **Edge cases:** (1) Default locale when user does not choose (e.g. `APP_LOCALE` or fallback en). (2) Locale persistence when navigating to form and thank-you page. (3) All landing strings translated in en, es, pt. (4) CTA and routes working; no layout break.
+- **Responsiveness:** layout usable on mobile and desktop.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Publicar arquivos de idioma se necessário (`php artisan lang:publish`). Garantir que `lang/en`, `lang/es`, `lang/pt` (ou equivalentes) existem com as chaves usadas na landing.
+- [ ] Landing displays tagline and subheadline from the manual; copy via Laravel localization (lang files or JSON).
+- [ ] Language selector (en, es, pt) at the **top** of the page; on selection, application locale is set and text updated.
+- [ ] Primary CTA visible; leads to the form via route `/start-growth`; CTA text per manual (translated).
+- [ ] Visual aligned with Branding (FDR-001).
+- [ ] No console errors or layout break in common viewports.
+
+---
+
+## Deployment notes
+
+- Publish language files if needed (`php artisan lang:publish`). Ensure `lang/en`, `lang/es`, `lang/pt` (or equivalents) exist with the keys used on the landing.

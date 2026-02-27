@@ -1,71 +1,61 @@
-# FDR-005: Job de processamento da análise
+# FDR-005: Analysis processing job
 
 **Feature:** 5  
-**Referência:** docs/04 - Features.md, ADR-015, ADR-011, docs/LLM Prompt Template.md
+**Reference:** docs/04 - Features.md, ADR-015, ADR-011, docs/LLM Prompt Template.md
 
 ---
 
-## Como funciona
+## How it works
 
-- Job `ProcessAnalysisRequest` recebe o UUID da requisição de análise. É enfileirado pelo webhook Stripe (FDR-004) quando `checkout.session.completed` é confirmado.
-- **Fluxo:** 
-    1. Carregar registro de `analysis_requests` onde `payment_status = paid`; se não existir ou não estiver paid, falhar o job (release/fail). 
-    2. Atualizar `processing_status = processing`, incrementar `attempt_count`. 
-    3. Chamar integração LLM (FDR-007) com dados do registro e locale; obter conteúdo estruturado. 
-    4. Montar HTML do relatório (seções: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan). 
-    5. Enviar e-mail com esse HTML (FDR-008). 
-    6. Em sucesso: atualizar `processing_status = sent`. Em falha: gravar `last_error`; fazer release do job para retry (backoff 5 min); após 12 tentativas totais, marcar como failed e deletar o registro (conforme ADR-011).
+- Job `ProcessAnalysisRequest` receives the analysis request UUID. It is enqueued by the Stripe webhook (FDR-004) when `checkout.session.completed` is confirmed.
+- **Flow:** (1) Load record from `analysis_requests` where `payment_status = paid`; if it does not exist or is not paid, fail the job (release/fail). (2) Update `processing_status = processing`, increment `attempt_count`. (3) Call LLM integration (FDR-007) with record data and locale; get structured content. (4) Build report HTML (sections: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan). (5) Send email with that HTML (FDR-008). (6) On success: update `processing_status = sent` and delete the record. On failure: record `last_error`; release the job for retry (backoff 5 min); after 12 total attempts, mark as failed and delete the record (per ADR-011).
 
-Diagrama do fluxo (Mermaid):
+Flow diagram (Mermaid):
 
 ```mermaid
 flowchart TD
-    A[Job recebe UUID] --> B{Registro existe e paid?}
-    B -->|Não| C[Falhar job]
-    B -->|Sim| D["processing_status = processing"]
+    A[Job receives UUID] --> B{Record exists and paid?}
+    B -->|No| C[Fail job]
+    B -->|Yes| D["processing_status = processing"]
     D --> E["attempt_count++"]
-    E --> F[Chamar LLM]
-    F --> G[Montar HTML do relatório]
-    G --> H[Enviar e-mail]
-    H --> I{Envio sucesso?}
-    I -->|Sim| J["processing_status = sent"]
-    J --> K[Deletar registro]
-    K --> L[Fim]
-    I -->|Não| M[Gravar last_error]
+    E --> F[Call LLM]
+    F --> G[Build report HTML]
+    G --> H[Send email]
+    H --> I{Send success?}
+    I -->|Yes| J["processing_status = sent"]
+    J --> K[Delete record]
+    K --> L[End]
+    I -->|No| M[Record last_error]
     M --> N{attempt_count >= 12?}
-    N -->|Sim| O[Deletar registro]
+    N -->|Yes| O[Delete record]
     O --> L
-    N -->|Não| P[Release / retry backoff 5 min]
+    N -->|No| P[Release / retry backoff 5 min]
     P --> L
 ```
 
-Referência: [Mermaid Flowcharts](https://mermaid.ai/open-source/syntax/flowchart.html).
+Reference: [Mermaid Flowcharts](https://mermaid.ai/open-source/syntax/flowchart.html).
 
 ---
 
-## Como testar
+## How to test
 
-- **Happy path:** Registro paid e queued; job roda; LLM retorna conteúdo; email enviado; registro fica sent e é deletado.
-- **Falha LLM:** Simular timeout ou erro da API; job faz release; attempt_count sobe; após 12 tentativas, registro é marcado failed e deletado; last_error preenchido.
-- **Falha e-mail:** Simular falha do SES; mesmo comportamento de retry e, após 12 tentativas, failed + delete.
-- **Edge cases:** 
-    - Registro já deletado (job duplicado ou atrasado): job deve falhar gracefully sem exception não tratada. 
-    - Registro com payment_status != paid: job não deve processar (fail/release). 
-    - Conteúdo do LLM malformado: tratar ou falhar com last_error claro para debug. 
-    - Idempotência: não enviar dois e-mails para o mesmo registro em caso de retry.
+- **Happy path:** Record paid and queued; job runs; LLM returns content; email sent; record becomes sent and is deleted.
+- **LLM failure:** Simulate timeout or API error; job releases; attempt_count increases; after 12 attempts, record is marked failed and deleted; last_error set.
+- **Email failure:** Simulate SES failure; same retry behavior and, after 12 attempts, failed + delete.
+- **Edge cases:** (1) Record already deleted (duplicate or delayed job): job should fail gracefully without unhandled exception. (2) Record with payment_status != paid: job must not process (fail/release). (3) Malformed LLM content: handle or fail with clear last_error for debug. (4) Idempotency: do not send two emails for the same record on retry.
 
 ---
 
-## Critérios de aceitação
+## Acceptance criteria
 
-- [ ] Job disparado pelo webhook (FDR-004) com id do registro.
-- [ ] Processamento: processing → LLM → montagem HTML → envio e-mail; em sucesso: sent + delete.
-- [ ] Em falha: last_error gravado; retry com backoff (ex.: 5 min); máx. 12 tentativas; após 12: failed + delete.
-- [ ] Apenas registros com payment_status = paid são processados.
-- [ ] Estrutura do relatório segue as seções definidas no PRD/template.
+- [ ] Job dispatched by webhook (FDR-004) with record id.
+- [ ] Processing: processing → LLM → build HTML → send email; on success: sent + delete.
+- [ ] On failure: last_error recorded; retry with backoff (e.g. 5 min); max 12 attempts; after 12: failed + delete.
+- [ ] Only records with payment_status = paid are processed.
+- [ ] Report structure follows the sections defined in the PRD/template.
 
 ---
 
-## Notas de deployment
+## Deployment notes
 
-- Worker deve estar rodando (queue:work ou equivalente). Timeout do job deve ser maior que latência LLM + envio de e-mail (ex.: 120–300 s). Fila: Redis (FDR-006).
+- Worker must be running (queue:work or equivalent). Job timeout must be greater than LLM latency + email send (e.g. 120–300 s). Queue: Redis (FDR-006).

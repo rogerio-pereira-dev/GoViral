@@ -1,47 +1,39 @@
-# FDR-003: Formulário
+# FDR-003: Form
 
 **Feature:** 3  
-**Referência:** docs/04 - Features.md, ADR-017
+**Reference:** docs/04 - Features.md, ADR-017
 
 ---
 
-## Como funciona
+## How it works
 
-- Formulário coleta: **email**, TikTok username, bio atual, aspiring niche, link vídeo 1, link vídeo 2, link vídeo 3, notas (opcional). **Não há campo de locale no formulário:** o locale é o da página, definido no topo (Landing ou no próprio header da página do formulário — FDR-002). Ao submeter, o backend usa o locale atual da aplicação (session ou request) para persistir em `analysis_requests.locale`.
-- **Campo de e-mail:** deve deixar **explícito** (label, placeholder ou texto de ajuda) que é necessário um **e-mail válido**, pois o relatório da análise será enviado por e-mail. Isso reduz risco de o usuário informar e-mail falso, pagar, não receber o relatório e ter que pagar novamente.
-- **Validação:** e-mail válido (formato e existência quando possível); URLs válidas nos 3 links; tamanhos máximos por campo (regras de negócio); sanitização no backend para XSS/injection (ADR-017).
-- **Checkout:** o pagamento é a Feature 4 (FDR-004) e será adicionado depois; quando implementado, ficará na mesma página do formulário. Este FDR cobre os campos do formulário, a validação e o redirect para a página de Obrigado.
-- **Redirect para a página de Obrigado:** após submit válido do formulário, o usuário é **redirecionado para a página de Obrigado** informando que receberá o relatório por e-mail em até 30 minutos. Esse redirect é implementado **nesta feature (FDR-003)**. Assim é possível testar o formulário por inteiro na fase de desenvolvimento sem precisar de cartão (ou cartões de teste); o pagamento (FDR-004) é adicionado em seguida, e a página de Obrigado passará a ser alcançada apenas após o pagamento concluído na mesma página.
-- **Microcopy:** labels e botão conforme Branding (ex.: "Start My Growth"); mensagens de validação no idioma do locale da página (Laravel translations).
-
----
-
-## Como testar
-
-- **Happy path:** Página com locale já definido (topo); preencher todos os campos válidos; campo de e-mail exibe texto explicando que o relatório será enviado por e-mail e que o e-mail deve ser válido; submit válido → **redirect para a página de Obrigado** (mensagem: relatório por e-mail em até 30 min). Registro criado no backend (payment_status = pending). Quando FDR-004 estiver ativo, o fluxo será formulário + pagamento na mesma página → Obrigado.
-- **Validação:** 
-    -  E-mail inválido → mensagem de erro, sem avançar. 
-    - URL inválida em cada um dos 3 links → erro. 
-    - Campos obrigatórios vazios (exceto notas) → erro. 
-    - Locale: não há campo no form; usar locale da página/sessão.
-- **Edge cases:** 
-    - Submit duplo (double-click): evitar duplicar registro (tratado no fluxo com pagamento — FDR-004). 
-    - Caracteres especiais em bio/notes: sanitização sem quebrar exibição. 
-    - URLs com query params: aceitar se URL base for válida.
-- **Texto do e-mail:** verificar que o usuário vê claramente que deve informar e-mail válido para receber o relatório.
+- Form collects: **email**, TikTok username, current bio, aspiring niche, video link 1, video link 2, video link 3, notes (optional). **There is no locale field in the form:** locale is the page locale, set at the top (Landing or the form page header — FDR-002). On submit, the backend uses the current application locale (session or request) to persist in `analysis_requests.locale`.
+- **Email field:** must make it **explicit** (label, placeholder, or help text) that a **valid email** is required, because the analysis report will be sent by email. This reduces the risk of the user entering a fake email, paying, not receiving the report, and having to pay again.
+- **Validation:** valid email (format and existence when possible); valid URLs for the 3 links; max lengths per field (business rules); backend sanitization for XSS/injection (ADR-017).
+- **Checkout:** payment is Feature 4 (FDR-004) and will be added later; when implemented, it will be on the same page as the form. This FDR covers the form fields, validation, and redirect to the Thank You page.
+- **Redirect to Thank You page:** after a valid form submit, the user is **redirected to the Thank You page** stating they will receive the report by email within 30 minutes. This redirect is implemented **in this feature (FDR-003)**. That way the full form can be tested during development without a card (or test cards); payment (FDR-004) is added next, and the Thank You page will then only be reached after payment is completed on the same page.
+- **Microcopy:** labels and button per Branding (e.g. "Start My Growth"); validation messages in the page locale (Laravel translations).
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Campos: email (com texto explícito de que deve ser válido para envio do relatório), username, bio, niche, 3 URLs, notes opcional; **sem** campo de locale (locale da página).
-- [ ] Validação de formato (email, URLs) no frontend e backend; tamanhos máximos aplicados.
-- [ ] Sanitização de entrada no backend (ADR-017).
-- [ ] Microcopy do Branding; mensagens de erro no idioma do locale (traduções Laravel).
-- [ ] Após submit válido: redirect para a página de Obrigado com mensagem “relatório por e-mail em até 30 minutos” (implementado nesta feature; permite testar o formulário sem pagamento na fase de desenvolvimento).
+- **Happy path:** Page with locale already set (top); fill all fields with valid data; email field shows text explaining the report will be sent by email and that the email must be valid; valid submit → **redirect to Thank You page** (message: report by email within 30 min). Record created in backend (payment_status = pending). When FDR-004 is active, flow will be form + payment on same page → Thank You.
+- **Validation:** (1) Invalid email → error message, no submit. (2) Invalid URL on any of the 3 links → error. (3) Required fields empty (except notes) → error. (4) Locale: no field on form; use page/session locale.
+- **Edge cases:** (1) Double submit (double-click): avoid duplicating record (handled in flow with payment — FDR-004). (2) Special characters in bio/notes: sanitization without breaking display. (3) URLs with query params: accept if base URL is valid. (4) **Email copy:** verify the user clearly sees that a valid email is required to receive the report.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Nenhuma dependência extra; traduções de validação já cobertas pelo Laravel (lang) e pelo locale definido na landing/topo.
+- [ ] Fields: email (with explicit text that it must be valid for report delivery), username, bio, niche, 3 URLs, notes optional; **no** locale field (page locale).
+- [ ] Format validation (email, URLs) on frontend and backend; max lengths applied.
+- [ ] Backend input sanitization (ADR-017).
+- [ ] Branding microcopy; error messages in the locale language (Laravel translations).
+- [ ] After valid submit: redirect to Thank You page with message "report by email within 30 minutes" (implemented in this feature; allows testing the form without payment during development).
+
+---
+
+## Deployment notes
+
+- No extra dependencies; validation translations covered by Laravel (lang) and the locale set on the landing/top.

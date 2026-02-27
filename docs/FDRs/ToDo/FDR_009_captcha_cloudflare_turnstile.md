@@ -1,39 +1,35 @@
-# FDR-009: Captcha no formulário (Cloudflare Turnstile)
+# FDR-009: Captcha on form (Cloudflare Turnstile)
 
 **Feature:** 9  
-**Referência:** docs/04 - Features.md, ADR-018
+**Reference:** docs/04 - Features.md, ADR-018
 
 ---
 
-## Como funciona
+## How it works
 
-- No formulário (FDR-003), widget Cloudflare Turnstile é exibido (modo managed ou invisible conforme escolha de produto). Usuário interage se necessário; Turnstile gera um token.
-- No submit, o frontend envia o token junto com os demais campos (ex.: campo `turnstile_token` ou `cf-turnstile-response`). Backend, antes de criar o registro em `analysis_requests` e a Stripe Checkout Session, valida o token chamando a API Turnstile (siteverify). Se a validação falhar (token ausente, inválido, expirado, domínio diferente), a requisição é rejeitada (ex.: 422) com mensagem adequada; não cria registro nem sessão. Não há rate limiting para usuários reais (ADR-018); o captcha é a barreira anti-bot.
-
----
-
-## Como testar
-
-- **Happy path:** Usuário preenche form e resolve Turnstile (se visível); submit com token; backend valida token; cria registro e Checkout; redirect para Stripe.
-- **Token ausente:** Submit sem token (ex.: script simulando bot); backend retorna 422; nenhum registro criado; mensagem de erro exibida.
-- **Token inválido/expirado:** Token fake ou expirado; siteverify retorna falha; backend retorna 422; nenhum registro criado.
-- **Edge cases:** 
-    - Múltiplos submits rápidos: cada um precisa de novo token (Turnstile gera um por vez). 
-    - Domínio: em dev, usar chave de teste Turnstile ou configurar domínio local no dashboard. 
-    - Usuário com bloqueador de script: Turnstile pode não carregar; definir fallback (ex.: mensagem "habilite JavaScript" ou degradação controlada por produto). 
-    - Timeout da API Turnstile: definir timeout curto no backend; em falha de rede para siteverify, tratar como inválido (422) ou retry uma vez, conforme política.
+- On the form (FDR-003), the Cloudflare Turnstile widget is shown (managed or invisible mode per product choice). User interacts if needed; Turnstile generates a token.
+- On submit, the frontend sends the token with the other fields (e.g. field `turnstile_token` or `cf-turnstile-response`). The backend, before creating the record in `analysis_requests` and the Stripe Checkout session, validates the token by calling the Turnstile API (siteverify). If validation fails (token missing, invalid, expired, wrong domain), the request is rejected (e.g. 422) with an appropriate message; no record or session is created. There is no rate limiting for real users (ADR-018); the captcha is the anti-bot barrier.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Widget Turnstile integrado no formulário; token enviado no submit.
-- [ ] Backend valida token com API Turnstile antes de persistir e criar Checkout; em falha de validação retorna 4xx e mensagem clara.
-- [ ] Sem rate limiting para usuários (apenas captcha como controle anti-bot — ADR-018).
-- [ ] Chaves (site key / secret) configuradas por env; domínio correto no Cloudflare Turnstile.
+- **Happy path:** User fills form and completes Turnstile (if visible); submit with token; backend validates token; creates record and Checkout; redirect to Stripe (or stays on page when payment is on same page).
+- **Token missing:** Submit without token (e.g. script simulating bot); backend returns 422; no record created; error message shown.
+- **Token invalid/expired:** Fake or expired token; siteverify returns failure; backend returns 422; no record created.
+- **Edge cases:** (1) Multiple quick submits: each needs a new token (Turnstile generates one at a time). (2) Domain: in dev, use Turnstile test key or configure local domain in the dashboard. (3) User with script blocker: Turnstile may not load; define fallback (e.g. message "enable JavaScript" or product-controlled degradation). (4) Turnstile API timeout: set short timeout on backend; on network failure to siteverify, treat as invalid (422) or retry once, per policy.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Chave pública (site key) no frontend (env ou build); chave secreta apenas no backend (env). Em produção, registrar domínio no Cloudflare Turnstile. Ambientes diferentes (staging/prod) podem usar chaves diferentes.
+- [ ] Turnstile widget integrated on the form; token sent on submit.
+- [ ] Backend validates token with Turnstile API before persisting and creating Checkout; on validation failure returns 4xx and clear message.
+- [ ] No rate limiting for users (captcha only as anti-bot control — ADR-018).
+- [ ] Keys (site key / secret) configured via env; correct domain in Cloudflare Turnstile.
+
+---
+
+## Deployment notes
+
+- Publishable key (site key) on frontend (env or build); secret key only on backend (env). In production, register domain in Cloudflare Turnstile. Different environments (staging/prod) may use different keys.

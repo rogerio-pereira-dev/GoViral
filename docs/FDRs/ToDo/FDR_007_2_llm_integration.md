@@ -1,36 +1,36 @@
-# FDR-007.2: Integração com o provedor de LLM
+# FDR-007.2: Integration with the LLM provider
 
 **Feature:** 7.2  
-**Referência:** FDR-007, FDR-007.1, FDR-005, ADR-014
+**Reference:** FDR-007, FDR-007.1, FDR-005, ADR-014
 
 ---
 
-## Como funciona
+## How it works
 
-- Implementar o **adapter** que satisfaz a interface definida em FDR-007.1 para o provedor escolhido (OpenAI, Gemini ou Anthropic). Configuração via variáveis de ambiente: API key, modelo, endpoint (quando aplicável).
-- O **Job** (FDR-005) chama o adapter com os dados do registro em `analysis_requests` e o `locale`; não depende do provedor concreto. Em caso de timeout ou erro da API (rate limit, 5xx), o adapter lança exceção ou retorna erro; o Job trata com retry (FDR-005/006).
-- Não implementar a montagem do prompt nem o parse da resposta aqui — isso é FDR-007.3. Esta feature cobre: cliente HTTP/SDK para o provedor, autenticação, tratamento de erro e integração no pipeline do Job.
-
----
-
-## Como testar
-
-- **Happy path:** Job chama o adapter; adapter envia request ao provedor (payload mock ou real); resposta recebida e repassada ao caller (ou falha tratada).
-- **Timeout:** simular LLM lento; adapter deve falhar com timeout; Job faz retry conforme FDR-006.
-- **Erro de API (5xx, rate limit):** adapter propaga erro; Job registra `last_error` e faz retry.
-- **Config:** trocar modelo ou key via env; adapter usa nova config sem alterar código do Job.
+- Implement the **adapter** that satisfies the interface defined in FDR-007.1 for the chosen provider (OpenAI, Gemini, or Anthropic). Configuration via environment variables: API key, model, endpoint (when applicable).
+- The **Job** (FDR-005) calls the adapter with data from the record in `analysis_requests` and the `locale`; it does not depend on the concrete provider. On timeout or API error (rate limit, 5xx), the adapter throws or returns an error; the Job handles it with retry (FDR-005/006).
+- Do not implement prompt building or response parsing here — that is FDR-007.3. This feature covers: HTTP client/SDK for the provider, authentication, error handling, and integration in the Job pipeline.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Adapter implementado para o provedor decidido em FDR-007.1; implementa a interface definida.
-- [ ] Configuração via env (API key, modelo, endpoint se necessário).
-- [ ] Job (FDR-005) chama o adapter; timeout e erros da API tratados; retry delegado ao Job/fila (FDR-006).
-- [ ] API key não exposta no frontend.
+- **Happy path:** Job calls the adapter; adapter sends request to the provider (mock or real payload); response received and passed to caller (or failure handled).
+- **Timeout:** simulate slow LLM; adapter should fail with timeout; Job retries per FDR-006.
+- **API error (5xx, rate limit):** adapter propagates error; Job records `last_error` and retries.
+- **Config:** change model or key via env; adapter uses new config without changing Job code.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Env: `LLM_API_KEY`, `LLM_MODEL` (e variáveis específicas do provedor). Staging pode usar modelo mais barato para reduzir custo.
+- [ ] Adapter implemented for the provider decided in FDR-007.1; implements the defined interface.
+- [ ] Configuration via env (API key, model, endpoint if needed).
+- [ ] Job (FDR-005) calls the adapter; timeout and API errors handled; retry delegated to Job/queue (FDR-006).
+- [ ] API key not exposed on the frontend.
+
+---
+
+## Deployment notes
+
+- Env: `LLM_API_KEY`, `LLM_MODEL` (and provider-specific variables). Staging can use a cheaper model to reduce cost.

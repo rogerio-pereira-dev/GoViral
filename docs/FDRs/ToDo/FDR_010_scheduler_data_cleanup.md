@@ -1,43 +1,36 @@
-# FDR-010: Scheduler para limpeza de dados
+# FDR-010: Scheduler for data cleanup
 
 **Feature:** 10  
-**Referência:** docs/04 - Features.md, ADR-011
+**Reference:** docs/04 - Features.md, ADR-011
 
 ---
 
-## Como funciona
+## How it works
 
-- Laravel Scheduler (cron) configurado no ambiente. Um comando ou job agendado roda em intervalo definido (ex.: diário ou a cada 6h).
-- O comando/job de limpeza: 
-    1. Remove registros de `analysis_requests` com `processing_status = sent` (caso ainda existam por atraso na deleção no Job — FDR-005). 
-    2. Remove registros com `created_at` older than 24 horas, qualquer status. 
-    3. Remove registros com `processing_status = failed` e `attempt_count >= 12` (caso não tenham sido deletados pelo próprio Job). Não armazenar relatórios; não criar repositório de dados (ADR-011, ADR-012). Opcional: logar quantidade de registros removidos por execução.
+- Laravel Scheduler (cron) configured in the environment. A scheduled command or job runs at a defined interval (e.g. daily or every 6h).
+- The cleanup command/job: (1) Removes records from `analysis_requests` with `processing_status = sent` (in case any remain due to delayed deletion in the Job — FDR-005). (2) Removes records with `created_at` older than 24 hours, any status. (3) Removes records with `processing_status = failed` and `attempt_count >= 12` (in case they were not deleted by the Job itself). Do not store reports; do not create a data repository (ADR-011, ADR-012). Optional: log the number of records removed per run.
 
 ---
 
-## Como testar
+## How to test
 
-- **Registros sent:** Inserir registro com processing_status = sent; rodar comando; registro deve sumir.
-- **Registros > 24h:** Inserir registro com created_at há 25 horas; rodar comando; registro deve sumir. Registro com created_at há 23 horas deve permanecer (ou política diferente documentada).
-- **Registros failed com 12 tentativas:** Inserir com processing_status = failed, attempt_count = 12; rodar comando; registro deve sumir.
-- **Edge cases:** 
-    - Registros pending ou queued antigos (> 24h): devem ser removidos pela regra de 24h. 
-    - Job rodando em zero registros: sem erro. 
-    - Concorrência: Job (FDR-005) e scheduler podem deletar; evitar race condition (ex.: delete por id ou por critério atômico). 
-    - Cron realmente disparando: em produção, garantir que o cron do Laravel está ativo (`schedule:run` a cada minuto).
+- **Sent records:** Insert record with processing_status = sent; run command; record should disappear.
+- **Records > 24h:** Insert record with created_at 25 hours ago; run command; record should disappear. Record with created_at 23 hours ago should remain (or document a different policy).
+- **Failed records with 12 attempts:** Insert with processing_status = failed, attempt_count = 12; run command; record should disappear.
+- **Edge cases:** (1) Old pending or queued records (> 24h): should be removed by the 24h rule. (2) Command run with zero matching records: no error. (3) Concurrency: Job (FDR-005) and scheduler may both delete; avoid race (e.g. delete by id or atomic criteria). (4) Cron actually firing: in production, ensure Laravel cron is active (`schedule:run` every minute).
 
 ---
 
-## Critérios de aceitação
+## Acceptance criteria
 
-- [ ] Comando/job de limpeza implementado; critérios: sent, created_at > 24h, failed com attempt_count >= 12.
-- [ ] Scheduler registra o comando (ex.: `$schedule->command('analysis:cleanup')->daily()` ou equivalente).
-- [ ] Em execução manual do comando: registros que atendem aos critérios são removidos; demais permanecem.
-- [ ] Documentação ou comentário sobre como ativar o cron (`* * * * * php artisan schedule:run`) em produção.
-- [ ] Opcional: log com quantidade de linhas deletadas.
+- [ ] Cleanup command/job implemented; criteria: sent, created_at > 24h, failed with attempt_count >= 12.
+- [ ] Scheduler registers the command (e.g. `$schedule->command('analysis:cleanup')->daily()` or equivalent).
+- [ ] When running the command manually: records that meet the criteria are removed; others remain.
+- [ ] Documentation or comment on how to enable the cron (`* * * * * php artisan schedule:run`) in production.
+- [ ] Optional: log with count of rows deleted.
 
 ---
 
-## Notas de deployment
+## Deployment notes
 
-- Produção: garantir que o cron do sistema chama `php artisan schedule:run` a cada minuto (ou conforme doc Laravel). Laravel Cloud e muitos PaaS já configuram isso. Fuso horário do app (`APP_TIMEZONE`) afeta o "24 horas" (usar UTC ou timezone consistente para created_at).
+- Production: ensure the system cron calls `php artisan schedule:run` every minute (or per Laravel docs). Laravel Cloud and many PaaS already configure this. App timezone (`APP_TIMEZONE`) affects "24 hours" (use UTC or consistent timezone for created_at).

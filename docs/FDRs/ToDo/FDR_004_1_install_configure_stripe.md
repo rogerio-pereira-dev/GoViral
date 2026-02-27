@@ -1,36 +1,36 @@
-# FDR-004.1: Instalar e configurar Stripe
+# FDR-004.1: Install and configure Stripe
 
 **Feature:** 4.1  
-**Referência:** FDR-004, docs/04 - Features.md, ADR-007
+**Reference:** FDR-004, docs/04 - Features.md, ADR-007
 
 ---
 
-## Como funciona
+## How it works
 
-- **Laravel Cashier (Stripe)** instalado e configurado no projeto.
-- **Variáveis de ambiente:** `STRIPE_KEY` (publishable), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
-- **Stripe Dashboard:** produto e preço configurados (pagamento único, USD; valor alvo ex.: $20). Para pagamento embutido na página do formulário, usar **Stripe Elements** (ou Payment Element) com Payment Intents ou Checkout Session com `mode: payment` conforme abordagem escolhida; URLs de success e cancel apontam para a aplicação (ex.: success = página de Obrigado, cancel = voltar ao formulário).
-- **Webhook:** endpoint da aplicação registrado no Stripe para o evento `checkout.session.completed` (ou equivalente, se usar Payment Intent); signing secret em `STRIPE_WEBHOOK_SECRET`.
-
----
-
-## Como testar
-
-- `php artisan` lista comandos Cashier; configuração carrega sem erro.
-- Chaves e webhook secret em env; em local, usar Stripe CLI para encaminhar webhooks (`stripe listen --forward-to ...`).
-- Produto/preço existem no Stripe; valor em USD.
+- **Laravel Cashier (Stripe)** installed and configured in the project.
+- **Environment variables:** `STRIPE_KEY` (publishable), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
+- **Stripe Dashboard:** product and price configured (one-time payment, USD; target amount e.g. $20). For payment embedded on the form page, use **Stripe Elements** (or Payment Element) with Payment Intents or Checkout Session with `mode: payment` per chosen approach; success and cancel URLs point to the app (e.g. success = Thank You page, cancel = back to form).
+- **Webhook:** application endpoint registered in Stripe for the `checkout.session.completed` event (or equivalent if using Payment Intent); signing secret in `STRIPE_WEBHOOK_SECRET`.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Cashier instalado; env com `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
-- [ ] Produto e preço (one-time, USD) configurados no Stripe.
-- [ ] Webhook configurado no Stripe com evento `checkout.session.completed` (ou o evento usado pelo fluxo de pagamento na página).
-- [ ] URLs de success/cancel configuradas (success = página de Obrigado).
+- `php artisan` lists Cashier commands; config loads without error.
+- Keys and webhook secret in env; locally, use Stripe CLI to forward webhooks (`stripe listen --forward-to ...`).
+- Product/price exist in Stripe; amount in USD.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Produção: configurar webhook no Stripe Dashboard com URL pública HTTPS; copiar signing secret para env. Stripe CLI apenas para dev/local.
+- [ ] Cashier installed; env with `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `CASHIER_CURRENCY=usd`.
+- [ ] Product and price (one-time, USD) configured in Stripe.
+- [ ] Webhook configured in Stripe with event `checkout.session.completed` (or the event used by the in-page payment flow).
+- [ ] Success/cancel URLs configured (success = Thank You page).
+
+---
+
+## Deployment notes
+
+- Production: configure webhook in Stripe Dashboard with public HTTPS URL; copy signing secret to env. Stripe CLI for dev/local only.

@@ -1,43 +1,37 @@
-# FDR-004.2: Checkout na página do formulário e página de Obrigado
+# FDR-004.2: Checkout on form page and Thank You page
 
 **Feature:** 4.2  
-**Referência:** FDR-004, FDR-003, ADR-007, ADR-015
+**Reference:** FDR-004, FDR-003, ADR-007, ADR-015
 
 ---
 
-## Como funciona
+## How it works
 
-- **Checkout na mesma página do formulário:** o campo de pagamento (Stripe Elements / Payment Element ou Checkout Session embutido) fica na página do formulário. O usuário preenche os dados do formulário (FDR-003) e, na mesma tela, insere os dados do cartão e confirma o pagamento. Não há redirect para página externa do Stripe (Stripe Hosted Checkout); o fluxo é “formulário + pagamento na mesma página”.
-- **Ordem do fluxo:** 
-    1. Usuário preenche formulário (email, username, bio, etc.; locale já é o da página). 
-    2. Backend pode criar um registro em `analysis_requests` (payment_status = pending) e devolver client secret ou session id para o frontend, ou o frontend primeiro envia os dados do form e depois inicia o pagamento — conforme implementação (Stripe Payment Element + Payment Intent ou Checkout Session com `mode: payment`). 
-    3. Usuário conclui o pagamento na mesma página. 
-    4. Após sucesso (confirmado no frontend), **redirecionar** o usuário para a **página de Obrigado**.
-- **Página de Obrigado:** rota dedicada (ex.: `/thank-you`). Mensagem clara: o usuário receberá o relatório por e-mail **em até 30 minutos**. Conteúdo traduzido (Laravel localization) conforme locale. Sem formulário nem botão de pagamento; opcional: link para voltar à home ou à landing.
-- A confirmação efetiva do pagamento para o backend é via **webhook** (FDR-004.3); o redirect para a página de Obrigado ocorre assim que o frontend recebe sucesso do Stripe (evitar esperar o webhook para redirecionar).
+- **Checkout on the same page as the form:** the payment field (Stripe Elements / Payment Element or embedded Checkout Session) is on the form page. The user fills the form data (FDR-003) and, on the same screen, enters card details and confirms payment. There is no redirect to an external Stripe page (Stripe Hosted Checkout); the flow is "form + payment on the same page".
+- **Flow order:** (1) User fills form (email, username, bio, etc.; locale is already the page locale). (2) Backend may create a record in `analysis_requests` (payment_status = pending) and return client secret or session id to the frontend, or the frontend first submits form data and then starts payment — per implementation (Stripe Payment Element + Payment Intent or Checkout Session with `mode: payment`). (3) User completes payment on the same page. (4) After success (confirmed on frontend), **redirect** the user to the **Thank You page**.
+- **Thank You page:** dedicated route (e.g. `/thank-you`). Clear message: the user will receive the report by email **within 30 minutes**. Content translated (Laravel localization) per locale. No form or payment button; optional: link back to home or landing.
+- Actual payment confirmation for the backend is via **webhook** (FDR-004.3); the redirect to the Thank You page happens as soon as the frontend receives success from Stripe (do not wait for the webhook to redirect).
 
 ---
 
-## Como testar
+## How to test
 
-- **Happy path:** Preencher formulário; inserir cartão de teste (4242...); concluir pagamento na mesma página; redirect para `/thank-you`; página exibe mensagem “relatório por e-mail em até 30 minutos” (ou tradução equivalente).
-- **Cancelar pagamento:** usuário cancela ou falha o pagamento; permanece na página do formulário; pode tentar novamente.
-- **Idioma:** página de Obrigado no locale correto (en/es/pt).
-- **Edge cases:** 
-    - Duplo clique em “Pagar”: evitar criar dois pagamentos ou dois registros. 
-    - Rede lenta: feedback de loading durante confirmação do pagamento.
+- **Happy path:** Fill form; enter test card (4242...); complete payment on same page; redirect to `/thank-you`; page shows message "report by email within 30 minutes" (or equivalent translation).
+- **Cancel payment:** user cancels or payment fails; remains on form page; can try again.
+- **Language:** Thank You page in correct locale (en/es/pt).
+- **Edge cases:** (1) Double-click on "Pay": avoid creating two payments or two records. (2) Slow network: loading feedback during payment confirmation.
 
 ---
 
-## Critérios de aceitação
+## Acceptance criteria
 
-- [ ] Campo de pagamento (Stripe) na **mesma página** do formulário; sem redirect para página externa do Stripe.
-- [ ] Após pagamento bem-sucedido: redirect para página de Obrigado.
-- [ ] Página de Obrigado exibe mensagem de que o relatório será enviado por e-mail em até 30 minutos; texto traduzido (Laravel lang).
-- [ ] Locale da página de Obrigado consistente com o da sessão/página (en/es/pt).
+- [ ] Payment field (Stripe) on the **same page** as the form; no redirect to external Stripe page.
+- [ ] After successful payment: redirect to Thank You page.
+- [ ] Thank You page displays message that the report will be sent by email within 30 minutes; text translated (Laravel lang).
+- [ ] Thank You page locale consistent with session/page locale (en/es/pt).
 
 ---
 
-## Notas de deployment
+## Deployment notes
 
-- Chave pública Stripe no frontend (env); em produção, usar chaves live. Página de Obrigado pode ser estática (apenas view) ou com rota nomeada para facilitar redirect.
+- Stripe publishable key on frontend (env); in production use live keys. Thank You page can be static (view only) or a named route for easier redirect.

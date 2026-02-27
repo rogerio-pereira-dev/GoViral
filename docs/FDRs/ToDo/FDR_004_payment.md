@@ -1,35 +1,32 @@
-# FDR-004: Pagamento
+# FDR-004: Payment
 
-**Feature:** 4 (visão geral; detalhes em FDR_004_1, FDR_004_2, FDR_004_3)  
-**Referência:** docs/04 - Features.md, ADR-007, ADR-016, ADR-015
-
----
-
-## Como funciona
-
-- **Pagamento na mesma página do formulário:** o checkout não é uma página externa (redirect para Stripe Hosted Checkout). O campo de pagamento (Stripe Elements ou equivalente) fica **na própria página do formulário**. O usuário preenche o formulário (FDR-003) e, na mesma tela, insere dados do cartão e conclui o pagamento. Após pagamento confirmado, o usuário é **redirecionado para a página de Obrigado** informando que receberá o relatório por e-mail em até 30 minutos.
-- Sub-features: 
-    - **4.1** Instalar/configurar Stripe (FDR_004_1); 
-    - **4.2** Realizar pagamento no formulário e redirect para Obrigado (FDR_004_2); 
-    - **4.3** Webhook de confirmação de pagamento (FDR_004_3).
+**Feature:** 4 (overview; details in FDR_004_1, FDR_004_2, FDR_004_3)  
+**Reference:** docs/04 - Features.md, ADR-007, ADR-016, ADR-015
 
 ---
 
-## Como testar
+## How it works
 
-- Fluxo completo: preencher formulário + pagar na mesma página → redirect para `/thank-you` (ou equivalente) com mensagem “relatório por e-mail em até 30 minutos”; webhook confirma pagamento e enfileira job.
-- Ver critérios e testes em FDR_004_1, FDR_004_2, FDR_004_3.
-
----
-
-## Critérios de aceitação
-
-- [ ] Pagamento disponível **na página do formulário** (sem redirect para página externa de checkout).
-- [ ] Após pagamento bem-sucedido: redirect para página de Obrigado com mensagem sobre recebimento do relatório por e-mail em até 30 minutos.
-- [ ] Webhook valida assinatura; atualiza registro e enfileira job (ver FDR_004_3).
+- **Payment on the same page as the form:** checkout is not an external page (redirect to Stripe Hosted Checkout). The payment field (Stripe Elements or equivalent) sits **on the form page itself**. The user fills the form (FDR-003) and, on the same screen, enters card details and completes payment. After payment is confirmed, the user is **redirected to the Thank You page** stating they will receive the report by email within 30 minutes.
+- Sub-features: **4.1** Install/configure Stripe (FDR_004_1); **4.2** Process payment on the form page and redirect to Thank You (FDR_004_2); **4.3** Payment confirmation webhook (FDR_004_3).
 
 ---
 
-## Notas de deployment
+## How to test
 
-- Ver FDR_004_1, FDR_004_2, FDR_004_3 para env, Stripe Dashboard e webhook.
+- Full flow: fill form + pay on same page → redirect to `/thank-you` (or equivalent) with message "report by email within 30 minutes"; webhook confirms payment and enqueues job.
+- See criteria and tests in FDR_004_1, FDR_004_2, FDR_004_3.
+
+---
+
+## Acceptance criteria
+
+- [ ] Payment available **on the form page** (no redirect to external checkout page).
+- [ ] After successful payment: redirect to Thank You page with message about receiving the report by email within 30 minutes.
+- [ ] Webhook validates signature; updates record and enqueues job (see FDR_004_3).
+
+---
+
+## Deployment notes
+
+- See FDR_004_1, FDR_004_2, FDR_004_3 for env, Stripe Dashboard, and webhook.

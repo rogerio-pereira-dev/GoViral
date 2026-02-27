@@ -1,33 +1,33 @@
-# FDR-007: Integração com LLM
+# FDR-007: LLM integration
 
-**Feature:** 7 (visão geral; detalhes em FDR_007_1, FDR_007_2, FDR_007_3)  
-**Referência:** docs/04 - Features.md, ADR-014, docs/LLM Prompt Template.md
-
----
-
-## Como funciona
-
-- O Job (FDR-005) precisa obter do LLM o conteúdo estruturado da análise para montar o relatório HTML e enviar por e-mail (FDR-008). A integração está dividida em três sub-features:
-- **7.1** Pesquisa e decisão do provedor (FDR_007_1): spike, escolha de provedor e abordagem, interface no código, ADR.
-- **7.2** Integração (FDR_007_2): implementar adapter, config env, chamada pelo Job, tratamento de timeout/erros.
-- **7.3** Obter relatório (FDR_007_3): montar prompt a partir do template, chamar LLM, parsear resposta, retornar conteúdo ao Job.
+**Feature:** 7 (overview; details in FDR_007_1, FDR_007_2, FDR_007_3)  
+**Reference:** docs/04 - Features.md, ADR-014, docs/LLM Prompt Template.md
 
 ---
 
-## Como testar
+## How it works
 
-- Ver FDR_007_1, FDR_007_2, FDR_007_3 para testes e edge cases.
-
----
-
-## Critérios de aceitação
-
-- [ ] Interface definida; Job depende dela (FDR_007_1).
-- [ ] Adapter implementado e configurável (FDR_007_2).
-- [ ] Prompt e parse implementados; conteúdo repassado ao Job e ao e-mail (FDR_007_3).
+- The Job (FDR-005) needs to get from the LLM the structured analysis content to build the HTML report and send by email (FDR-008). The integration is split into three sub-features:
+- **7.1** Provider research and decision (FDR_007_1): spike, provider and approach choice, code interface, ADR.
+- **7.2** Integration (FDR_007_2): implement adapter, env config, Job call, timeout/error handling.
+- **7.3** Get report (FDR_007_3): build prompt from template, call LLM, parse response, return content to the Job.
 
 ---
 
-## Notas de deployment
+## How to test
 
-- Env definidos em FDR_007_2 (API key, modelo). Não expor API key no frontend.
+- See FDR_007_1, FDR_007_2, FDR_007_3 for tests and edge cases.
+
+---
+
+## Acceptance criteria
+
+- [ ] Interface defined; Job depends on it (FDR_007_1).
+- [ ] Adapter implemented and configurable (FDR_007_2).
+- [ ] Prompt and parse implemented; content passed to Job and email (FDR_007_3).
+
+---
+
+## Deployment notes
+
+- Env defined in FDR_007_2 (API key, model). Do not expose API key on the frontend.

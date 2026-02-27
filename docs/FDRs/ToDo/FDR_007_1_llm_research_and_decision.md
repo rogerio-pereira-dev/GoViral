@@ -1,36 +1,36 @@
-# FDR-007.1: Pesquisa e decisão do provedor de LLM
+# FDR-007.1: LLM provider research and decision
 
 **Feature:** 7.1  
-**Referência:** FDR-007, docs/04 - Features.md, ADR-014
+**Reference:** FDR-007, docs/04 - Features.md, ADR-014
 
 ---
 
-## Como funciona
+## How it works
 
-- **Spike técnico:** avaliar provedores candidatos (OpenAI, Gemini, Anthropic) em: custo por requisição, qualidade da saída (adequação ao template do relatório), latência e limites de uso.
-- **Pacotes/SDKs:** avaliar pacotes Laravel ou PHP para cada provedor; padrão de integração: adapter/strategy dentro do Laravel (interface comum, ex.: `LlmClient::generateReport(array $payload, string $locale): array`) vs. orquestração externa (ex.: n8n). Escolher abordagem e provedor.
-- **Documentação:** produzir **ADR de implementação** com o provedor escolhido e a abordagem (adapter no Laravel ou externo). Atualizar ADR-014 (status e link para o novo ADR) quando a decisão for tomada.
-- **Contrato no código:** definir a interface que o Job (FDR-005) usará para chamar a geração do relatório (payload + locale → estrutura de seções), de forma que a implementação possa ser trocada sem alterar o Job.
-
----
-
-## Como testar
-
-- Comparar custo/requisição e tempo de resposta para um payload típico (ex.: template mínimo) em cada provedor.
-- Validar que a interface definida é suficiente para o Job e para o template (docs/LLM Prompt Template.md).
-- ADR de implementação revisado e ADR-014 atualizado.
+- **Technical spike:** evaluate candidate providers (OpenAI, Gemini, Anthropic) on: cost per request, output quality (fit for the report template), latency, and usage limits.
+- **Packages/SDKs:** evaluate Laravel or PHP packages for each provider; integration pattern: adapter/strategy inside Laravel (common interface, e.g. `LlmClient::generateReport(array $payload, string $locale): array`) vs. external orchestration (e.g. n8n). Choose approach and provider.
+- **Documentation:** produce an **implementation ADR** with the chosen provider and approach (adapter in Laravel or external). Update ADR-014 (status and link to the new ADR) when the decision is made.
+- **Code contract:** define the interface the Job (FDR-005) will use to call report generation (payload + locale → section structure), so the implementation can be swapped without changing the Job.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Spike concluído com comparação de custo, qualidade e latência (OpenAI, Gemini, Anthropic).
-- [ ] Decisão registrada: provedor e abordagem (adapter Laravel vs. externo).
-- [ ] ADR de implementação criado; ADR-014 atualizado (referência ou status).
-- [ ] Interface/contrato no código definida (ex.: `generateReport(payload, locale)`); Job depende apenas da interface.
+- Compare cost/request and response time for a typical payload (e.g. minimal template) for each provider.
+- Validate that the defined interface is sufficient for the Job and the template (docs/LLM Prompt Template.md).
+- Implementation ADR reviewed and ADR-014 updated.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Nenhuma alteração de deploy até a implementação (FDR-007.2 e FDR-007.3); env e keys serão definidos após a decisão.
+- [ ] Spike completed with cost, quality, and latency comparison (OpenAI, Gemini, Anthropic).
+- [ ] Decision recorded: provider and approach (Laravel adapter vs. external).
+- [ ] Implementation ADR created; ADR-014 updated (reference or status).
+- [ ] Interface/contract in code defined (e.g. `generateReport(payload, locale)`); Job depends only on the interface.
+
+---
+
+## Deployment notes
+
+- No deploy changes until implementation (FDR-007.2 and FDR-007.3); env and keys will be defined after the decision.

@@ -1,35 +1,35 @@
-# FDR-004.3: Webhook de confirmação de pagamento
+# FDR-004.3: Payment confirmation webhook
 
 **Feature:** 4.3  
-**Referência:** FDR-004, FDR-005, ADR-016, ADR-015
+**Reference:** FDR-004, FDR-005, ADR-016, ADR-015
 
 ---
 
-## Como funciona
+## How it works
 
-- Endpoint (ex.: `POST /stripe/webhook`) recebe eventos do Stripe. **Sempre validar a assinatura** com o header `Stripe-Signature` e `STRIPE_WEBHOOK_SECRET` (ADR-016). Se inválida → 400/403, não processar e não atualizar banco.
-- Para o evento **`checkout.session.completed`** (ou o evento equivalente ao fluxo de pagamento na página): localizar o registro em `analysis_requests` via `session_id` ou metadata; atualizar `payment_status = paid`, `processing_status = queued`; **despachar o job** `ProcessAnalysisRequest` com o id do registro; responder **200** rapidamente (processamento pesado fica no job — ADR-015).
-- Outros eventos podem ser ignorados ou tratados conforme documentação Stripe; pelo menos `checkout.session.completed` deve enfileirar o job.
-
----
-
-## Como testar
-
-- **Happy path:** Stripe CLI envia `checkout.session.completed` com payload válido; endpoint retorna 200; registro fica `payment_status = paid`, `processing_status = queued`; job aparece na fila.
-- **Assinatura inválida:** payload sem assinatura ou com secret errado → 4xx; registro não atualizado; job não enfileirado.
-- **Idempotência:** mesmo evento processado duas vezes (retry Stripe) não duplica job nem quebra estado (ex.: verificar se registro já está paid antes de enfileirar de novo).
-- **session_id não encontrado:** log; responder 200 para Stripe não reenviar em loop; não atualizar registro inexistente.
+- Endpoint (e.g. `POST /stripe/webhook`) receives Stripe events. **Always validate the signature** with the `Stripe-Signature` header and `STRIPE_WEBHOOK_SECRET` (ADR-016). If invalid → 400/403, do not process and do not update the database.
+- For the **`checkout.session.completed`** event (or the event equivalent to the in-page payment flow): find the record in `analysis_requests` via `session_id` or metadata; update `payment_status = paid`, `processing_status = queued`; **dispatch the job** `ProcessAnalysisRequest` with the record id; respond **200** quickly (heavy processing stays in the job — ADR-015).
+- Other events may be ignored or handled per Stripe docs; at least `checkout.session.completed` must enqueue the job.
 
 ---
 
-## Critérios de aceitação
+## How to test
 
-- [ ] Webhook valida assinatura; requisição inválida rejeitada (4xx).
-- [ ] Para `checkout.session.completed`: registro atualizado (paid, queued); job `ProcessAnalysisRequest` enfileirado; resposta 200 em < ~5s.
-- [ ] Retry do Stripe (mesmo evento) tratado de forma idempotente.
+- **Happy path:** Stripe CLI sends `checkout.session.completed` with valid payload; endpoint returns 200; record becomes `payment_status = paid`, `processing_status = queued`; job appears in the queue.
+- **Invalid signature:** payload without signature or wrong secret → 4xx; record not updated; job not enqueued.
+- **Idempotency:** same event processed twice (Stripe retry) does not duplicate job or break state (e.g. check if record is already paid before enqueueing again).
+- **session_id not found:** log; respond 200 so Stripe does not retry in a loop; do not update non-existent record.
 
 ---
 
-## Notas de deployment
+## Acceptance criteria
 
-- Produção: URL pública HTTPS; signing secret do Stripe Dashboard em env. Stripe CLI para testes locais.
+- [ ] Webhook validates signature; invalid request rejected (4xx).
+- [ ] For `checkout.session.completed`: record updated (paid, queued); job `ProcessAnalysisRequest` enqueued; response 200 in < ~5s.
+- [ ] Stripe retry (same event) handled idempotently.
+
+---
+
+## Deployment notes
+
+- Production: public HTTPS URL; signing secret from Stripe Dashboard in env. Stripe CLI for local testing.
