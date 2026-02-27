@@ -26,12 +26,12 @@
 
 ## Acceptance criteria
 
-- [ ] Vuetify dark theme with #121212, #FE2C55, #25F4EE applied globally where defined in the manual.
-- [ ] Space Grotesk and Inter loaded and used per manual (headlines vs body).
-- [ ] CTAs and microcopy from the manual present where feature 1 applies (e.g. primary button "Start My Growth").
-- [ ] Subtle glow/neon on CTAs and interactive elements; smooth transitions.
-- [ ] Favicon/logo with Teal→Pink gradient, readable at small sizes.
-- [ ] No styles that explicitly violate the manual (e.g. light background at root).
+- [x] Vuetify dark theme with #121212, #FE2C55, #25F4EE applied globally where defined in the manual.
+- [x] Space Grotesk and Inter loaded and used per manual (headlines vs body).
+- [x] CTAs and microcopy from the manual present where feature 1 applies (e.g. primary button "Start My Growth").
+- [x] Subtle glow/neon on CTAs and interactive elements; smooth transitions.
+- [x] Favicon/logo with Teal→Pink gradient, readable at small sizes.
+- [x] No styles that explicitly violate the manual (e.g. light background at root).
 
 ---
 

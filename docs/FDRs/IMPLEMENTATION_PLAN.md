@@ -10,13 +10,13 @@ Run Planning (see `.cursor/ralph/README.md`) to populate this list from `docs/FD
 
 Prioritized by dependency and value (docs/04 - Features.md). One line per task. Do not assume something is missing — confirm in code first.
 
-### Foundation (FDR-001: Vue + Vuetify + Branding)
+### Foundation (FDR-001: Vue + Vuetify + Branding) — done
 
 - [x] Add Vuetify to the project (npm) and configure it alongside or replacing current UI (Tailwind/reka-ui) for GoViral pages.
-- Create Vuetify theme: dark mode, background #121212, primary Pink #FE2C55, Teal #25F4EE, neon/glow on CTAs (docs/03 - Branding Manual.md).
-- Load and apply typography: Space Grotesk (headlines), Inter (body) per Branding Manual.
-- Apply CTAs and microcopy from Branding Manual (e.g. "Start My Growth", "Generate My Growth Blueprint"); ensure components inherit theme.
-- Add favicon/logo with Teal→Pink gradient, clean geometry; ensure readable at small sizes.
+- [x] Create Vuetify theme: dark mode, background #121212, primary Pink #FE2C55, Teal #25F4EE, neon/glow on CTAs (docs/03 - Branding Manual.md).
+- [x] Load and apply typography: Space Grotesk (headlines), Inter (body) per Branding Manual.
+- [x] Apply CTAs and microcopy from Branding Manual (e.g. "Start My Growth", "Generate My Growth Blueprint"); ensure components inherit theme.
+- [x] Add favicon/logo with Teal→Pink gradient, clean geometry; ensure readable at small sizes.
 
 ### Landing (FDR-002)
 
