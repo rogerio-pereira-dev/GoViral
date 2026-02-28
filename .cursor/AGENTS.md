@@ -90,6 +90,10 @@ Key flags:
 
 The `retry_after` in `config/queue.php` (Redis connection) is set to **600 s** so Redis does not re-queue a job that is still running within the 300 s timeout window.
 
+## Pull requests
+
+When a feature is complete and the branch is pushed, **create the PR using the GitHub MCP server** (MCP tools), not the `gh` CLI. If MCP is unavailable, push the branch and tell the user to open the PR manually (branch name + repo URL).
+
 ## Notes
 
 - Use docs in `docs/` for project and setup details

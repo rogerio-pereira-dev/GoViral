@@ -23,8 +23,9 @@ You are running **one iteration** of the Ralph Loop in **BUILDING** mode. Do **e
 8. Run the linter: `./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel`.
 
 ### Phase 1.2 — Testing
-Run all tests
+Run all tests (the full suite includes Browser tests per `phpunit.xml`). **Before running tests:** build the frontend or have the dev server running — either `./vendor/bin/sail npm run build` once, or `./vendor/bin/sail npm run dev` in a background terminal.
 ```
+./vendor/bin/sail npm run build
 ./vendor/bin/sail artisan test --parallel --coverage --min=90
 ./vendor/bin/sail artisan test --type-coverage --min=90 --parallel
 ```
@@ -44,7 +45,7 @@ Run Pint
 3. If you learned something operational (how to run/build/test), update `.cursor/AGENTS.md` briefly.
 4. Stage all changes and commit with a clear message describing the work: `git add -A && git commit -m "feat: <short description>"`.
 5. Keep the work on the feature branch from Phase 0. Do not create a new branch for another task of the same feature. Do not commit directly on `main`.
-6. If the feature is marked complete in this run: push the feature branch, create a PR targeting `main`, then checkout `main` and delete the local feature branch.
+6. If the feature is marked complete in this run: push the feature branch, then **create the PR using the GitHub MCP server** (use MCP tools to create the pull request targeting `main`). Do **not** use the `gh` CLI. If GitHub MCP is not available, push the branch and document in the output that the user should open the PR manually (with the branch name and repo URL). After the PR is created (or documented), checkout `main` and delete the local feature branch.
 
 ## Guardrails
 
@@ -56,4 +57,4 @@ Run Pint
 
 ## Output
 
-When done, state: (1) which task you completed, (2) that tests and Pint passed, (3) whether you moved an FDR to Done, (4) the commit hash or message, and (5) if feature-complete, the PR URL and confirmation that local branch cleanup was done.
+When done, state: (1) which task you completed, (2) that tests and Pint passed, (3) whether you moved an FDR to Done, (4) the commit hash or message, and (5) if feature-complete, the PR URL (from GitHub MCP) and confirmation that local branch cleanup was done. If you could not create the PR via MCP, give the user the branch name and link to open the PR manually.

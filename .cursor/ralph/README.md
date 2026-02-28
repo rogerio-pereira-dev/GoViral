@@ -1,8 +1,63 @@
 # Como usar o Ralph Loop no GoViral (Cursor)
 
-Este projeto usa o **Ralph Loop** adaptado para o **Cursor**: você (humano) inicia cada iteração; o agente do Cursor executa **uma** fase por vez (planejamento ou uma tarefa de construção), atualiza o plano e, no modo Building, commita.
+Este projeto usa o **Ralph Loop** de duas formas:
 
-**Não há script em bash.** O “loop” é você rodar o agente de novo quando quiser a próxima tarefa.
+1. **No Cursor (manual)** — você inicia cada iteração no chat; o agente executa uma fase por vez e commita. Para a próxima tarefa, você abre outro chat.
+2. **Com Claude CLI (automático)** — um script em bash reinicia o Claude a cada tarefa; você não precisa ficar monitorando nem iniciando novos chats.
+
+---
+
+## Opção A: Loop automático (Claude CLI) — sem interação
+
+Se você quer o mesmo comportamento de quem usa o Ralph com Claude: **deixar rodando e não interagir**.
+
+### Pré-requisitos
+
+- **Cursor:** [Cursor CLI](https://cursor.com/docs/cli/installation) instalado (`curl https://cursor.com/install -fsS | bash`). Use `./loop.sh cursor`.
+- **Claude:** [Claude CLI](https://claude.ai/download) instalado e autenticado. Use `./loop.sh` (sem argumento).
+- Executar na raiz do projeto: `./loop.sh` ou `./loop.sh cursor`.
+
+### Uso
+
+**Com Cursor Agent CLI** (recomendado se você já usa Cursor):
+
+```bash
+# Building: loop contínuo (uma tarefa por vez até você dar Ctrl+C)
+./loop.sh cursor
+
+# Building: no máximo 20 iterações
+./loop.sh cursor 20
+
+# Planning: gerar/atualizar o plano
+./loop.sh cursor plan
+```
+
+**Com Claude CLI:**
+
+```bash
+# Building: loop contínuo
+./loop.sh
+
+# Building: no máximo 20 iterações
+./loop.sh 20
+
+# Planning: gerar/atualizar o plano (geralmente 1–2 iterações)
+./loop.sh plan
+
+# Planning: no máximo 5 iterações
+./loop.sh plan 5
+```
+
+O script usa os mesmos prompts em `.cursor/ralph/` (PROMPT_build.md e PROMPT_plan.md) e o mesmo plano em `docs/FDRs/IMPLEMENTATION_PLAN.md`. Cada vez que o agente termina uma tarefa (commit e exit), o script inicia outra execução sozinho. Você só precisa parar com Ctrl+C quando quiser.
+
+- **Cursor:** instale o [Cursor CLI](https://cursor.com/docs/cli/installation) (`curl https://cursor.com/install -fsS | bash`) e use `./loop.sh cursor`. O agente usa `-p --force --trust --approve-mcps` para rodar sem confirmações.
+- **Claude:** use `./loop.sh` (sem argumento). O Claude CLI roda com `--dangerously-skip-permissions`. Use em ambiente controlado.
+
+---
+
+## Opção B: No Cursor (uma iteração por chat)
+
+**No Cursor não há loop automático.** O “loop” é você rodar o agente de novo quando quiser a próxima tarefa.
 
 ---
 
@@ -13,6 +68,7 @@ Este projeto usa o **Ralph Loop** adaptado para o **Cursor**: você (humano) ini
 | `PROMPT_plan.md` | Instruções do modo **Planning**. O agente só lê docs/FDRs/ADRs e código e atualiza o plano. |
 | `PROMPT_build.md` | Instruções do modo **Building**. O agente escolhe uma tarefa, implementa, testa, atualiza o plano e commita. |
 | Plano (fora desta pasta) | `docs/FDRs/IMPLEMENTATION_PLAN.md` — lista de tarefas priorizadas. **Planning** gera/atualiza; **Building** consome e marca concluído. |
+| Script do loop (raiz do repo) | `loop.sh` — usa Claude CLI para rodar Building (ou Planning) em loop sem interação. |
 
 ---
 
@@ -68,7 +124,7 @@ Assim a LLM do Cursor sabe onde estão os prompts, o plano e a regra de mover FD
 |----------|------|
 | Gerar ou atualizar o plano | Chat com `PROMPT_plan.md` ou “Ralph Planning”. |
 | Fazer uma tarefa e commitar | Chat com `PROMPT_build.md` ou “Ralph Building” / “uma tarefa do Ralph”. |
-| Próxima tarefa | Novo chat, de novo com Building. |
+| Próxima tarefa | **Com Claude CLI:** o próprio `./loop.sh` inicia a próxima. **No Cursor:** novo chat, de novo com Building. |
 | Ver o que falta | Abrir `docs/FDRs/IMPLEMENTATION_PLAN.md`. |
 
-Não é necessário rodar Planning e Building por você; você só inicia o agente com o prompt certo quando quiser planejar ou implementar mais uma tarefa.
+Com Claude CLI você não precisa rodar nada manualmente após cada tarefa; com Cursor, você inicia o agente com o prompt certo quando quiser planejar ou implementar mais uma tarefa.
