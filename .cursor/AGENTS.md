@@ -90,6 +90,15 @@ Key flags:
 
 The `retry_after` in `config/queue.php` (Redis connection) is set to **600 s** so Redis does not re-queue a job that is still running within the 300 s timeout window.
 
+### Laravel Horizon (Redis queue dashboard)
+
+The project uses **Laravel Horizon** for Redis queue workers and a dashboard. Horizon is started by Supervisor inside the Sail container (see `docker/8.5/supervisord.conf`).
+
+- **Dashboard (local):** `http://localhost/horizon` (or your app URL + `/horizon`). In non-local environments, access is restricted by the gate in `App\Providers\HorizonServiceProvider`.
+- **Manual run (dev):** `./vendor/bin/sail artisan horizon`
+- **Terminate (deploy):** `./vendor/bin/sail artisan horizon:terminate` so the process manager restarts Horizon with new code.
+- **Config:** `config/horizon.php` (environments, tries, timeout, backoff). Default supervisor uses `tries=12`, `timeout=330`, `backoff=300` to align with `ProcessAnalysisRequest`.
+
 ## Pull requests
 
 When a feature is complete and the branch is pushed, **create the PR using the GitHub MCP server** (MCP tools), not the `gh` CLI. If MCP is unavailable, push the branch and tell the user to open the PR manually (branch name + repo URL).

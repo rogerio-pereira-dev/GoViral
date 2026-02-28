@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessAnalysisRequest implements ShouldQueue
 {
@@ -36,6 +37,8 @@ class ProcessAnalysisRequest implements ShouldQueue
         if (! $analysisRequest || $analysisRequest->payment_status !== 'paid') {
             return;
         }
+
+        Log::info($analysisRequest->toArray()); // Test only, to see if job is being processed, Remove after real code is implemented
 
         // Stub: full implementation in FDR-005 (LLM, report, email).
     }

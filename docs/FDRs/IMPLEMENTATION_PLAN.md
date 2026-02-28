@@ -15,6 +15,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Form (FDR-003) -> feat/form`
 - `Stripe setup (FDR-004.1) -> feat/stripe-setup`
 - `Queue and worker (FDR-006) -> feat/queue-worker`
+- `Horizon (FDR-006) -> feature/horizon`
 
 ---
 
@@ -78,6 +79,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Set QUEUE_CONNECTION=redis; ensure Redis connection in config/database.php and .env; document for Sail/production.
 - [x] Create job `ProcessAnalysisRequest` (stub or full): receives AnalysisRequest id; configure max 12 attempts, backoff (e.g. 5 min), job timeout (e.g. 120–300 s) for LLM + email.
 - [x] Document running worker: `php artisan queue:work` (or queue name); production: Laravel Cloud, supervisor, or equivalent.
+- [x] Install and configure Laravel Horizon (Redis queue dashboard + workers); enable Horizon in `docker/8.5/supervisord.conf`.
 
 ### LLM (FDR-007.1, 007.2, 007.3)
 
