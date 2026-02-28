@@ -5,7 +5,7 @@ description: Run the Ralph Loop (Planning or Building) in Cursor using docs/FDRs
 
 # Ralph Loop with Cursor
 
-Use this skill when the user wants to run **Planning** or **Building** for the Ralph workflow, or when they refer to "Ralph", "Ralph Loop", or "one task from the plan".
+Use this skill when the user wants to run **Planning** or **Building** for the Ralph workflow, or when they refer to "Ralph", "Ralph Loop", or "one task from the plan". For **hands-off continuous execution** (no monitoring, no new chats), use the **Claude CLI** with the project's `loop.sh` script instead of Cursor chat; see `.cursor/ralph/README.md`.
 
 ## What is the Ralph Loop here
 
@@ -30,7 +30,7 @@ Use this skill when the user wants to run **Planning** or **Building** for the R
 
 3. **Finalize feature (automatic)**
    - Ensure the branch is pushed to remote.
-   - Open a PR targeting `main` with a concise summary and test plan.
+   - Open a PR targeting `main` using the **GitHub MCP server** (MCP tools), not `gh` CLI. Use a concise summary and test plan.
    - After push + PR, checkout `main` and delete the local feature branch.
    - Confirm lint and test checks passed before merge.
 

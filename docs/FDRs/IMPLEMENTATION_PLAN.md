@@ -14,6 +14,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - Example: `Data layer (for Form and Payment) -> feat/data-layer`
 - `Form (FDR-003) -> feat/form`
 - `Stripe setup (FDR-004.1) -> feat/stripe-setup`
+- `Queue and worker (FDR-006) -> feat/queue-worker`
 
 ---
 
@@ -72,11 +73,11 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Handle `payment_intent.succeeded`: find AnalysisRequest by stripe_payment_intent_id; set payment_status=paid, processing_status=queued; dispatch ProcessAnalysisRequest job with record id; return 200 quickly.
 - [x] Handle Stripe retries idempotently (e.g. skip if record already paid); if payment_intent_id not found, log and return 200.
 
-### Queue and worker (FDR-006)
+### Queue and worker (FDR-006) — done
 
-- Set QUEUE_CONNECTION=redis; ensure Redis connection in config/database.php and .env; document for Sail/production.
-- Create job `ProcessAnalysisRequest` (stub or full): receives AnalysisRequest id; configure max 12 attempts, backoff (e.g. 5 min), job timeout (e.g. 120–300 s) for LLM + email.
-- Document running worker: `php artisan queue:work` (or queue name); production: Laravel Cloud, supervisor, or equivalent.
+- [x] Set QUEUE_CONNECTION=redis; ensure Redis connection in config/database.php and .env; document for Sail/production.
+- [x] Create job `ProcessAnalysisRequest` (stub or full): receives AnalysisRequest id; configure max 12 attempts, backoff (e.g. 5 min), job timeout (e.g. 120–300 s) for LLM + email.
+- [x] Document running worker: `php artisan queue:work` (or queue name); production: Laravel Cloud, supervisor, or equivalent.
 
 ### LLM (FDR-007.1, 007.2, 007.3)
 
@@ -113,3 +114,5 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
 - **Current codebase:** Welcome is the Laravel starter page (not GoViral landing). Frontend uses Tailwind + reka-ui (no Vuetify). No analysis_requests, Stripe, job, LLM, or mail report. No lang files for en/es/pt. Queue default is database — change to Redis per ADR-005.
 - **Order:** Implement in the order above; within each section order by dependency (e.g. migration before model; Stripe config before webhook; LLM interface before adapter; adapter before Job full implementation).
+- **Discovery (FDR-004.1):** The last Stripe setup task "Register webhook in Stripe" is an ops/dashboard step (not code); the webhook endpoint code is done in FDR-004.3. Consider marking it done or deferring to deployment docs.
+- **Discovery (Browser tests):** 14 browser tests fail on `main` (pre-existing, unrelated to queue work). They need Vite dev server or a Chrome environment fix. Tracked here for visibility.
