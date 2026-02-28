@@ -16,19 +16,27 @@ class ProcessAnalysisRequest implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /** ADR-011: max 12 attempts (~1 h with 5 min backoff). */
+    public int $tries = 12;
+
+    /** 5-minute delay between retries (seconds). */
+    public int $backoff = 300;
+
+    /** Ceiling for LLM call + email delivery (seconds). */
+    public int $timeout = 300;
+
     public function __construct(
         public string $analysisRequestId
     ) {}
 
     public function handle(): void
     {
-        // Stub: full implementation in FDR-005 (LLM, report, email).
         $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
 
         if (! $analysisRequest || $analysisRequest->payment_status !== 'paid') {
             return;
         }
 
-        // Placeholder for: set processing_status=processing, call LLM, send email, etc.
+        // Stub: full implementation in FDR-005 (LLM, report, email).
     }
 }

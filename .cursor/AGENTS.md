@@ -64,6 +64,32 @@ Key commands:
 ./vendor/bin/sail exec laravel.test vendor/bin/pint --parallel
 ```
 
+## Queue Worker
+
+The project uses **Redis** as the queue driver (`QUEUE_CONNECTION=redis`). Redis runs as a Sail service (`redis` in `compose.yaml`).
+
+### Running the worker (development / Sail)
+
+```
+./vendor/bin/sail artisan queue:work redis --queue=default
+```
+
+### Running the worker (production)
+
+Use a process manager (supervisor, systemd, or Laravel Cloud) to keep the worker alive:
+
+```
+php artisan queue:work redis --queue=default --tries=12 --backoff=300 --timeout=300 --sleep=3
+```
+
+Key flags:
+- `--tries=12` — max 12 attempts per job (ADR-011)
+- `--backoff=300` — 5-minute delay between retries
+- `--timeout=300` — kill a job after 300 s (LLM + email ceiling)
+- `--sleep=3` — poll interval when queue is empty
+
+The `retry_after` in `config/queue.php` (Redis connection) is set to **600 s** so Redis does not re-queue a job that is still running within the 300 s timeout window.
+
 ## Notes
 
 - Use docs in `docs/` for project and setup details
