@@ -1,9 +1,9 @@
 <?php
 
 use App\Ai\Agents\GrowthReportAgent;
-use App\Contracts\ReportGenerator;
 use App\Jobs\ProcessAnalysisRequest;
 use App\Models\AnalysisRequest;
+use App\Services\Llm\GrowthReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -41,7 +41,7 @@ it('runs without error when analysis request exists and is paid', function (): v
     ]);
 
     $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->handle(app(ReportGenerator::class));
+    $job->handle(app(GrowthReportService::class));
 
     $analysisRequest->refresh();
     expect($analysisRequest->payment_status)->toBe('paid');
@@ -51,7 +51,7 @@ it('runs without error when analysis request exists and is paid', function (): v
 
 it('returns early when analysis request is not found', function (): void {
     $job = new ProcessAnalysisRequest('00000000-0000-0000-0000-000000000000');
-    $job->handle(app(ReportGenerator::class));
+    $job->handle(app(GrowthReportService::class));
 
     expect(AnalysisRequest::count())->toBe(0);
 });
@@ -63,10 +63,28 @@ it('returns early when analysis request is not paid', function (): void {
     ]);
 
     $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->handle(app(ReportGenerator::class));
+    $job->handle(app(GrowthReportService::class));
 
     $analysisRequest->refresh();
     expect($analysisRequest->payment_status)->toBe('pending');
+});
+
+it('records last_error and rethrows when LLM returns empty report', function (): void {
+    GrowthReportAgent::fake(['']);
+
+    $analysisRequest = AnalysisRequest::factory()->create([
+        'payment_status' => 'paid',
+        'processing_status' => 'queued',
+        'attempt_count' => 0,
+    ]);
+
+    $job = new ProcessAnalysisRequest($analysisRequest->id);
+
+    expect(fn () => $job->handle(app(GrowthReportService::class)))
+        ->toThrow(InvalidArgumentException::class, 'LLM returned empty report');
+
+    $analysisRequest->refresh();
+    expect($analysisRequest->last_error)->toContain('empty report');
 });
 
 it('records last_error and rethrows when report generator throws', function (): void {
@@ -82,7 +100,7 @@ it('records last_error and rethrows when report generator throws', function (): 
 
     $job = new ProcessAnalysisRequest($analysisRequest->id);
 
-    expect(fn () => $job->handle(app(ReportGenerator::class)))
+    expect(fn () => $job->handle(app(GrowthReportService::class)))
         ->toThrow(RuntimeException::class, 'API rate limit');
 
     $analysisRequest->refresh();

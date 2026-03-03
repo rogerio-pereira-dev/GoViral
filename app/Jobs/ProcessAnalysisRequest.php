@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Contracts\ReportGenerator;
 use App\Models\AnalysisRequest;
+use App\Services\Llm\GrowthReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,7 +31,7 @@ class ProcessAnalysisRequest implements ShouldQueue
         public string $analysisRequestId
     ) {}
 
-    public function handle(ReportGenerator $reportGenerator): void
+    public function handle(GrowthReportService $reportService): void
     {
         $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
 
@@ -54,9 +54,11 @@ class ProcessAnalysisRequest implements ShouldQueue
                 'video_url_3' => $analysisRequest->video_url_3,
                 'notes' => $analysisRequest->notes,
             ];
-            $reportGenerator->generateReport($payload, $analysisRequest->locale ?? 'en');
+            $locale = $analysisRequest->locale ?? 'en';
+            $reportHtml = $reportService->generateReportHtml($payload, $locale);
 
-            // FDR-007.3: parse response and build HTML; FDR-008: send email; FDR-005: update status/sent, delete record.
+            // FDR-008: send GrowthReportMail with $reportHtml to $analysisRequest->email.
+            // FDR-005: on success set processing_status=sent and delete record; on failure last_error and retry.
         } catch (Throwable $e) {
             $analysisRequest->update([
                 'last_error' => $e->getMessage(),
