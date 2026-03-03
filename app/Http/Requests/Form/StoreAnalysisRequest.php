@@ -27,6 +27,7 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_3' => ['nullable', 'url', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'payment_intent_id' => ['required', 'string', 'max:255'],
+            'cf-turnstile-response' => ['nullable', 'string'],
         ];
     }
 

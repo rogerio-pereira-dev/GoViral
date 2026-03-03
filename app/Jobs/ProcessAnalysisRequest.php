@@ -67,12 +67,12 @@ class ProcessAnalysisRequest implements ShouldQueue
                 );
 
             $analysisRequest->update(['processing_status' => 'sent']);
-            
+
             /*
              * After some thinking, i'm not sure if i want to delete the reports
-             * Keeping it here 
+             * Keeping it here
              */
-            // $analysisRequest->delete(); 
+            // $analysisRequest->delete();
         } catch (Throwable $e) {
             $analysisRequest->update([
                 'last_error' => $e->getMessage(),

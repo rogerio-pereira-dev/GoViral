@@ -40,4 +40,9 @@ return [
         'currency' => env('STRIPE_CURRENCY', 'usd'),
     ],
 
+    'turnstile' => [
+        'key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
 ];
