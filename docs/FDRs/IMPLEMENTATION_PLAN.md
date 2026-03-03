@@ -17,6 +17,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Queue and worker (FDR-006) -> feat/queue-worker`
 - `Horizon (FDR-006) -> feature/horizon`
 - `LLM (FDR-007) -> feat/llm`
+- `Email report (FDR-008) -> feat/email-report`
 
 ---
 
@@ -90,7 +91,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Email report (FDR-008)
 
-- Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
+- [x] Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
 - Create Mailable (e.g. GrowthReportMail): accepts report HTML and recipient email; body HTML; subject and plain text per branding/locale.
 - Job (FDR-005) will call this after building HTML; send failure triggers job retry; after 12 failures record removed (FDR-005).
 
