@@ -98,7 +98,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ### Job orchestration (FDR-005)
 
 - [x] Implement ProcessAnalysisRequest job fully: load record (payment_status=paid only); set processing_status=processing, attempt_count++; call LLM integration (FDR-007); build report HTML (sections per PRD); send email (FDR-008); on success: processing_status=sent, delete record; on failure: last_error, release with backoff; after 12 attempts: mark failed, delete record (ADR-011). Use queue name "analysis".
-- Ensure job is only dispatched by webhook (FDR-004.3); only process paid records; handle already-deleted or non-paid gracefully.
+- [x] Ensure job is only dispatched by webhook (FDR-004.3); only process paid records; handle already-deleted or non-paid gracefully.
 
 ### Captcha (FDR-009)
 
