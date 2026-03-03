@@ -82,11 +82,11 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Document running worker: `php artisan queue:work` (or queue name); production: Laravel Cloud, supervisor, or equivalent.
 - [x] Install and configure Laravel Horizon (Redis queue dashboard + workers); enable Horizon in `docker/8.5/supervisord.conf`.
 
-### LLM (FDR-007.1, 007.2, 007.3)
+### LLM (FDR-007, 007.1, 007.2, 007.3) — done
 
 - [x] FDR-007.1: Run spike: compare OpenAI, Gemini, Anthropic (cost, quality, latency); choose provider and approach (Laravel adapter vs external); create implementation ADR; ~~update ADR-014~~ use ADR-019; define interface in code (e.g. `generateReport(array $payload, string $locale): array`).
 - [x] FDR-007.2: Implement adapter for chosen provider; env (GEMINI_API_KEY per ADR-019); Job calls interface; timeout and API errors propagate for Job retry.
-- FDR-007.3: Build prompt from docs/LLM Prompt Template.md (placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE); call LLM via adapter; parse response into report sections; return structured content (or HTML) to Job; handle malformed response (last_error, no email); sanitize markdown→HTML if needed.
+- [x] FDR-007.3: Build prompt from docs/LLM Prompt Template.md (placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE); call LLM via adapter; parse response into report sections; return structured content (or HTML) to Job; handle malformed response (last_error, no email); sanitize markdown→HTML if needed.
 
 ### Email report (FDR-008)
 
