@@ -93,11 +93,11 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 - [x] Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
 - [x] Create Mailable (e.g. GrowthReportMail): accepts report HTML and recipient email; body HTML; subject and plain text per branding/locale.
-- Job (FDR-005) will queue the email after building HTML (use queue name "emails"); Job (report) failure triggers job retry; after 12 failures record removed (FDR-005).
+- [x] Job (FDR-005) will queue the email after building HTML (use queue name "emails"); Job (report) failure triggers job retry; after 12 failures record removed (FDR-005).
 
 ### Job orchestration (FDR-005)
 
-- Implement ProcessAnalysisRequest job fully: load record (payment_status=paid only); set processing_status=processing, attempt_count++; call LLM integration (FDR-007); build report HTML (sections per PRD); send email (FDR-008); on success: processing_status=sent, delete record; on failure: last_error, release with backoff; after 12 attempts: mark failed, delete record (ADR-011). Use queue name "analysis"
+- [x] Implement ProcessAnalysisRequest job fully: load record (payment_status=paid only); set processing_status=processing, attempt_count++; call LLM integration (FDR-007); build report HTML (sections per PRD); send email (FDR-008); on success: processing_status=sent, delete record; on failure: last_error, release with backoff; after 12 attempts: mark failed, delete record (ADR-011). Use queue name "analysis".
 - Ensure job is only dispatched by webhook (FDR-004.3); only process paid records; handle already-deleted or non-paid gracefully.
 
 ### Captcha (FDR-009)
