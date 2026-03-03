@@ -3,6 +3,7 @@
 use App\Models\AnalysisRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use RyanChandler\LaravelCloudflareTurnstile\Facades\Turnstile;
 use Stripe\StripeClient;
 
 uses(RefreshDatabase::class);
@@ -21,9 +22,15 @@ it('renders the start growth form page with current locale', function () {
 });
 
 it('stores a new analysis request and returns checkout payload', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
     $response = $this
         ->withSession(['locale' => 'es'])
-        ->post(route('form.store'), validFormPayload());
+        ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -51,16 +58,21 @@ it('stores a new analysis request and returns checkout payload', function () {
 });
 
 it('stores not informed placeholders for optional empty profile fields', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = array_merge(validFormPayload(), [
+        'tiktok_username' => '',
+        'bio' => '',
+        'video_url_1' => '',
+        'video_url_2' => '',
+        'video_url_3' => '',
+        'cf-turnstile-response' => Turnstile::dummy(),
+    ]);
+
     $response = $this
         ->withSession(['locale' => 'pt'])
-        ->post(route('form.store'), [
-            ...validFormPayload(),
-            'tiktok_username' => '',
-            'bio' => '',
-            'video_url_1' => '',
-            'video_url_2' => '',
-            'video_url_3' => '',
-        ]);
+        ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -82,17 +94,53 @@ it('stores not informed placeholders for optional empty profile fields', functio
 });
 
 it('does not store analysis request when payload is invalid', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = array_merge(validFormPayload(), [
+        'cf-turnstile-response' => Turnstile::dummy(),
+        'email' => 'invalid-email',
+        'video_url_1' => 'invalid-url',
+    ]);
+
     $response = $this
         ->withSession(['locale' => 'pt'])
-        ->postJson(route('form.store'), [
-            ...validFormPayload(),
-            'email' => 'invalid-email',
-            'video_url_1' => 'invalid-url',
-        ]);
+        ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
         ->assertJsonValidationErrors(['email', 'video_url_1']);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when turnstile token is missing or invalid and turnstile is configured', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake()->fail();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), array_merge(validFormPayload(), [
+            'cf-turnstile-response' => Turnstile::dummy(),
+        ]));
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['cf-turnstile-response']);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when turnstile token is missing and turnstile is configured', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), validFormPayload());
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['cf-turnstile-response']);
 
     expect(AnalysisRequest::count())->toBe(0);
 });

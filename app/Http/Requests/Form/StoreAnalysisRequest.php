@@ -4,6 +4,7 @@ namespace App\Http\Requests\Form;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use RyanChandler\LaravelCloudflareTurnstile\Rules\Turnstile as TurnstileRule;
 
 class StoreAnalysisRequest extends FormRequest
 {
@@ -17,6 +18,10 @@ class StoreAnalysisRequest extends FormRequest
      */
     public function rules(): array
     {
+        $turnstileRules = $this->turnstileIsConfigured()
+            ? ['required', 'string', new TurnstileRule]
+            : ['nullable', 'string'];
+
         return [
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
             'tiktok_username' => ['nullable', 'string', 'max:255'],
@@ -27,8 +32,15 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_3' => ['nullable', 'url', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'payment_intent_id' => ['required', 'string', 'max:255'],
-            'cf-turnstile-response' => ['nullable', 'string'],
+            'cf-turnstile-response' => $turnstileRules,
         ];
+    }
+
+    private function turnstileIsConfigured(): bool
+    {
+        $secret = config('services.turnstile.secret');
+
+        return is_string($secret) && ! blank($secret);
     }
 
     /**
@@ -60,6 +72,7 @@ class StoreAnalysisRequest extends FormRequest
             'video_url_3' => __('form.video_url_3_label'),
             'notes' => __('form.notes_label'),
             'payment_intent_id' => __('form.payment_card_label'),
+            'cf-turnstile-response' => __('form.turnstile_label'),
         ];
     }
 

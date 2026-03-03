@@ -105,7 +105,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 - Read **Setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../Setup/TURNSTILE_SETUP.md)
 - [x] Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
-- Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
+- [x] Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
 
 ### Scheduler cleanup (FDR-010)
 
