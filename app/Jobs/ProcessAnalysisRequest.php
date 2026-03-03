@@ -2,13 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Contracts\ReportGenerator;
 use App\Models\AnalysisRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessAnalysisRequest implements ShouldQueue
 {
@@ -30,7 +31,7 @@ class ProcessAnalysisRequest implements ShouldQueue
         public string $analysisRequestId
     ) {}
 
-    public function handle(): void
+    public function handle(ReportGenerator $reportGenerator): void
     {
         $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
 
@@ -38,8 +39,30 @@ class ProcessAnalysisRequest implements ShouldQueue
             return;
         }
 
-        Log::info($analysisRequest->toArray()); // Test only, to see if job is being processed, Remove after real code is implemented
+        $analysisRequest->update([
+            'processing_status' => 'processing',
+            'attempt_count' => $analysisRequest->attempt_count + 1,
+        ]);
 
-        // Stub: full implementation in FDR-005 (LLM, report, email).
+        try {
+            $payload = [
+                'tiktok_username' => $analysisRequest->tiktok_username,
+                'bio' => $analysisRequest->bio,
+                'aspiring_niche' => $analysisRequest->aspiring_niche,
+                'video_url_1' => $analysisRequest->video_url_1,
+                'video_url_2' => $analysisRequest->video_url_2,
+                'video_url_3' => $analysisRequest->video_url_3,
+                'notes' => $analysisRequest->notes,
+            ];
+            $reportGenerator->generateReport($payload, $analysisRequest->locale ?? 'en');
+
+            // FDR-007.3: parse response and build HTML; FDR-008: send email; FDR-005: update status/sent, delete record.
+        } catch (Throwable $e) {
+            $analysisRequest->update([
+                'last_error' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
     }
 }
