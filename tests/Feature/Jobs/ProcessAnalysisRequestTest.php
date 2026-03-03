@@ -5,6 +5,7 @@ use App\Jobs\ProcessAnalysisRequest;
 use App\Models\AnalysisRequest;
 use App\Services\Llm\GrowthReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
 
@@ -32,6 +33,7 @@ it('implements ShouldQueue', function (): void {
 });
 
 it('runs without error when analysis request exists and is paid', function (): void {
+    Queue::fake();
     GrowthReportAgent::fake(['Fake report content']);
 
     $analysisRequest = AnalysisRequest::factory()->create([
@@ -43,10 +45,8 @@ it('runs without error when analysis request exists and is paid', function (): v
     $job = new ProcessAnalysisRequest($analysisRequest->id);
     $job->handle(app(GrowthReportService::class));
 
-    $analysisRequest->refresh();
-    expect($analysisRequest->payment_status)->toBe('paid');
-    expect($analysisRequest->processing_status)->toBe('processing');
-    expect($analysisRequest->attempt_count)->toBe(1);
+    expect(AnalysisRequest::find($analysisRequest->id))->toBeNull();
+    Queue::assertPushedOn('emails', \Illuminate\Mail\SendQueuedMailable::class);
 });
 
 it('returns early when analysis request is not found', function (): void {
@@ -107,13 +107,20 @@ it('records last_error and rethrows when report generator throws', function (): 
     expect($analysisRequest->last_error)->toBe('API rate limit');
 });
 
-it('is dispatched by the webhook to the default queue', function (): void {
+it('uses queue name analysis per FDR-005', function (): void {
+    $job = new ProcessAnalysisRequest('fake-id');
+
+    expect($job->queue)->toBe('analysis');
+});
+
+it('marks record as failed and deletes it when job fails after max attempts', function (): void {
     $analysisRequest = AnalysisRequest::factory()->create([
         'payment_status' => 'paid',
-        'processing_status' => 'queued',
+        'processing_status' => 'processing',
     ]);
 
     $job = new ProcessAnalysisRequest($analysisRequest->id);
+    $job->failed(new RuntimeException('Final failure'));
 
-    expect($job->queue)->toBeNull();
+    expect(AnalysisRequest::find($analysisRequest->id))->toBeNull();
 });

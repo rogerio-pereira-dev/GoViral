@@ -54,6 +54,7 @@ Run Pint
 - Resolve test failures before committing. No placeholder or stub-only implementations.
 - Keep `docs/FDRs/IMPLEMENTATION_PLAN.md` up to date so the next run knows what is left.
 - If you find spec inconsistencies or bugs unrelated to this task, add them to the plan or document in the plan; do not expand scope beyond the one chosen task.
+- Do not consider the Building run finished until Phase 2 is fully executed: FDR moved to Done (when applicable), changes committed, feature branch pushed, PR created (or clearly documented when MCP is unavailable), `main` checked out, and the local feature branch deleted.
 
 ## Output
 

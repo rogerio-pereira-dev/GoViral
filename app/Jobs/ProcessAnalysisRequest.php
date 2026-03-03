@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\GrowthReportMail;
 use App\Models\AnalysisRequest;
 use App\Services\Llm\GrowthReportService;
 use Illuminate\Bus\Queueable;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class ProcessAnalysisRequest implements ShouldQueue
@@ -24,12 +26,14 @@ class ProcessAnalysisRequest implements ShouldQueue
     /** 5-minute delay between retries (seconds). */
     public int $backoff = 300;
 
-    /** Ceiling for LLM call + email delivery (seconds). */
+    /** Ceiling for LLM call + queue email (seconds). */
     public int $timeout = 300;
 
     public function __construct(
         public string $analysisRequestId
-    ) {}
+    ) {
+        $this->onQueue('analysis');
+    }
 
     public function handle(GrowthReportService $reportService): void
     {
@@ -57,14 +61,29 @@ class ProcessAnalysisRequest implements ShouldQueue
             $locale = $analysisRequest->locale ?? 'en';
             $reportHtml = $reportService->generateReportHtml($payload, $locale);
 
-            // FDR-008: send GrowthReportMail with $reportHtml to $analysisRequest->email.
-            // FDR-005: on success set processing_status=sent and delete record; on failure last_error and retry.
+            Mail::to($analysisRequest->email)
+                ->queue(
+                    (new GrowthReportMail($reportHtml, $locale))->onQueue('emails')
+                );
+
+            $analysisRequest->update(['processing_status' => 'sent']);
+            $analysisRequest->delete();
         } catch (Throwable $e) {
             $analysisRequest->update([
                 'last_error' => $e->getMessage(),
             ]);
 
             throw $e;
+        }
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
+
+        if ($analysisRequest) {
+            $analysisRequest->update(['processing_status' => 'failed']);
+            $analysisRequest->delete();
         }
     }
 }
