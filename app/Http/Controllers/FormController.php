@@ -58,6 +58,7 @@ class FormController extends Controller
         return Inertia::render('Form/StartGrowth', [
             'locale' => app()->getLocale(),
             'translations' => $translations,
+            'turnstileSiteKey' => config('services.turnstile.key'),
         ]);
     }
 

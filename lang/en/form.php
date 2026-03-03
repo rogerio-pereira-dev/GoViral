@@ -40,6 +40,7 @@ return [
     'payment_declined_error' => 'Your card was declined. Please use another card.',
     'payment_insufficient_funds_error' => 'Your card has insufficient funds.',
     'payment_amount_label' => 'Amount',
+    'turnstile_label' => 'Security check',
 
     'validation' => [
         'required' => 'The :attribute field is required.',

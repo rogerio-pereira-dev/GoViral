@@ -4,6 +4,7 @@ import { nextTick, onMounted, ref } from 'vue';
 
 const props = defineProps<{
     locale: string;
+    turnstileSiteKey: string | null;
     translations: {
         title: string;
         subtitle: string;
@@ -67,6 +68,8 @@ const clientSecret = ref('');
 const thankYouUrl = ref('/thank-you');
 const paymentIntentId = ref('');
 const amountDisplay = ref('');
+const turnstileToken = ref('');
+const turnstileReady = ref(false);
 
 function csrfToken(): string {
     const tokenFromMeta = document
@@ -86,6 +89,35 @@ function csrfToken(): string {
     }
 
     return decodeURIComponent(xsrfCookie.split('=')[1] ?? '');
+}
+
+async function loadTurnstileScript(): Promise<void> {
+    if ((window as any).turnstile) {
+        return;
+    }
+
+    await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Turnstile load error'));
+        document.head.appendChild(script);
+    });
+}
+
+function onTurnstileSuccess(token: string): void {
+    turnstileToken.value = token;
+}
+
+function onTurnstileExpired(): void {
+    turnstileToken.value = '';
+}
+
+function registerTurnstileCallbacks(): void {
+    (window as any).onTurnstileSuccess = onTurnstileSuccess;
+    (window as any).onTurnstileExpired = onTurnstileExpired;
 }
 
 async function loadStripeLibrary(): Promise<void> {
@@ -179,6 +211,7 @@ async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<voi
         body: JSON.stringify({
             ...form.data(),
             payment_intent_id: finalPaymentIntentId,
+            'cf-turnstile-response': turnstileToken.value || undefined,
         }),
     });
 
@@ -252,6 +285,11 @@ async function submitPayment(): Promise<void> {
 }
 
 onMounted(async () => {
+    if (props.turnstileSiteKey) {
+        registerTurnstileCallbacks();
+        await loadTurnstileScript();
+        turnstileReady.value = true;
+    }
     await initializePayment();
 });
 </script>
@@ -407,6 +445,20 @@ onMounted(async () => {
                                             <p class="payment-amount-highlight mt-3 text-right">
                                                 {{ amountDisplay }}
                                             </p>
+                                        </v-col>
+
+                                        <v-col
+                                            v-if="turnstileReady && turnstileSiteKey"
+                                            cols="12"
+                                            class="d-flex justify-center"
+                                        >
+                                            <div
+                                                class="cf-turnstile"
+                                                :data-sitekey="turnstileSiteKey"
+                                                data-callback="onTurnstileSuccess"
+                                                data-expired-callback="onTurnstileExpired"
+                                                dusk="turnstile-widget"
+                                            />
                                         </v-col>
                                     </v-row>
 

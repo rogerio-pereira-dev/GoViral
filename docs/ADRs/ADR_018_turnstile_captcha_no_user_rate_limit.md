@@ -21,3 +21,7 @@ The data collection form (landing → checkout) is public and a target for bots 
 - **Positive:** Fewer bot submissions with minimal impact on user experience; no risk of blocking sales due to request limits; Turnstile is lightweight and often invisible to real users in the right mode.
 - **Negative:** Manual (human) abuse is not mitigated by rate limit; dependency on Cloudflare Turnstile and validation API availability.
 - **Neutral:** In future human-abuse scenarios, selective rate limit (e.g. by email or after N purchases) can be evaluated without changing this decision for the overall flow.
+
+## References
+
+- **Turnstile setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../Setup/TURNSTILE_SETUP.md)

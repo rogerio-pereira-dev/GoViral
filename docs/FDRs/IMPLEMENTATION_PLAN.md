@@ -18,6 +18,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Horizon (FDR-006) -> feature/horizon`
 - `LLM (FDR-007) -> feat/llm`
 - `Email report (FDR-008) -> feat/email-report`
+- `Captcha (FDR-009) -> feat/captcha`
 
 ---
 
@@ -102,8 +103,9 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Captcha (FDR-009)
 
-- Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
-- Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
+- Read **Setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../Setup/TURNSTILE_SETUP.md)
+- [x] Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
+- [x] Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
 
 ### Scheduler cleanup (FDR-010)
 

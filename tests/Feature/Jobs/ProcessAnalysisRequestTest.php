@@ -45,7 +45,8 @@ it('runs without error when analysis request exists and is paid', function (): v
     $job = new ProcessAnalysisRequest($analysisRequest->id);
     $job->handle(app(GrowthReportService::class));
 
-    expect(AnalysisRequest::find($analysisRequest->id))->toBeNull();
+    $analysisRequest->refresh();
+    expect($analysisRequest->processing_status)->toBe('sent');
     Queue::assertPushedOn('emails', \Illuminate\Mail\SendQueuedMailable::class);
 });
 

@@ -40,6 +40,7 @@ return [
     'payment_declined_error' => 'Tu tarjeta fue rechazada. Usa otra tarjeta.',
     'payment_insufficient_funds_error' => 'Tu tarjeta no tiene fondos suficientes.',
     'payment_amount_label' => 'Importe',
+    'turnstile_label' => 'Comprobación de seguridad',
 
     'validation' => [
         'required' => 'El campo :attribute es obligatorio.',
