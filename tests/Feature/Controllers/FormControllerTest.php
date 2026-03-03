@@ -112,24 +112,8 @@ it('renders thank you page with translated content', function () {
         );
 });
 
-it('returns payment intent payload on initialization endpoint', function () {
-    $response = $this->get(route('form.payment-intent'));
-
-    $response
-        ->assertOk()
-        ->assertJsonStructure([
-            'skipPayment',
-            'paymentIntentId',
-            'clientSecret',
-            'publishableKey',
-            'amountCents',
-            'currency',
-        ]);
-});
-
-it('returns payment init error when fake mode is disabled and stripe keys are missing', function () {
+it('returns payment init error when stripe keys are missing', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'cashier.key' => null,
         'cashier.secret' => null,
     ]);
@@ -143,9 +127,8 @@ it('returns payment init error when fake mode is disabled and stripe keys are mi
         ]);
 });
 
-it('returns payment init error when provider fails in real mode', function () {
+it('returns payment init error when stripe api fails', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'cashier.key' => 'pk_test_example',
         'cashier.secret' => 'sk_test_example',
     ]);
@@ -159,10 +142,10 @@ it('returns payment init error when provider fails in real mode', function () {
         ]);
 });
 
-it('returns live payment intent payload when provider succeeds in real mode', function () {
+it('returns payment intent payload when stripe api succeeds', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
         'cashier.key' => 'pk_test_example',
         'cashier.secret' => 'sk_test_example',
     ]);
@@ -185,8 +168,8 @@ it('returns live payment intent payload when provider succeeds in real mode', fu
                         ]);
 
                         return (object) [
-                            'id' => 'pi_live_test',
-                            'client_secret' => 'pi_live_secret_test',
+                            'id' => 'pi_mock_test_123',
+                            'client_secret' => 'pi_mock_secret_123',
                         ];
                     }
                 };
@@ -198,14 +181,19 @@ it('returns live payment intent payload when provider succeeds in real mode', fu
 
     $response
         ->assertOk()
+        ->assertJsonStructure([
+            'paymentIntentId',
+            'clientSecret',
+            'publishableKey',
+            'amountCents',
+            'currency',
+        ])
         ->assertJson([
-            'skipPayment' => false,
-            'paymentIntentId' => 'pi_live_test',
-            'clientSecret' => 'pi_live_secret_test',
+            'paymentIntentId' => 'pi_mock_test_123',
+            'clientSecret' => 'pi_mock_secret_123',
             'publishableKey' => 'pk_test_example',
             'amountCents' => 3500,
             'currency' => 'usd',
-            'testScenario' => null,
         ]);
 });
 
