@@ -33,3 +33,4 @@
 ## Deployment notes
 
 - Publishable key (site key) on frontend (env or build); secret key only on backend (env). In production, register domain in Cloudflare Turnstile. Different environments (staging/prod) may use different keys.
+- **Setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../../Setup/TURNSTILE_SETUP.md)
