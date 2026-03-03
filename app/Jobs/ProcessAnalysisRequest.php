@@ -2,13 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Mail\GrowthReportMail;
 use App\Models\AnalysisRequest;
+use App\Services\Llm\GrowthReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ProcessAnalysisRequest implements ShouldQueue
 {
@@ -23,14 +26,16 @@ class ProcessAnalysisRequest implements ShouldQueue
     /** 5-minute delay between retries (seconds). */
     public int $backoff = 300;
 
-    /** Ceiling for LLM call + email delivery (seconds). */
+    /** Ceiling for LLM call + queue email (seconds). */
     public int $timeout = 300;
 
     public function __construct(
         public string $analysisRequestId
-    ) {}
+    ) {
+        $this->onQueue('analysis');
+    }
 
-    public function handle(): void
+    public function handle(GrowthReportService $reportService): void
     {
         $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
 
@@ -38,8 +43,52 @@ class ProcessAnalysisRequest implements ShouldQueue
             return;
         }
 
-        Log::info($analysisRequest->toArray()); // Test only, to see if job is being processed, Remove after real code is implemented
+        $analysisRequest->update([
+            'processing_status' => 'processing',
+            'attempt_count' => $analysisRequest->attempt_count + 1,
+        ]);
 
-        // Stub: full implementation in FDR-005 (LLM, report, email).
+        try {
+            $payload = [
+                'tiktok_username' => $analysisRequest->tiktok_username,
+                'bio' => $analysisRequest->bio,
+                'aspiring_niche' => $analysisRequest->aspiring_niche,
+                'video_url_1' => $analysisRequest->video_url_1,
+                'video_url_2' => $analysisRequest->video_url_2,
+                'video_url_3' => $analysisRequest->video_url_3,
+                'notes' => $analysisRequest->notes,
+            ];
+            $locale = $analysisRequest->locale ?? 'en';
+            $reportHtml = $reportService->generateReportHtml($payload, $locale);
+
+            Mail::to($analysisRequest->email)
+                ->queue(
+                    (new GrowthReportMail($reportHtml, $locale))->onQueue('emails')
+                );
+
+            $analysisRequest->update(['processing_status' => 'sent']);
+
+            /*
+             * After some thinking, i'm not sure if i want to delete the reports
+             * Keeping it here
+             */
+            // $analysisRequest->delete();
+        } catch (Throwable $e) {
+            $analysisRequest->update([
+                'last_error' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        $analysisRequest = AnalysisRequest::find($this->analysisRequestId);
+
+        if ($analysisRequest) {
+            $analysisRequest->update(['processing_status' => 'failed']);
+            $analysisRequest->delete();
+        }
     }
 }

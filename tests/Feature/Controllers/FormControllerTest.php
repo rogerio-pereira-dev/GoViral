@@ -3,6 +3,7 @@
 use App\Models\AnalysisRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use RyanChandler\LaravelCloudflareTurnstile\Facades\Turnstile;
 use Stripe\StripeClient;
 
 uses(RefreshDatabase::class);
@@ -21,9 +22,15 @@ it('renders the start growth form page with current locale', function () {
 });
 
 it('stores a new analysis request and returns checkout payload', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
     $response = $this
         ->withSession(['locale' => 'es'])
-        ->post(route('form.store'), validFormPayload());
+        ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -51,16 +58,21 @@ it('stores a new analysis request and returns checkout payload', function () {
 });
 
 it('stores not informed placeholders for optional empty profile fields', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = array_merge(validFormPayload(), [
+        'tiktok_username' => '',
+        'bio' => '',
+        'video_url_1' => '',
+        'video_url_2' => '',
+        'video_url_3' => '',
+        'cf-turnstile-response' => Turnstile::dummy(),
+    ]);
+
     $response = $this
         ->withSession(['locale' => 'pt'])
-        ->post(route('form.store'), [
-            ...validFormPayload(),
-            'tiktok_username' => '',
-            'bio' => '',
-            'video_url_1' => '',
-            'video_url_2' => '',
-            'video_url_3' => '',
-        ]);
+        ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -82,17 +94,53 @@ it('stores not informed placeholders for optional empty profile fields', functio
 });
 
 it('does not store analysis request when payload is invalid', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = array_merge(validFormPayload(), [
+        'cf-turnstile-response' => Turnstile::dummy(),
+        'email' => 'invalid-email',
+        'video_url_1' => 'invalid-url',
+    ]);
+
     $response = $this
         ->withSession(['locale' => 'pt'])
-        ->postJson(route('form.store'), [
-            ...validFormPayload(),
-            'email' => 'invalid-email',
-            'video_url_1' => 'invalid-url',
-        ]);
+        ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
         ->assertJsonValidationErrors(['email', 'video_url_1']);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when turnstile token is missing or invalid and turnstile is configured', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake()->fail();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), array_merge(validFormPayload(), [
+            'cf-turnstile-response' => Turnstile::dummy(),
+        ]));
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['cf-turnstile-response']);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when turnstile token is missing and turnstile is configured', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), validFormPayload());
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['cf-turnstile-response']);
 
     expect(AnalysisRequest::count())->toBe(0);
 });
@@ -112,24 +160,8 @@ it('renders thank you page with translated content', function () {
         );
 });
 
-it('returns payment intent payload on initialization endpoint', function () {
-    $response = $this->get(route('form.payment-intent'));
-
-    $response
-        ->assertOk()
-        ->assertJsonStructure([
-            'skipPayment',
-            'paymentIntentId',
-            'clientSecret',
-            'publishableKey',
-            'amountCents',
-            'currency',
-        ]);
-});
-
-it('returns payment init error when fake mode is disabled and stripe keys are missing', function () {
+it('returns payment init error when stripe keys are missing', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'cashier.key' => null,
         'cashier.secret' => null,
     ]);
@@ -143,9 +175,8 @@ it('returns payment init error when fake mode is disabled and stripe keys are mi
         ]);
 });
 
-it('returns payment init error when provider fails in real mode', function () {
+it('returns payment init error when stripe api fails', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'cashier.key' => 'pk_test_example',
         'cashier.secret' => 'sk_test_example',
     ]);
@@ -159,10 +190,10 @@ it('returns payment init error when provider fails in real mode', function () {
         ]);
 });
 
-it('returns live payment intent payload when provider succeeds in real mode', function () {
+it('returns payment intent payload when stripe api succeeds', function () {
     config([
-        'services.stripe.fake_intent_on_testing' => false,
         'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
         'cashier.key' => 'pk_test_example',
         'cashier.secret' => 'sk_test_example',
     ]);
@@ -185,8 +216,8 @@ it('returns live payment intent payload when provider succeeds in real mode', fu
                         ]);
 
                         return (object) [
-                            'id' => 'pi_live_test',
-                            'client_secret' => 'pi_live_secret_test',
+                            'id' => 'pi_mock_test_123',
+                            'client_secret' => 'pi_mock_secret_123',
                         ];
                     }
                 };
@@ -198,14 +229,19 @@ it('returns live payment intent payload when provider succeeds in real mode', fu
 
     $response
         ->assertOk()
+        ->assertJsonStructure([
+            'paymentIntentId',
+            'clientSecret',
+            'publishableKey',
+            'amountCents',
+            'currency',
+        ])
         ->assertJson([
-            'skipPayment' => false,
-            'paymentIntentId' => 'pi_live_test',
-            'clientSecret' => 'pi_live_secret_test',
+            'paymentIntentId' => 'pi_mock_test_123',
+            'clientSecret' => 'pi_mock_secret_123',
             'publishableKey' => 'pk_test_example',
             'amountCents' => 3500,
             'currency' => 'usd',
-            'testScenario' => null,
         ]);
 });
 

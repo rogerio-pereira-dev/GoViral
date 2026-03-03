@@ -149,6 +149,8 @@ If you prefer using Stripe CLI locally instead of the container:
 
 ## 5. Test the Integration
 
+**Important:** The application never uses environment variables or backdoors to simulate approved/declined payment. All payment outcomes (success, declined, insufficient funds) are driven by **Stripe test cards** below. Use test keys (`pk_test_`, `sk_test_`) in development and test; use live keys only in production.
+
 ### 5.1. Test Cards
 
 Stripe provides test cards to simulate payments:

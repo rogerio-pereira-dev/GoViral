@@ -4,6 +4,10 @@ use App\Http\Requests\Form\StoreAnalysisRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
+beforeEach(function (): void {
+    config(['services.turnstile.secret' => null]);
+});
+
 it('authorizes the request', function () {
     $request = new StoreAnalysisRequest;
 
@@ -23,6 +27,7 @@ it('defines validation rules for analysis request input', function () {
         'video_url_3' => ['nullable', 'url', 'max:2048'],
         'notes' => ['nullable', 'string', 'max:5000'],
         'payment_intent_id' => ['required', 'string', 'max:255'],
+        'cf-turnstile-response' => ['nullable', 'string'],
     ]);
 });
 
@@ -49,6 +54,7 @@ it('defines localized validation messages and attributes', function () {
         'video_url_3' => trans('form.video_url_3_label'),
         'notes' => trans('form.notes_label'),
         'payment_intent_id' => trans('form.payment_card_label'),
+        'cf-turnstile-response' => trans('form.turnstile_label'),
     ]);
 });
 

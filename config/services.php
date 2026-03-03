@@ -36,8 +36,13 @@ return [
     ],
 
     'stripe' => [
-        'price_in_cents' => env('STRIPE_PRICE_IN_CENTS', 2000),
-        'fake_intent_on_testing' => env('STRIPE_FAKE_INTENT_ON_TESTING', true),
+        'price_in_cents' => (int) env('STRIPE_PRICE_IN_CENTS', 2000),
+        'currency' => env('STRIPE_CURRENCY', 'usd'),
+    ],
+
+    'turnstile' => [
+        'key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET_KEY'),
     ],
 
 ];

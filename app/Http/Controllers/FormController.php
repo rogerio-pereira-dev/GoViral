@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Form\StoreAnalysisRequest;
 use App\Models\AnalysisRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Cashier\Cashier;
@@ -14,8 +13,6 @@ class FormController extends Controller
 {
     public function index(): Response
     {
-        $paymentScenario = request()->query('payment_scenario');
-
         $translations = [
             'title' => __('form.title'),
             'subtitle' => __('form.subtitle'),
@@ -61,31 +58,14 @@ class FormController extends Controller
         return Inertia::render('Form/StartGrowth', [
             'locale' => app()->getLocale(),
             'translations' => $translations,
-            'paymentScenario' => is_string($paymentScenario) ? $paymentScenario : null,
+            'turnstileSiteKey' => config('services.turnstile.key'),
         ]);
     }
 
-    public function paymentIntent(Request $request): JsonResponse
+    public function paymentIntent(): JsonResponse
     {
-        $amountCents = (int) config('services.stripe.price_in_cents', 2000);
-        $currency = 'usd';
-        $scenario = $request->query('payment_scenario');
-        $validScenarios = ['valid', 'declined', 'insufficient_funds'];
-        $isScenario = is_string($scenario) && in_array($scenario, $validScenarios, true);
-        $useFakeIntent = (bool) config('services.stripe.fake_intent_on_testing', app()->environment('testing'));
-
-        if ($useFakeIntent) {
-            return response()->json([
-                'skipPayment' => ! $isScenario,
-                'paymentIntentId' => 'pi_test_init_'.$scenario,
-                'clientSecret' => 'pi_test_secret_init_'.$scenario,
-                'publishableKey' => 'pk_test_fake',
-                'amountCents' => $amountCents,
-                'currency' => $currency,
-                'testScenario' => $isScenario ? $scenario : null,
-            ]);
-        }
-
+        $amountCents = config('services.stripe.price_in_cents');
+        $currency = config('services.stripe.currency');
         $publishableKey = config('cashier.key');
         $secretKey = config('cashier.secret');
 
@@ -101,20 +81,20 @@ class FormController extends Controller
                 'currency' => $currency,
                 'automatic_payment_methods' => ['enabled' => true],
             ]);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            report($e);
+
             return response()->json([
                 'message' => __('form.payment_init_error'),
             ], 500);
         }
 
         return response()->json([
-            'skipPayment' => false,
             'paymentIntentId' => $paymentIntent->id,
             'clientSecret' => $paymentIntent->client_secret,
             'publishableKey' => $publishableKey,
             'amountCents' => $amountCents,
             'currency' => $currency,
-            'testScenario' => null,
         ]);
     }
 

@@ -23,13 +23,14 @@
 
 ## Acceptance criteria
 
-- [ ] Turnstile widget integrated on the form; token sent on submit.
-- [ ] Backend validates token with Turnstile API before persisting and creating Checkout; on validation failure returns 4xx and clear message.
-- [ ] No rate limiting for users (captcha only as anti-bot control — ADR-018).
-- [ ] Keys (site key / secret) configured via env; correct domain in Cloudflare Turnstile.
+- [x] Turnstile widget integrated on the form; token sent on submit.
+- [x] Backend validates token with Turnstile API before persisting and creating Checkout; on validation failure returns 4xx and clear message.
+- [x] No rate limiting for users (captcha only as anti-bot control — ADR-018).
+- [x] Keys (site key / secret) configured via env; correct domain in Cloudflare Turnstile.
 
 ---
 
 ## Deployment notes
 
 - Publishable key (site key) on frontend (env or build); secret key only on backend (env). In production, register domain in Cloudflare Turnstile. Different environments (staging/prod) may use different keys.
+- **Setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../../Setup/TURNSTILE_SETUP.md)

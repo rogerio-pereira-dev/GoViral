@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+
+class GrowthReportMail extends Mailable
+{
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public string $reportHtml,
+        string $locale
+    ) {
+        $this->locale = $locale;
+    }
+
+    public function envelope(): Envelope
+    {
+        $previousLocale = app()->getLocale();
+        app()->setLocale($this->locale);
+
+        $envelope = new Envelope(
+            subject: (string) __('report_mail.subject'),
+        );
+
+        app()->setLocale($previousLocale);
+
+        return $envelope;
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.growth-report',
+            text: 'emails.growth-report-text',
+            with: ['locale' => $this->locale],
+        );
+    }
+}

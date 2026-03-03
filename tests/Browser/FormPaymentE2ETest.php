@@ -1,67 +1,26 @@
 <?php
 
-use App\Models\AnalysisRequest;
+/**
+ * Payment uses real Stripe only (no env to bypass). Test cards: docs/Setup/STRIPE_SETUP.md
+ * (e.g. 4242 4242 4242 4242 success, 4000 0000 0000 0002 declined, 4000 0000 0000 9995 insufficient funds).
+ */
+it('loads payment form with card element when Stripe is configured', function () {
+    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+        $this->markTestSkipped('Stripe test keys (STRIPE_KEY, STRIPE_SECRET) required. See docs/Setup/STRIPE_SETUP.md.');
+    }
 
-it('completes payment flow with valid payment scenario', function () {
-    $page = visit('/start-growth?payment_scenario=valid');
-
-    $page
-        ->assertSee('What you get in your report')
-        ->fill('email', 'valid-payment@gmail.com')
-        ->fill('tiktok_username', '@validpayment')
-        ->fill('aspiring_niche', 'Lifestyle')
-        ->fill('bio', 'Valid payment browser scenario.')
-        ->fill('video_url_1', 'https://example.com/video-1')
-        ->fill('video_url_2', 'https://example.com/video-2')
-        ->fill('video_url_3', 'https://example.com/video-3')
-        ->fill('notes', 'Valid payment scenario')
-        ->click('[dusk="start-growth-submit"]')
-        ->assertSee('Your growth report will be sent to your email within 30 minutes.')
-        ->assertNoSmoke();
-
-    $this->assertDatabaseHas('analysis_requests', [
-        'email' => 'valid-payment@gmail.com',
-        'payment_status' => 'pending',
-        'stripe_payment_intent_id' => 'pi_test_init_valid',
-    ]);
-});
-
-it('shows declined card message and does not persist analysis request', function () {
-    $page = visit('/start-growth?payment_scenario=declined');
+    $page = visit('/start-growth');
+    $page->waitForEvent('networkidle');
 
     $page
         ->assertSee('What you get in your report')
-        ->fill('email', 'declined-payment@gmail.com')
-        ->fill('tiktok_username', '@declinedpayment')
+        ->fill('email', 'e2e@example.com')
+        ->fill('tiktok_username', '@e2e')
         ->fill('aspiring_niche', 'Lifestyle')
-        ->fill('bio', 'Declined payment browser scenario.')
-        ->fill('video_url_1', 'https://example.com/video-1')
-        ->fill('video_url_2', 'https://example.com/video-2')
-        ->fill('video_url_3', 'https://example.com/video-3')
-        ->fill('notes', 'Declined payment scenario')
-        ->click('[dusk="start-growth-submit"]')
-        ->assertSee('Your card was declined. Please use another card.')
-        ->assertNoSmoke();
+        ->fill('bio', 'E2E test.')
+        ->fill('video_url_1', 'https://example.com/v1')
+        ->fill('video_url_2', 'https://example.com/v2')
+        ->fill('video_url_3', 'https://example.com/v3');
 
-    expect(AnalysisRequest::where('email', 'declined-payment@gmail.com')->count())->toBe(0);
-});
-
-it('shows insufficient funds message and does not persist analysis request', function () {
-    $page = visit('/start-growth?payment_scenario=insufficient_funds');
-
-    $page
-        ->assertSee('What you get in your report')
-        ->fill('email', 'insufficient-payment@gmail.com')
-        ->fill('tiktok_username', '@insufficientpayment')
-        ->fill('aspiring_niche', 'Lifestyle')
-        ->fill('bio', 'Insufficient funds browser scenario.')
-        ->fill('video_url_1', 'https://example.com/video-1')
-        ->fill('video_url_2', 'https://example.com/video-2')
-        ->fill('video_url_3', 'https://example.com/video-3')
-        ->fill('notes', 'Insufficient funds scenario')
-        ->click('[dusk="start-growth-submit"]')
-        ->assertSee('Your card has insufficient funds.')
-        ->assertNoSmoke();
-
-    expect(AnalysisRequest::where('email', 'insufficient-payment@gmail.com')->count())->toBe(0);
+    $page->assertPresent('#stripe-card-element');
 });

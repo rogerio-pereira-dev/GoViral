@@ -16,6 +16,9 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Stripe setup (FDR-004.1) -> feat/stripe-setup`
 - `Queue and worker (FDR-006) -> feat/queue-worker`
 - `Horizon (FDR-006) -> feature/horizon`
+- `LLM (FDR-007) -> feat/llm`
+- `Email report (FDR-008) -> feat/email-report`
+- `Captcha (FDR-009) -> feat/captcha`
 
 ---
 
@@ -82,27 +85,28 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Install and configure Laravel Horizon (Redis queue dashboard + workers); enable Horizon in `docker/8.5/supervisord.conf`.
 - [x] Split Horizon into two supervisors (analysis + emails) so both queues run; config in `config/horizon.php`.
 
-### LLM (FDR-007.1, 007.2, 007.3)
+### LLM (FDR-007, 007.1, 007.2, 007.3) — done
 
-- FDR-007.1: Run spike: compare OpenAI, Gemini, Anthropic (cost, quality, latency); choose provider and approach (Laravel adapter vs external); create implementation ADR; update ADR-014; define interface in code (e.g. `generateReport(array $payload, string $locale): array`).
-- FDR-007.2: Implement adapter for chosen provider; env (LLM_API_KEY, LLM_MODEL); Job calls interface; timeout and API errors propagate for Job retry.
-- FDR-007.3: Build prompt from docs/LLM Prompt Template.md (placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE); call LLM via adapter; parse response into report sections; return structured content (or HTML) to Job; handle malformed response (last_error, no email); sanitize markdown→HTML if needed.
+- [x] FDR-007.1: Run spike: compare OpenAI, Gemini, Anthropic (cost, quality, latency); choose provider and approach (Laravel adapter vs external); create implementation ADR; ~~update ADR-014~~ use ADR-019; define interface in code (e.g. `generateReport(array $payload, string $locale): array`).
+- [x] FDR-007.2: Implement adapter for chosen provider; env (GEMINI_API_KEY per ADR-019); Job calls interface; timeout and API errors propagate for Job retry.
+- [x] FDR-007.3: Build prompt from docs/LLM Prompt Template.md (placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE); call LLM via adapter; parse response into report sections; return structured content (or HTML) to Job; handle malformed response (last_error, no email); sanitize markdown→HTML if needed.
 
 ### Email report (FDR-008)
 
-- Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
-- Create Mailable (e.g. GrowthReportMail): accepts report HTML and recipient email; body HTML; subject and plain text per branding/locale.
-- Job (FDR-005) will call this after building HTML; send failure triggers job retry; after 12 failures record removed (FDR-005).
+- [x] Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
+- [x] Create Mailable (e.g. GrowthReportMail): accepts report HTML and recipient email; body HTML; subject and plain text per branding/locale.
+- [x] Job (FDR-005) will queue the email after building HTML (use queue name "emails"); Job (report) failure triggers job retry; after 12 failures record removed (FDR-005).
 
 ### Job orchestration (FDR-005)
 
-- Implement ProcessAnalysisRequest job fully: load record (payment_status=paid only); set processing_status=processing, attempt_count++; call LLM integration (FDR-007); build report HTML (sections per PRD); send email (FDR-008); on success: processing_status=sent, delete record; on failure: last_error, release with backoff; after 12 attempts: mark failed, delete record (ADR-011).
-- Ensure job is only dispatched by webhook (FDR-004.3); only process paid records; handle already-deleted or non-paid gracefully.
+- [x] Implement ProcessAnalysisRequest job fully: load record (payment_status=paid only); set processing_status=processing, attempt_count++; call LLM integration (FDR-007); build report HTML (sections per PRD); send email (FDR-008); on success: processing_status=sent, delete record; on failure: last_error, release with backoff; after 12 attempts: mark failed, delete record (ADR-011). Use queue name "analysis".
+- [x] Ensure job is only dispatched by webhook (FDR-004.3); only process paid records; handle already-deleted or non-paid gracefully.
 
 ### Captcha (FDR-009)
 
-- Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
-- Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
+- Read **Setup tutorial:** [docs/Setup/TURNSTILE_SETUP.md](../Setup/TURNSTILE_SETUP.md)
+- [x] Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
+- [x] Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
 
 ### Scheduler cleanup (FDR-010)
 
