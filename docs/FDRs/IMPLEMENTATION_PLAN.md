@@ -83,6 +83,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Create job `ProcessAnalysisRequest` (stub or full): receives AnalysisRequest id; configure max 12 attempts, backoff (e.g. 5 min), job timeout (e.g. 120–300 s) for LLM + email.
 - [x] Document running worker: `php artisan queue:work` (or queue name); production: Laravel Cloud, supervisor, or equivalent.
 - [x] Install and configure Laravel Horizon (Redis queue dashboard + workers); enable Horizon in `docker/8.5/supervisord.conf`.
+- [x] Split Horizon into two supervisors (analysis + emails) so both queues run; config in `config/horizon.php`.
 
 ### LLM (FDR-007, 007.1, 007.2, 007.3) — done
 
