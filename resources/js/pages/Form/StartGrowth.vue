@@ -301,36 +301,7 @@ onMounted(async () => {
         <v-main class="start-growth-main">
             <v-container class="start-growth-container" max-width="1200">
                 <v-row class="ga-6" align="stretch">
-                    <v-col cols="12" md="5">
-                        <v-card class="copy-panel" elevation="12">
-                            <v-card-text class="d-flex flex-column fill-height">
-                                <h1 class="copy-title text-h3 font-weight-bold mb-4">
-                                    {{ translations.copy_title }}
-                                </h1>
-
-                                <p class="copy-lead text-medium-emphasis mb-8">
-                                    {{ translations.copy_lead }}
-                                </p>
-
-                                <h3 class="copy-section-title mb-3">
-                                    {{ translations.what_you_get_title }}
-                                </h3>
-
-                                <v-list class="copy-list mb-6" bg-color="transparent">
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_1" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_2" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_3" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_4" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_5" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_6" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_7" />
-                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_8" />
-                                </v-list>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-
-                    <v-col cols="12" md="7">
+                    <v-col cols="12" md="7" order="1" order-md="2">
                         <v-card elevation="12" class="form-panel">
                             <v-card-item>
                                 <v-card-title class="form-title font-weight-bold">
@@ -490,6 +461,35 @@ onMounted(async () => {
                                     </v-alert>
                                 </v-form>
 
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+
+                    <v-col cols="12" md="5" order="2" order-md="1">
+                        <v-card class="copy-panel" elevation="12">
+                            <v-card-text class="d-flex flex-column fill-height">
+                                <h1 class="copy-title text-h3 font-weight-bold mb-4">
+                                    {{ translations.copy_title }}
+                                </h1>
+
+                                <p class="copy-lead text-medium-emphasis mb-8">
+                                    {{ translations.copy_lead }}
+                                </p>
+
+                                <h3 class="copy-section-title mb-3">
+                                    {{ translations.what_you_get_title }}
+                                </h3>
+
+                                <v-list class="copy-list mb-6" bg-color="transparent">
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_1" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_2" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_3" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_4" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_5" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_6" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_7" />
+                                    <v-list-item prepend-icon="mdi-check-circle-outline" :title="translations.report_item_8" />
+                                </v-list>
                             </v-card-text>
                         </v-card>
                     </v-col>

@@ -8,3 +8,26 @@ it('shows the start growth page with no javascript errors', function () {
         ->assertSee('Start My Growth')
         ->assertNoSmoke();
 });
+
+it('shows form first then copy on mobile viewport', function () {
+    $page = visit('/start-growth');
+    $page->waitForEvent('networkidle');
+
+    $page
+        ->assertSee('What you get in your report')
+        ->resize(375, 667);
+
+    $page->assertScript(
+        "function() {
+            const form = document.querySelector('.form-panel');
+            const copy = document.querySelector('.copy-panel');
+            if (!form || !copy) return false;
+            const formTop = form.getBoundingClientRect().top;
+            const copyTop = copy.getBoundingClientRect().top;
+            return formTop < copyTop;
+        }",
+        true
+    );
+
+    $page->assertNoSmoke();
+});
