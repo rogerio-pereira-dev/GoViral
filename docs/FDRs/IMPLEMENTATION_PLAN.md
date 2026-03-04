@@ -96,6 +96,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Configure mail for AWS SES: MAIL_MAILER=ses, sender (e.g. report@goviral.you); document DKIM/SPF for production.
 - [x] Create Mailable (e.g. GrowthReportMail): accepts report HTML and recipient email; body HTML; subject and plain text per branding/locale.
 - [x] Job (FDR-005) will queue the email after building HTML (use queue name "emails"); Job (report) failure triggers job retry; after 12 failures record removed (FDR-005).
+- [x] Improve report email: branding styles (dark #121212, pink/teal), intro copy (confident, new chapter), full i18n (en/es/pt) for subject and body.
 
 ### Job orchestration (FDR-005)
 
