@@ -36,10 +36,23 @@ class GrowthReportMail extends Mailable
 
     public function content(): Content
     {
+        $previousLocale = app()->getLocale();
+        app()->setLocale($this->locale);
+
+        $with = [
+            'locale' => $this->locale,
+            'subject' => (string) __('report_mail.subject'),
+            'intro_heading' => (string) __('report_mail.intro_heading'),
+            'intro_body' => (string) __('report_mail.intro_body'),
+            'plain_intro' => (string) __('report_mail.plain_intro'),
+        ];
+
+        app()->setLocale($previousLocale);
+
         return new Content(
             view: 'emails.growth-report',
             text: 'emails.growth-report-text',
-            with: ['locale' => $this->locale],
+            with: $with,
         );
     }
 }

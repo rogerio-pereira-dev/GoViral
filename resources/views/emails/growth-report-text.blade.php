@@ -1,1 +1,5 @@
-{{ __('report_mail.plain_intro') }}
+{{ $intro_heading }}
+
+{{ $intro_body }}
+
+{{ $plain_intro }}
