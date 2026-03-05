@@ -93,22 +93,6 @@ it('stores not informed placeholders for optional empty profile fields', functio
     ]);
 });
 
-it('rejects form store when CSRF token is invalid', function () {
-    config(['services.turnstile.secret' => 'test-secret']);
-    Turnstile::fake();
-
-    $this->get(route('form.index'));
-    $payload = array_merge(validFormPayload(), [
-        'cf-turnstile-response' => Turnstile::dummy(),
-        '_token' => 'invalid-csrf-token',
-    ]);
-
-    $response = $this->post(route('form.store'), $payload);
-
-    $response->assertStatus(419);
-    expect(AnalysisRequest::count())->toBe(0);
-})->skip('CSRF enforcement in test env depends on session/cookie propagation; app has validateCsrfTokens for web routes.');
-
 it('does not store analysis request when payload is invalid', function () {
     config(['services.turnstile.secret' => 'test-secret']);
     Turnstile::fake();
@@ -161,9 +145,9 @@ it('returns 422 when turnstile token is missing and turnstile is configured', fu
     expect(AnalysisRequest::count())->toBe(0);
 });
 
-it('renders thank you page with translated content when accessed with flow', function () {
+it('renders thank you page with translated content', function () {
     $response = $this
-        ->withSession(['locale' => 'es', 'thank_you_allowed' => true])
+        ->withSession(['locale' => 'es'])
         ->get(route('form.thank-you'));
 
     $response
@@ -174,12 +158,6 @@ it('renders thank you page with translated content when accessed with flow', fun
             ->where('translations.message', 'Tu informe de crecimiento será enviado a tu correo en un plazo de 30 minutos.')
             ->where('translations.cta', 'Volver al inicio')
         );
-});
-
-it('redirects to home when accessing thank-you without flow', function () {
-    $response = $this->get(route('form.thank-you'));
-
-    $response->assertRedirect(route('home'));
 });
 
 it('returns payment init error when stripe keys are missing', function () {

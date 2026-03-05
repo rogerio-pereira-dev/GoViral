@@ -9,12 +9,6 @@ it('shows the start growth page with no javascript errors', function () {
         ->assertNoSmoke();
 });
 
-it('shows validation errors when form is submitted with invalid data', function () {
-    $this->markTestSkipped(
-        'Submit button is disabled until payment intent loads; E2E validation test would need to wait for button to be enabled (Stripe iframe/payment ready) or mock payment init.'
-    );
-});
-
 it('shows form first then copy on mobile viewport', function () {
     $page = visit('/start-growth');
     $page->waitForEvent('networkidle');

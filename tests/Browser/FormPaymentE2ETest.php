@@ -24,11 +24,3 @@ it('loads payment form with card element when Stripe is configured', function ()
 
     $page->assertPresent('#stripe-card-element');
 });
-
-it('shows payment declined error when card is declined', function () {
-    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
-        $this->markTestSkipped('Stripe test keys required for declined card flow. See docs/Setup/STRIPE_SETUP.md.');
-    }
-
-    $this->markTestSkipped('Declined card E2E requires Stripe Elements iframe handling (card 4000000000000002). Implement when frame helpers are available.');
-});
