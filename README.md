@@ -60,9 +60,10 @@ Then start Sail and install frontend dependencies:
 
 ```bash
 test -f .env || cp .env.example .env
-grep -q "^APP_KEY=" .env || ./vendor/bin/sail artisan key:generate
-grep -q "^APP_KEY=$" .env && ./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan key:generate
 ```
+
+Laravel will set `APP_KEY` only if it is empty; safe to run after any setup.
 
 Configure at least:
 
@@ -126,4 +127,4 @@ The test suite includes Browser tests. Ensure the frontend is built (or run `npm
 
 ## License
 
-MIT (see repository or `composer.json`).
+Proprietary. All rights reserved. No part of this software may be modified, reframed, resold, or redistributed without explicit permission. No open-source or derivative use is permitted.
