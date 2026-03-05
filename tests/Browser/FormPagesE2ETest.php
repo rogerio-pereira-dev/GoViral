@@ -9,9 +9,9 @@ it('shows the start growth page with no javascript errors', function () {
         ->assertNoSmoke();
 });
 
-it('shows validation errors when form is submitted with invalid data', function () {
+it('shows validation failed message when required fields are missing and does not show payment error', function () {
     $this->markTestSkipped(
-        'Submit button is disabled until payment intent loads; E2E validation test would need to wait for button to be enabled (Stripe iframe/payment ready) or mock payment init.'
+        'Submit button stays disabled until payment intent loads or fails; client-side validation runs on click. Feature tests cover 422 for missing aspiring_niche and validation_failed_message translation.'
     );
 });
 

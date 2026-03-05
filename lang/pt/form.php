@@ -41,6 +41,7 @@ return [
     'payment_insufficient_funds_error' => 'Seu cartão não tem saldo suficiente.',
     'payment_amount_label' => 'Valor',
     'turnstile_label' => 'Verificação de segurança',
+    'validation_failed_message' => 'A validação falhou. Verifique os campos acima.',
 
     'validation' => [
         'required' => 'O campo :attribute é obrigatório.',

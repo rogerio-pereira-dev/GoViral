@@ -45,6 +45,7 @@ const props = defineProps<{
         payment_declined_error: string;
         payment_insufficient_funds_error: string;
         payment_amount_label: string;
+        validation_failed_message: string;
     };
 }>();
 
@@ -70,6 +71,7 @@ const paymentIntentId = ref('');
 const amountDisplay = ref('');
 const turnstileToken = ref('');
 const turnstileReady = ref(false);
+const showValidationFailedMessage = ref(false);
 
 function csrfToken(): string {
     const tokenFromMeta = document
@@ -218,6 +220,7 @@ async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<voi
     if (response.status === 422) {
         const data = await response.json();
         form.setError(data.errors ?? {});
+        showValidationFailedMessage.value = true;
         paymentLoading.value = false;
 
         return;
@@ -240,10 +243,34 @@ async function submit(): Promise<void> {
     await submitPayment();
 }
 
+function validateRequiredFields(): boolean {
+    const errors: Record<string, string[]> = {};
+    const email = String(form.email ?? '').trim();
+    const aspiringNiche = String(form.aspiring_niche ?? '').trim();
+    if (! email) {
+        errors.email = [props.translations.validation_failed_message];
+    }
+    if (! aspiringNiche) {
+        errors.aspiring_niche = [props.translations.validation_failed_message];
+    }
+    if (Object.keys(errors).length > 0) {
+        form.setError(errors);
+        showValidationFailedMessage.value = true;
+        return false;
+    }
+    return true;
+}
+
 async function submitPayment(): Promise<void> {
     form.clearErrors();
     paymentError.value = '';
+    showValidationFailedMessage.value = false;
     paymentLoading.value = true;
+
+    if (! validateRequiredFields()) {
+        paymentLoading.value = false;
+        return;
+    }
 
     if (! stripeClient.value || ! cardElement.value || ! clientSecret.value) {
         paymentError.value = props.translations.payment_confirm_error;
@@ -261,7 +288,9 @@ async function submitPayment(): Promise<void> {
         },
     });
 
-    if (result.error || result.paymentIntent?.status !== 'succeeded') {
+    const status = result.paymentIntent?.status;
+    const success = status === 'succeeded' || status === 'processing';
+    if (result.error || ! success) {
         const stripeErrorCode = result.error?.code;
         const stripeDeclineCode = result.error?.decline_code;
 
@@ -327,6 +356,7 @@ onMounted(async () => {
                                                 required
                                                 persistent-hint
                                                 :hint="translations.email_hint"
+                                                dusk="start-growth-email"
                                             />
                                         </v-col>
 
@@ -337,6 +367,7 @@ onMounted(async () => {
                                                 :label="translations.tiktok_username_label"
                                                 :placeholder="translations.tiktok_username_placeholder"
                                                 :error-messages="form.errors.tiktok_username"
+                                                dusk="start-growth-tiktok"
                                             />
                                         </v-col>
 
@@ -451,6 +482,15 @@ onMounted(async () => {
                                         }}
                                     </v-btn>
 
+                                    <v-alert
+                                        v-if="showValidationFailedMessage || (form.errors && Object.keys(form.errors).length > 0)"
+                                        type="warning"
+                                        variant="tonal"
+                                        class="mt-4"
+                                        dusk="validation-failed-message"
+                                    >
+                                        {{ translations.validation_failed_message }}
+                                    </v-alert>
                                     <v-alert
                                         v-if="paymentError"
                                         type="error"

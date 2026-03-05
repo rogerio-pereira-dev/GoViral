@@ -39,14 +39,17 @@ it('renders form page translations for supported locales', function () {
         'en' => [
             'title' => 'Start My Growth',
             'what_you_get_title' => 'What you get in your report',
+            'validation_failed_message' => 'Validation failed. Please check the fields above.',
         ],
         'es' => [
             'title' => 'Comenzar mi crecimiento',
             'what_you_get_title' => 'Qué recibes en tu informe',
+            'validation_failed_message' => 'La validación falló. Revisa los campos anteriores.',
         ],
         'pt' => [
             'title' => 'Começar meu crescimento',
             'what_you_get_title' => 'O que você recebe no relatório',
+            'validation_failed_message' => 'A validação falhou. Verifique os campos acima.',
         ],
     ];
 
@@ -62,6 +65,7 @@ it('renders form page translations for supported locales', function () {
                 ->where('locale', $locale)
                 ->where('translations.title', $expected['title'])
                 ->where('translations.what_you_get_title', $expected['what_you_get_title'])
+                ->where('translations.validation_failed_message', $expected['validation_failed_message'])
             );
     }
 });

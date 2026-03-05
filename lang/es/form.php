@@ -41,6 +41,7 @@ return [
     'payment_insufficient_funds_error' => 'Tu tarjeta no tiene fondos suficientes.',
     'payment_amount_label' => 'Importe',
     'turnstile_label' => 'Comprobación de seguridad',
+    'validation_failed_message' => 'La validación falló. Revisa los campos anteriores.',
 
     'validation' => [
         'required' => 'El campo :attribute es obligatorio.',

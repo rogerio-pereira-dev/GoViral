@@ -41,6 +41,7 @@ return [
     'payment_insufficient_funds_error' => 'Your card has insufficient funds.',
     'payment_amount_label' => 'Amount',
     'turnstile_label' => 'Security check',
+    'validation_failed_message' => 'Validation failed. Please check the fields above.',
 
     'validation' => [
         'required' => 'The :attribute field is required.',
