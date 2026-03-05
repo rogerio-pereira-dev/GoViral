@@ -84,7 +84,7 @@ it('renders thank you page translations for supported locales', function () {
 
     foreach ($cases as $locale => $expected) {
         $response = $this
-            ->withSession(['locale' => $locale])
+            ->withSession(['locale' => $locale, 'thank_you_allowed' => true])
             ->get(route('form.thank-you'));
 
         $response

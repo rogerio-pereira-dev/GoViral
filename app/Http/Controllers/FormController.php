@@ -115,6 +115,8 @@ class FormController extends Controller
             'processing_status' => 'waiting_payment_confirmation',
         ]);
 
+        $request->session()->put('thank_you_allowed', true);
+
         return response()->json([
             'analysisRequestId' => $analysisRequest->id,
             'thankYouUrl' => route('form.thank-you'),

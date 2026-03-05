@@ -22,6 +22,13 @@ class LocaleController extends Controller
 
         $request->session()->put('locale', $locale);
 
+        $previous = url()->previous();
+        $appUrl = rtrim(config('app.url'), '/');
+
+        if (blank($previous) || ! str_starts_with($previous, $appUrl)) {
+            return redirect()->route('home');
+        }
+
         return redirect()->back();
     }
 }

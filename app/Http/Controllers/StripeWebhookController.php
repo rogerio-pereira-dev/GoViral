@@ -20,6 +20,10 @@ class StripeWebhookController extends Controller
             return response()->json(['error' => 'Webhook secret not configured'], 500);
         }
 
+        if (blank($request->header('Stripe-Signature'))) {
+            return response()->json(['error' => 'Missing Stripe-Signature header'], 403);
+        }
+
         try {
             WebhookSignature::verifyHeader(
                 $request->getContent(),
@@ -35,6 +39,11 @@ class StripeWebhookController extends Controller
 
         if (! is_array($payload) || empty($payload['type'])) {
             return response()->json(['error' => 'Invalid payload'], 400);
+        }
+
+        $data = $payload['data'] ?? null;
+        if (! is_array($data)) {
+            return response()->json(['received' => true], 200);
         }
 
         if ($payload['type'] === 'payment_intent.succeeded') {
