@@ -9,6 +9,20 @@ it('shows the start growth page with no javascript errors', function () {
         ->assertNoSmoke();
 });
 
+it('shows validation errors when form is submitted with invalid data', function () {
+    $page = visit('/start-growth');
+    $page->waitForEvent('networkidle');
+
+    $page
+        ->assertSee('What you get in your report')
+        ->fill('email', 'invalid-email')
+        ->fill('aspiring_niche', 'Lifestyle')
+        ->click('@start-growth-submit');
+
+    $page->assertSee('email', ignoreCase: true);
+    $page->assertNoSmoke();
+});
+
 it('shows form first then copy on mobile viewport', function () {
     $page = visit('/start-growth');
     $page->waitForEvent('networkidle');

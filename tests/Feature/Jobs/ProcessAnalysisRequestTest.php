@@ -31,6 +31,13 @@ it('returns early when analysis request is not found', function (): void {
     expect(AnalysisRequest::count())->toBe(0);
 });
 
+it('returns early when analysis request id is not a valid UUID', function (): void {
+    $job = new ProcessAnalysisRequest('not-a-valid-uuid');
+    $job->handle(app(GrowthReportService::class));
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
 it('returns early when analysis request is not paid', function (): void {
     $analysisRequest = AnalysisRequest::factory()->create([
         'payment_status' => 'pending',

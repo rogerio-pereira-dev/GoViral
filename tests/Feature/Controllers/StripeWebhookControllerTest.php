@@ -44,6 +44,57 @@ it('rejects request with wrong signature with 403', function (): void {
     $response->assertStatus(403);
 });
 
+it('returns 403 when Stripe-Signature header is missing', function (): void {
+    $body = json_encode(['type' => 'payment_intent.succeeded', 'data' => ['object' => ['id' => 'pi_xxx']]]);
+
+    $response = $this->call(
+        'POST',
+        route('stripe.webhook'),
+        [],
+        [],
+        [],
+        ['CONTENT_TYPE' => 'application/json'],
+        $body
+    );
+
+    $response->assertStatus(403)->assertJson(['error' => 'Missing Stripe-Signature header']);
+});
+
+it('returns 400 when body is not valid JSON', function (): void {
+    $body = 'not valid json';
+    $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
+
+    $response = $this->call(
+        'POST',
+        route('stripe.webhook'),
+        [],
+        [],
+        [],
+        ['CONTENT_TYPE' => 'application/json', 'HTTP_STRIPE_SIGNATURE' => $header],
+        $body
+    );
+
+    $response->assertStatus(400)->assertJson(['error' => 'Invalid payload']);
+});
+
+it('returns 200 when payload has type but data is not an array', function (): void {
+    $payload = ['type' => 'payment_intent.succeeded', 'data' => 'invalid'];
+    $body = json_encode($payload);
+    $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
+
+    $response = $this->call(
+        'POST',
+        route('stripe.webhook'),
+        [],
+        [],
+        [],
+        ['CONTENT_TYPE' => 'application/json', 'HTTP_STRIPE_SIGNATURE' => $header],
+        $body
+    );
+
+    $response->assertStatus(200)->assertJson(['received' => true]);
+});
+
 it('returns 500 when webhook secret is not configured', function (): void {
     config(['cashier.webhook.secret' => null]);
 
