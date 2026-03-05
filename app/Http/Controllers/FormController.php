@@ -53,6 +53,7 @@ class FormController extends Controller
             'payment_declined_error' => __('form.payment_declined_error'),
             'payment_insufficient_funds_error' => __('form.payment_insufficient_funds_error'),
             'payment_amount_label' => __('form.payment_amount_label'),
+            'validation_failed_message' => __('form.validation_failed_message'),
         ];
 
         return Inertia::render('Form/StartGrowth', [

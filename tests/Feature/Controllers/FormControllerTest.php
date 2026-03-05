@@ -130,6 +130,26 @@ it('does not store analysis request when payload is invalid', function () {
     expect(AnalysisRequest::count())->toBe(0);
 });
 
+it('returns 422 when aspiring_niche is missing so payment is never confirmed twice', function () {
+    config(['services.turnstile.secret' => 'test-secret']);
+    Turnstile::fake();
+
+    $payload = array_merge(validFormPayload(), [
+        'cf-turnstile-response' => Turnstile::dummy(),
+        'aspiring_niche' => '',
+    ]);
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['aspiring_niche']);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
 it('returns 422 when turnstile token is missing or invalid and turnstile is configured', function () {
     config(['services.turnstile.secret' => 'test-secret']);
     Turnstile::fake()->fail();
