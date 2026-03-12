@@ -22,6 +22,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Persist report before email (FDR-011) -> feat/persist-report`
 - `Conversion tracking + shared layout (FDR-012) -> feat/conversion-tracking-shared-layout`
 - `Auth and dashboard Vuetify branding (FDR-013) -> feat/auth-dashboard-vuetify-branding`
+- `Core discount coupons (FDR-014) -> feat/core-discount-coupons`
 
 ---
 
@@ -138,6 +139,16 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - Ensure existing auth and dashboard Feature tests pass.
 - Add or update Browser tests: smoke checks for auth routes (e.g. `/login`, `/forgot-password`) and for dashboard (guest redirect to login, authenticated sees dashboard); at least one E2E flow (e.g. login → dashboard). Use stable selectors (e.g. `data-test` or `dusk`) for login button and key fields.
 
+### Core discount coupons (FDR-014)
+
+- Add migration for `discount_coupons`: id (UUID), code (string, unique), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
+- Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
+- Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
+- Build core UI (Inertia/Vue) to list, create, edit, delete coupons; expiration type (never / after X days / after X uses); delete = soft delete.
+- Checkout at `/start-growth`: add optional coupon code input; backend validates (exists, not soft-deleted, not expired, not exhausted) and applies discount; store coupon id on analysis_requests. Webhook: increment coupon `times_used` when payment succeeded and coupon was used.
+- Scheduler: add job that soft-deletes invalid coupons (expired: `expires_at` is not null and `expires_at < now()`; exhausted: `max_uses` is not null and `times_used >= max_uses`). Schedule in Laravel Scheduler. Because it is soft delete, the row remains and analysis_requests never loses the reference.
+- Tests: Feature tests for CRUD (auth, validation, soft delete); checkout and webhook; scheduler soft-deletes invalid coupons and references remain valid.
+
 ### Scheduler cleanup (FDR-010) — closed
 
 - **N/A.** FDR-010 is closed (see docs/FDRs/Closed/). ADR-020: retain reports for case studies; no scheduled cleanup. Do not implement analysis:cleanup or scheduler for deletion.
@@ -147,7 +158,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout), FDR-013 (auth and dashboard Vuetify branding). Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/. For FDR-013: auth layout and all auth pages + Dashboard.vue refactor to Vuetify; Browser tests for auth/dashboard.
+- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout), FDR-013 (auth and dashboard Vuetify branding), FDR-014 (core discount coupons). Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/. For FDR-013: auth layout and all auth pages + Dashboard.vue refactor to Vuetify; Browser tests for auth/dashboard. For FDR-014: discount_coupons table and model (SoftDeletes); analysis_requests.discount_coupon_id; CRUD under /core/* (soft delete); checkout integration; webhook increments times_used; scheduler soft-deletes invalid coupons (expired + exhausted). No ON DELETE SET NULL; soft delete keeps reference.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
 - **Discovery (Browser tests):** If browser tests fail locally, ensure Vite dev server is running or run `npm run build` before tests.
