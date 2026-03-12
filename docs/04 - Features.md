@@ -1,226 +1,226 @@
-# GoViral — Lista de Features
+# GoViral — Feature List
 
-**Versão:** 1.0  
-**Data:** 2026-02-26  
-**Referências:** PRD, HLD, Branding Manual, ADRs
+**Version:** 1.0  
+**Date:** 2026-02-26  
+**References:** PRD, HLD, Branding Manual, ADRs
 
-Cada feature é descrita de forma isolada e completa; quando houver dependência, outras features são referenciadas.
+Each feature is described in isolation; when there are dependencies, other features are referenced.
 
 ---
 
-## 1. Configurar Vue + Vuetify conforme Branding Manual
+## 1. Configure Vue + Vuetify per Branding Manual
 
-**Objetivo:** Alinhar o frontend ao manual de identidade visual e de voz (docs/03 - Branding Manual.md).
+**Objective:** Align the frontend with the visual and voice identity manual (docs/03 - Branding Manual.md).
 
-**Escopo:**
-- Tema Vuetify em dark mode: background base #121212 (dark charcoal).
-- Cores primárias: Pink #FE2C55, Teal #25F4EE; acentos com neon glow em CTAs e destaques.
-- Tipografia: Space Grotesk (headlines), Inter (body); hierarquia clara e alto contraste.
-- UI: transições suaves, glow sutil em elementos interativos, micro-interações, layout limpo.
-- CTAs e microcopy conforme manual (ex.: "Start My Growth", "Generate My Growth Blueprint", "Analyzing Your Growth Potential...").
-- Favicon/logo: gradiente Teal→Pink, geometria limpa, movimento viral/relâmpago quando aplicável.
+**Scope:**
+- Vuetify theme in dark mode: base background #121212 (dark charcoal).
+- Primary colours: Pink #FE2C55, Teal #25F4EE; neon glow accents on CTAs and highlights.
+- Typography: Space Grotesk (headlines), Inter (body); clear hierarchy and high contrast.
+- UI: smooth transitions, subtle glow on interactive elements, micro-interactions, clean layout.
+- CTAs and microcopy per manual (e.g. "Start My Growth", "Generate My Growth Blueprint", "Analyzing Your Growth Potential...").
+- Favicon/logo: Teal→Pink gradient, clean geometry, viral/lightning motion where applicable.
 
-**Dependências:** Nenhuma (feature de fundação do frontend).  
-**Relacionada com:** Feature 2 (Landing Page), Feature 3 (Formulário).
+**Dependencies:** None (frontend foundation feature).  
+**Related to:** Feature 2 (Landing Page), Feature 3 (Form).
 
 ---
 
 ## 2. Landing Page
 
-**Objetivo:** Página de entrada que comunica valor, posicionamento e direciona para o formulário.
+**Objective:** Entry page that communicates value, positioning, and directs users to the form.
 
-**Escopo:**
-- Conteúdo alinhado ao Branding Manual: tagline "Engineered for Viral Growth", subheadline "Turn insight into viral momentum in minutes", tom sharp/fast/smart.
-- Apresentação do produto (análise de perfil TikTok, recomendações, plano de 30 dias).
-- CTA principal para iniciar o fluxo (leva ao formulário).
-- Seleção de idioma (locale) antes ou no início do preenchimento: English (en), Spanish (es), Portuguese (pt); valor repassado ao formulário e ao relatório (Feature 3, Feature 8).
-- Visual e componentes conforme Feature 1 (Vue + Vuetify + Branding).
+**Scope:**
+- Content aligned with Branding Manual: tagline "Engineered for Viral Growth", subheadline "Turn insight into viral momentum in minutes", tone sharp/fast/smart.
+- Product presentation (TikTok profile analysis, recommendations, 30-day plan).
+- Primary CTA to start the flow (leads to the form).
+- Language selection (locale) before or at the start of filling: English (en), Spanish (es), Portuguese (pt); value passed to form and report (Feature 3, Feature 8).
+- Visual and components per Feature 1 (Vue + Vuetify + Branding).
 
-**Dependências:** Feature 1 (configuração Vue + Vuetify).  
-**Relacionada com:** Feature 3 (Formulário), Feature 4 (Pagamento).
-
----
-
-## 3. Formulário
-
-**Objetivo:** Coletar dados do perfil TikTok e do usuário para gerar a análise e receber o relatório.
-
-**Escopo:**
-- Campos: email, TikTok username, bio atual, nicho desejado (aspiring niche), links dos últimos 3 vídeos, notas (opcional).
-- Campo ou seletor de idioma (locale): en | es | pt; deve estar preenchido (via landing ou no próprio form).
-- Validação de entrada (formato email, URLs válidas, tamanhos máximos); sanitização para evitar XSS/injection (ADR-017).
-- Cloudflare Turnstile (captcha) no formulário para mitigar bots (Feature 9; ADR-018); token enviado no submit e validado no backend.
-- Submit envia dados para o backend; backend persiste em `analysis_requests` (payment_status = pending), cria sessão Stripe Checkout e redireciona para o pagamento (Feature 4).
-- Mensagens e labels no idioma selecionado quando aplicável; microcopy conforme Branding (ex.: "Start My Growth").
-
-**Dependências:** Feature 1, Feature 2 (locale pode vir da landing).  
-**Relacionada com:** Feature 4 (Pagamento), Feature 9 (Captcha).
+**Dependencies:** Feature 1 (Vue + Vuetify setup).  
+**Related to:** Feature 3 (Form), Feature 4 (Payment).
 
 ---
 
-## 4. Pagamento
+## 3. Form
 
-**Objetivo:** Cobrar pagamento único (~US$ 20) em USD via Stripe e, após confirmação, disparar o processamento da análise.
+**Objective:** Collect TikTok profile and user data to generate the analysis and deliver the report.
 
-### 4.1 Instalar e configurar Stripe
+**Scope:**
+- Fields: email, TikTok username, current bio, aspiring niche, links to last 3 videos, notes (optional).
+- Language field or selector (locale): en | es | pt; must be set (via landing or on the form itself).
+- Input validation (email format, valid URLs, max lengths); sanitization to avoid XSS/injection (ADR-017).
+- Cloudflare Turnstile (captcha) on the form to mitigate bots (Feature 9; ADR-018); token sent on submit and validated on the backend.
+- Submit sends data to the backend; backend persists in `analysis_requests` (payment_status = pending), creates Stripe Checkout session and redirects to payment (Feature 4).
+- Messages and labels in the selected language where applicable; microcopy per Branding (e.g. "Start My Growth").
 
-- Laravel Cashier (Stripe) instalado e configurado.
-- Variáveis de ambiente: chaves Stripe (publishable, secret), webhook signing secret.
-- Produto/preço configurado no Stripe (pagamento único, USD); valor alvo validável (ex.: $20).
-- Stripe Checkout usado como fluxo de pagamento (hosted); URL de sucesso/cancelamento configuradas.
-- Webhook endpoint registrado no Stripe para o evento `checkout.session.completed`.
-
-### 4.2 Realizar pagamento
-
-- Após submit do formulário (Feature 3), backend cria registro em `analysis_requests` (pending), cria Stripe Checkout Session associada ao registro (metadata com id da requisição ou email) e retorna URL de redirect.
-- Usuário é redirecionado ao Stripe Checkout; conclui pagamento em USD.
-- Após pagamento, Stripe redireciona o usuário para URL de sucesso (página de “obrigado” ou “relatório em breve”); a confirmação efetiva é via webhook (4.3).
-
-### 4.3 Webhook de confirmação de pagamento
-
-- Endpoint recebe evento `checkout.session.completed`.
-- Validar assinatura do webhook (ADR-016); rejeitar com 4xx se inválida.
-- Identificar o registro em `analysis_requests` (via session_id ou metadata).
-- Atualizar `payment_status = paid`, `processing_status = queued`.
-- Enfileirar job (Feature 5) para processar a análise (inicialmente job “vazio” ou com passos reais conforme implementação do Job e da Integração LLM).
-- Responder 200 ao Stripe rapidamente (processamento é assíncrono — ADR-015).
-
-**Dependências:** Feature 3 (formulário gera o registro que será pago).  
-**Relacionada com:** Feature 5 (Job), Feature 6 (Fila e worker), ADR-007, ADR-016.
+**Dependencies:** Feature 1, Feature 2 (locale may come from landing).  
+**Related to:** Feature 4 (Payment), Feature 9 (Captcha).
 
 ---
 
-## 5. Job de processamento da análise
+## 4. Payment
 
-**Objetivo:** Orquestrar, em background, a geração do relatório e o envio por e-mail após pagamento confirmado.
+**Objective:** Charge one-time payment (~US$ 20) in USD via Stripe and, after confirmation, trigger analysis processing.
 
-**Escopo:**
-- Job único (ex.: `ProcessAnalysisRequest`) acionado pelo webhook (Feature 4.3).
-- Recebe o id (UUID) da requisição de análise; carrega registro de `analysis_requests` (somente payment_status = paid).
-- Atualiza `processing_status = processing`, incrementa `attempt_count`.
-- Chama a integração LLM (Feature 7) para obter o conteúdo da análise (texto estruturado ou blocos conforme template).
-- Monta o relatório HTML (estrutura do PRD: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan) usando o output do LLM.
-- Envia e-mail com o relatório em HTML (Feature 8).
-- Em sucesso: atualiza `processing_status = sent` e remove o registro (política de retenção — ADR-011).
-- Em falha: grava `last_error`, agenda retry (ex.: 5 min); após 12 falhas, marca como failed e remove registro (ADR-011). Configuração de retry via fila Laravel (Feature 6).
+### 4.1 Install and configure Stripe
 
-**Dependências:** Feature 4 (webhook enfileira o job), Feature 6 (fila/worker), Feature 7 (LLM), Feature 8 (e-mail).  
-**Relacionada com:** Feature 6, Feature 7, Feature 8, ADR-015, ADR-011.
+- Laravel Cashier (Stripe) installed and configured.
+- Environment variables: Stripe keys (publishable, secret), webhook signing secret.
+- Product/price configured in Stripe (one-time payment, USD); target amount configurable (e.g. $20).
+- Stripe Checkout used as payment flow (hosted); success/cancel URLs configured.
+- Webhook endpoint registered in Stripe for `checkout.session.completed` (or event used by in-page flow).
 
----
+### 4.2 Perform payment
 
-## 6. Configurar fila e worker
+- After form submit (Feature 3), backend creates record in `analysis_requests` (pending), creates Stripe Checkout Session linked to the record (metadata with request id or email) and returns redirect URL.
+- User is redirected to Stripe Checkout; completes payment in USD.
+- After payment, Stripe redirects user to success URL ("thank you" or "report on the way" page); actual confirmation is via webhook (4.3).
 
-**Objetivo:** Garantir processamento assíncrono e escalável dos jobs de análise (ADR-005, ADR-015).
+### 4.3 Payment confirmation webhook
 
-**Escopo:**
-- Driver de fila: Redis; conexão Redis configurada no Laravel.
-- Job `ProcessAnalysisRequest` (ou equivalente) implementado e enfileirado pelo webhook (Feature 4.3).
-- Worker(s) Laravel consumindo a fila (local ou em Laravel Cloud); configuração de timeout e de número de tentativas (máx. 12, backoff ex.: 5 min).
-- Em ambiente local: `php artisan queue:work`; em produção: processo(es) de worker garantidos pelo ambiente (Laravel Cloud ou supervisor/cron).
-- Monitoramento recomendado: falhas de job, tamanho da fila (operacional — HLD e ADR-017).
+- Endpoint receives `checkout.session.completed` event.
+- Validate webhook signature (ADR-016); reject with 4xx if invalid.
+- Identify the record in `analysis_requests` (via session_id or metadata).
+- Update `payment_status = paid`, `processing_status = queued`.
+- Enqueue job (Feature 5) to process the analysis (initially "empty" job or with real steps per Job and LLM integration implementation).
+- Respond 200 to Stripe quickly (processing is asynchronous — ADR-015).
 
-**Dependências:** Feature 4 (webhook), Feature 5 (definição do job).  
-**Relacionada com:** Feature 4, Feature 5, ADR-005.
+**Dependencies:** Feature 3 (form produces the record to be paid).  
+**Related to:** Feature 5 (Job), Feature 6 (Queue and worker), ADR-007, ADR-016.
 
 ---
 
-## 7. Integração com LLM
+## 5. Analysis processing job
 
-**Objetivo:** Obter do provedor de LLM o conteúdo estruturado da análise para montagem do relatório (Feature 5). Provedor e abordagem foram adiados (ADR-014); esta feature inclui pesquisa, decisão e implementação.
+**Objective:** Orchestrate, in background, report generation and email delivery after payment is confirmed.
 
-### 7.1 Pesquisa e decisão do provedor de LLM
+**Scope:**
+- Single job (e.g. `ProcessAnalysisRequest`) triggered by the webhook (Feature 4.3).
+- Receives the analysis request id (UUID); loads record from `analysis_requests` (only payment_status = paid).
+- Updates `processing_status = processing`, increments `attempt_count`.
+- Calls LLM integration (Feature 7) to get analysis content (structured text or blocks per template).
+- Builds HTML report (PRD structure: Executive Summary, Profile Score, Inferred Niche, Username Suggestions, Optimized Bio, Profile Optimization, Content Ideas, Viralization Tips, 30-Day Action Plan) using LLM output.
+- Sends email with report in HTML (Feature 8).
+- On success: update `processing_status = sent` and remove record (retention policy — ADR-011; see ADR-020 for current policy).
+- On failure: store `last_error`, schedule retry (e.g. 5 min); after 12 failures, mark as failed and remove record (ADR-011). Retry configured via Laravel queue (Feature 6).
 
-- Spike técnico: avaliar provedores candidatos (OpenAI, Gemini, Anthropic) em custo por requisição, qualidade de saída e latência.
-- Avaliar pacotes Laravel (adapters, SDKs) e padrão de integração: adapter/strategy no Laravel (interface `LlmClient`, seleção por env) vs. orquestração externa (ex.: n8n).
-- Produzir ADR de implementação (provedor escolhido + abordagem) e atualizar ADR-014 quando a decisão for tomada.
-- Definir contrato/interface no código (ex.: método que recebe payload do formulário + locale e retorna texto estruturado ou blocos) para manter arquitetura agnóstica até a decisão.
-
-### 7.2 Integração
-
-- Implementar cliente (adapter) para o provedor escolhido; configurar via variáveis de ambiente (API key, modelo, etc.).
-- Integrar ao pipeline do Job (Feature 5): chamada ao LLM com dados de `analysis_requests` e locale; tratamento de timeout e erros (retry no nível do job conforme Feature 6).
-
-### 7.3 Obter relatório
-
-- Montar prompt a partir do template (docs/LLM Prompt Template.md): placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE.
-- Enviar request ao LLM; parsear resposta para a estrutura esperada (seções do relatório).
-- Retornar conteúdo ao Job para geração do HTML e envio por e-mail (Feature 5, Feature 8).
-
-**Dependências:** ADR-014 (decisão adiada; 7.1 desbloqueia 7.2 e 7.3).  
-**Relacionada com:** Feature 5, Feature 8, docs/LLM Prompt Template.md.
+**Dependencies:** Feature 4 (webhook enqueues job), Feature 6 (queue/worker), Feature 7 (LLM), Feature 8 (email).  
+**Related to:** Feature 6, Feature 7, Feature 8, ADR-015, ADR-011.
 
 ---
 
-## 8. Envio de e-mail com relatório
+## 6. Configure queue and worker
 
-**Objetivo:** Entregar o relatório em HTML ao usuário por e-mail após processamento bem-sucedido (ADR-010).
+**Objective:** Ensure asynchronous, scalable processing of analysis jobs (ADR-005, ADR-015).
 
-**Escopo:**
-- Provedor: AWS SES; remetente configurado (ex.: report@goviral.you); domínio verificado, DKIM/SPF (HLD).
-- Laravel Mail: mailable que recebe o HTML do relatório e o email do destinatário; corpo da mensagem em HTML (não anexo).
-- Assunto e texto alternativo conforme branding; idioma pode refletir o locale da requisição.
-- Chamada feita pelo Job (Feature 5) após obter o conteúdo do LLM (Feature 7) e montar o HTML.
-- Tratamento de falha de envio: retry pelo job (Feature 6); após 12 falhas, registro é removido (ADR-011).
-- Não armazenar o relatório; não enviar PDF no MVP (ADR-010).
+**Scope:**
+- Queue driver: Redis; Redis connection configured in Laravel.
+- Job `ProcessAnalysisRequest` (or equivalent) implemented and enqueued by the webhook (Feature 4.3).
+- Laravel worker(s) consuming the queue (local or Laravel Cloud); timeout and number of attempts configured (max 12, backoff e.g. 5 min).
+- Local: `php artisan queue:work`; production: worker process(es) provided by the environment (Laravel Cloud or supervisor/cron).
+- Recommended monitoring: job failures, queue size (operational — HLD and ADR-017).
 
-**Dependências:** Feature 5 (Job orquestra), Feature 7 (conteúdo do relatório).  
-**Relacionada com:** Feature 5, Feature 7, ADR-006, ADR-010.
-
----
-
-## 9. Captcha no formulário (Cloudflare Turnstile)
-
-**Objetivo:** Reduzir submissões de bots no formulário sem limitar usuários reais (evitar impacto no faturamento).
-
-**Escopo:**
-- Integrar Cloudflare Turnstile no formulário (Feature 3): widget no frontend, token enviado no submit.
-- Backend valida o token com a API Turnstile antes de criar o registro em `analysis_requests` e a sessão Stripe Checkout; em falha de validação, rejeitar a submissão com mensagem adequada.
-- Turnstile atua como controle anti-bot; não aplicar rate limiting por IP/usuário para usuários reais (decisão de produto — ADR-018).
-
-**Dependências:** Feature 3 (formulário).  
-**Relacionada com:** Feature 3, ADR-018.
+**Dependencies:** Feature 4 (webhook), Feature 5 (job definition).  
+**Related to:** Feature 4, Feature 5, ADR-005.
 
 ---
 
-## 10. Scheduler para limpeza de dados — Closed
+## 7. LLM integration
+
+**Objective:** Obtain from the LLM provider the structured analysis content for report assembly (Feature 5). Provider and approach were deferred (ADR-014); this feature includes research, decision and implementation.
+
+### 7.1 LLM provider research and decision
+
+- Technical spike: evaluate candidate providers (OpenAI, Gemini, Anthropic) on cost per request, output quality and latency.
+- Evaluate Laravel packages (adapters, SDKs) and integration pattern: adapter/strategy in Laravel (interface `LlmClient`, selection via env) vs. external orchestration (e.g. n8n).
+- Produce implementation ADR (chosen provider + approach) and update ADR-014 when the decision is made.
+- Define contract/interface in code (e.g. method that receives form payload + locale and returns structured text or blocks) to keep architecture agnostic until the decision.
+
+### 7.2 Integration
+
+- Implement client (adapter) for the chosen provider; configure via environment variables (API key, model, etc.).
+- Integrate into the Job pipeline (Feature 5): call LLM with `analysis_requests` data and locale; handle timeout and errors (retry at job level per Feature 6).
+
+### 7.3 Get report
+
+- Build prompt from template (docs/LLM Prompt Template.md): placeholders USERNAME, BIO, NICHE, VIDEO_1/2/3, NOTES, LANGUAGE.
+- Send request to LLM; parse response into the expected structure (report sections).
+- Return content to the Job for HTML generation and email delivery (Feature 5, Feature 8).
+
+**Dependencies:** ADR-014 (decision deferred; 7.1 unblocks 7.2 and 7.3).  
+**Related to:** Feature 5, Feature 8, docs/LLM Prompt Template.md.
+
+---
+
+## 8. Email delivery with report
+
+**Objective:** Deliver the HTML report to the user by email after successful processing (ADR-010).
+
+**Scope:**
+- Provider: AWS SES; sender configured (e.g. report@goviral.you); domain verified, DKIM/SPF (HLD).
+- Laravel Mail: mailable that receives report HTML and recipient email; message body in HTML (not attachment).
+- Subject and plain text per branding; language may reflect request locale.
+- Called by the Job (Feature 5) after getting LLM content (Feature 7) and building the HTML.
+- Send failure handling: retry by job (Feature 6); after 12 failures record is removed (ADR-011).
+- Do not store the report; do not send PDF in MVP (ADR-010).
+
+**Dependencies:** Feature 5 (Job orchestrates), Feature 7 (report content).  
+**Related to:** Feature 5, Feature 7, ADR-006, ADR-010.
+
+---
+
+## 9. Captcha on form (Cloudflare Turnstile)
+
+**Objective:** Reduce bot submissions on the form without limiting real users (avoid impact on revenue).
+
+**Scope:**
+- Integrate Cloudflare Turnstile on the form (Feature 3): widget on frontend, token sent on submit.
+- Backend validates the token with the Turnstile API before creating the record in `analysis_requests` and the Stripe Checkout session; on validation failure, reject the submission with an appropriate message.
+- Turnstile acts as anti-bot control; do not apply rate limiting by IP/user for real users (product decision — ADR-018).
+
+**Dependencies:** Feature 3 (form).  
+**Related to:** Feature 3, ADR-018.
+
+---
+
+## 10. Scheduler for data cleanup — Closed
 
 **Status:** Closed. Analyses will be used as case studies; sent report content must be retained in the database. The scheduler cleanup approach is no longer desired. See ADR-020 (Data Retention — Retain for Case Studies) and FDR-011 (persist report before email). FDR-010 is in `docs/FDRs/Closed/`.
 
-**Objetivo (original):** Aplicar a política de retenção mínima (ADR-011): remover registros antigos ou em estado final.
+**Objective (original):** Apply the minimal retention policy (ADR-011): remove old or terminal-state records.
 
-**Escopo (original):** Laravel Scheduler, job de cleanup (sent, > 24h, failed com 12 tentativas).
+**Scope (original):** Laravel Scheduler, cleanup job (sent, > 24h, failed with 12 attempts).
 
 ---
 
 ## 11. Persist report in database before sending email
 
-**Objetivo:** Ensure the report content (HTML) sent by email is stored in the database for internal case studies (ADR-020).
+**Objective:** Ensure the report content (HTML) sent by email is stored in the database for internal case studies (ADR-020).
 
-**Escopo:**
+**Scope:**
 - New migration: column(s) to store report HTML (e.g. `report_html` on `analysis_requests`, or dedicated table).
 - In the Job (Feature 5): after generating report HTML, save it to the database **before** queueing/sending the email; then send the email. Order: generate HTML → persist → send.
 - The `analysis_requests` record is not deleted after successful send; it remains with the stored report for internal use.
 
-**Dependências:** Feature 5 (Job), Feature 7 (report content), Feature 8 (email).  
-**Relacionada com:** ADR-020, FDR-011.
+**Dependencies:** Feature 5 (Job), Feature 7 (report content), Feature 8 (email).  
+**Related to:** ADR-020, FDR-011.
 
 ---
 
-## Resumo de dependências entre features
+## Feature dependency summary
 
-| Feature | Depende de | Bloqueia / alimenta |
-|--------|------------|----------------------|
+| Feature | Depends on | Blocks / feeds |
+|--------|------------|----------------|
 | 1. Vue + Vuetify Branding | — | 2, 3 |
 | 2. Landing Page | 1 | 3 (locale), 4 |
-| 3. Formulário | 1, 2, 9 (captcha) | 4 |
-| 4. Pagamento (4.1–4.3) | 3 | 5, 6 |
-| 5. Job | 4, 6, 7, 8 | 8 (envio), 10 (limpeza lógica) |
-| 6. Fila e worker | 4, 5 | 5 |
-| 7. Integração LLM (7.1–7.3) | ADR-014 (decisão) | 5, 8 |
-| 8. E-mail com relatório | 5, 7 | — |
-| 9. Captcha Turnstile | 3 (formulário) | 3 |
-| 10. Scheduler limpeza | — | — (closed) |
+| 3. Form | 1, 2, 9 (captcha) | 4 |
+| 4. Payment (4.1–4.3) | 3 | 5, 6 |
+| 5. Job | 4, 6, 7, 8 | 8 (delivery), 10 (cleanup logic) |
+| 6. Queue and worker | 4, 5 | 5 |
+| 7. LLM integration (7.1–7.3) | ADR-014 (decision) | 5, 8 |
+| 8. Email with report | 5, 7 | — |
+| 9. Captcha Turnstile | 3 (form) | 3 |
+| 10. Scheduler cleanup | — | — (closed) |
 | 11. Persist report before email | 5, 7, 8 | — |
 
-Documento vivo: novas features ou refinamentos devem ser adicionados aqui e, quando for o caso, refletidos em ADRs.
+Living document: new features or refinements should be added here and, when applicable, reflected in ADRs.
