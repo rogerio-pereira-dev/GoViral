@@ -221,11 +221,25 @@ Each feature is described in isolation; when there are dependencies, other featu
 
 ---
 
+## 13. Auth and dashboard Vuetify branding
+
+**Objective:** Refactor the default Laravel auth pages and the core dashboard to use Vue + Vuetify and the same visual identity as the public pages (GoViral branding). English only; no i18n for these pages.
+
+**Scope:**
+- Auth pages: Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge. Replace Tailwind/reka-ui with a Vuetify auth layout (goviralDark theme, gradient background, centered card, GoViral logo) and Vuetify form components.
+- Dashboard: Refactor `Dashboard.vue` content to Vuetify (v-container, v-row, v-col, v-card) and same branding.
+- Automated tests: Feature tests (no regressions) and Browser tests (smoke for auth/dashboard routes, at least one E2E flow e.g. login → dashboard).
+
+**Dependencies:** Feature 1 (Vue + Vuetify branding).  
+**Related to:** ADR-003, ADR-022, FDR-013, docs/03 - Branding Manual.md.
+
+---
+
 ## Feature dependency summary
 
 | Feature | Depends on | Blocks / feeds |
 |--------|------------|----------------|
-| 1. Vue + Vuetify Branding | — | 2, 3 |
+| 1. Vue + Vuetify Branding | — | 2, 3, 13 |
 | 2. Landing Page | 1 | 3 (locale), 4 |
 | 3. Form | 1, 2, 9 (captcha) | 4 |
 | 4. Payment (4.1–4.3) | 3 | 5, 6 |
@@ -237,5 +251,6 @@ Each feature is described in isolation; when there are dependencies, other featu
 | 10. Scheduler cleanup | — | — (closed) |
 | 11. Persist report before email | 5, 7, 8 | — |
 | 12. Conversion tracking + shared layout | 2, 3 | — |
+| 13. Auth and dashboard Vuetify branding | 1 | — |
 
 Living document: new features or refinements should be added here and, when applicable, reflected in ADRs.
