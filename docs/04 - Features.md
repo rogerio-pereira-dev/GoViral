@@ -237,13 +237,14 @@ Each feature is described in isolation; when there are dependencies, other featu
 
 ## 14. Core discount coupons (admin CRUD and checkout)
 
-**Objective:** Allow logged-in users (admins) to create and manage discount coupons in the core panel (`/core/*`). Coupons are applied at checkout on `/start-growth` as a percentage (0–100%). Expiration: never, after X days (scheduler hard-deletes expired), or after X uses (decrement on payment confirmation, hard-delete when exhausted). CRUD is auth-protected; deletion is hard delete.
+**Objective:** Allow logged-in users (admins) to create and manage discount coupons in the core panel (`/core/*`). Coupons are applied at checkout on `/start-growth` as a percentage (0–100%). Expiration: never, after X days (invalid for new uses when expired), or after X uses (invalid when times_used >= max_uses). Coupons are **not hard-deleted** so that `analysis_requests` can reference the coupon used; `analysis_requests` is altered to include the coupon (e.g. `discount_coupon_id`). Every use increments `times_used`. CRUD is auth-protected; admin delete is soft delete or equivalent (no hard delete).
 
 **Scope:**
-- New table: id (UUID), code (unique), value (0–100), expires_at (nullable), max_uses (nullable), times_used.
-- CRUD under `/core/*` (auth); admin UI to list, create, edit, delete coupons; validation (unique code, value 0–100, expiration type).
-- Checkout: user enters code at `/start-growth`; backend validates and applies discount; on payment confirmation (webhook), record use and hard-delete if exhausted.
-- Scheduler job to hard-delete coupons where expires_at has passed.
+- New table discount_coupons: id (UUID), code (unique), value (0–100), expires_at (nullable), max_uses (nullable), times_used.
+- Alter analysis_requests: add nullable discount_coupon_id (FK to discount_coupons).
+- CRUD under `/core/*` (auth); admin UI to list, create, edit, delete coupons (soft delete or inactive flag; no hard delete); validation (unique code, value 0–100, expiration type).
+- Checkout: user enters code at `/start-growth`; backend validates and applies discount; store coupon id on analysis request; on payment confirmation (webhook), increment coupon `times_used` (for all coupon types).
+- No scheduler that deletes coupons; expired/exhausted coupons remain in DB and are only invalid for new uses.
 - Prevent unauthenticated creation or manipulation of coupons (authorization and abuse prevention).
 
 **Dependencies:** Feature 3 (Form), Feature 4 (Payment); core routes (auth).  
