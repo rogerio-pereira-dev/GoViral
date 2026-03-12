@@ -235,6 +235,22 @@ Each feature is described in isolation; when there are dependencies, other featu
 
 ---
 
+## 14. Core discount coupons (admin CRUD and checkout)
+
+**Objective:** Allow logged-in users (admins) to create and manage discount coupons in the core panel (`/core/*`). Coupons are applied at checkout on `/start-growth` as a percentage (0–100%). Expiration: never, after X days (scheduler hard-deletes expired), or after X uses (decrement on payment confirmation, hard-delete when exhausted). CRUD is auth-protected; deletion is hard delete.
+
+**Scope:**
+- New table: id (UUID), code (unique), value (0–100), expires_at (nullable), max_uses (nullable), times_used.
+- CRUD under `/core/*` (auth); admin UI to list, create, edit, delete coupons; validation (unique code, value 0–100, expiration type).
+- Checkout: user enters code at `/start-growth`; backend validates and applies discount; on payment confirmation (webhook), record use and hard-delete if exhausted.
+- Scheduler job to hard-delete coupons where expires_at has passed.
+- Prevent unauthenticated creation or manipulation of coupons (authorization and abuse prevention).
+
+**Dependencies:** Feature 3 (Form), Feature 4 (Payment); core routes (auth).  
+**Related to:** ADR-023, FDR-014.
+
+---
+
 ## Feature dependency summary
 
 | Feature | Depends on | Blocks / feeds |
@@ -252,5 +268,6 @@ Each feature is described in isolation; when there are dependencies, other featu
 | 11. Persist report before email | 5, 7, 8 | — |
 | 12. Conversion tracking + shared layout | 2, 3 | — |
 | 13. Auth and dashboard Vuetify branding | 1 | — |
+| 14. Core discount coupons | 3, 4 (core auth) | — |
 
 Living document: new features or refinements should be added here and, when applicable, reflected in ADRs.
