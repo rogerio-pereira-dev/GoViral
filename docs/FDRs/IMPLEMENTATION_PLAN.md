@@ -141,7 +141,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Core discount coupons (FDR-014)
 
-- Add migration for `discount_coupons`: id (UUID), code (string, unique), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), deleted_at (nullable), timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
+- Add migration for `discount_coupons`: id (UUID), code (string, unique), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
 - Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
 - Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
 - Build core UI (Inertia/Vue) to list, create, edit, delete coupons; expiration type (never / after X days / after X uses); delete = soft delete.
