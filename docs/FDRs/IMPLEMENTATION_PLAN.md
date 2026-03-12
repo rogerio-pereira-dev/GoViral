@@ -19,6 +19,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `LLM (FDR-007) -> feat/llm`
 - `Email report (FDR-008) -> feat/email-report`
 - `Captcha (FDR-009) -> feat/captcha`
+- `Persist report before email (FDR-011) -> feat/persist-report`
 
 ---
 
@@ -109,18 +110,24 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Add Cloudflare Turnstile widget to form page; send token (e.g. turnstile_token) on submit.
 - [x] Backend: before creating AnalysisRequest and Stripe session, validate token with Turnstile siteverify API; on failure return 422 with clear message; keys via env (site key frontend, secret backend).
 
-### Scheduler cleanup (FDR-010)
+### Persist report before email (FDR-011)
 
-- Create artisan command (e.g. `analysis:cleanup`): delete analysis_requests where processing_status=sent, or created_at > 24h, or (processing_status=failed and attempt_count >= 12).
-- Register in Laravel Scheduler (e.g. daily or every 6h); document cron `* * * * * php artisan schedule:run` for production.
-- Optional: log count of deleted rows.
+- Add migration: column `report_html` (longText, nullable) and optionally `sent_at` (timestamp, nullable) on `analysis_requests`.
+- Add `report_html` and `sent_at` to AnalysisRequest `$fillable`; cast `sent_at` to `datetime`.
+- In ProcessAnalysisRequest: after generating HTML, save `report_html` (and set `sent_at` when sending) to the record **before** calling Mail::queue; then queue email; then set `processing_status = sent`. On retry, if `report_html` is already set, use it and only resend email (no duplicate LLM call).
+- Ensure record is not deleted after successful send (already the case; remove or keep commented delete per ADR-020).
+- Add tests: persistence before send; persisted HTML matches email content; record retained with `processing_status = sent`; retry after persist only resends email (idempotent).
+
+### Scheduler cleanup (FDR-010) — closed
+
+- **N/A.** FDR-010 is closed (see docs/FDRs/Closed/). ADR-020: retain reports for case studies; no scheduled cleanup. Do not implement analysis:cleanup or scheduler for deletion.
 
 ---
 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** Welcome is the Laravel starter page (not GoViral landing). Frontend uses Tailwind + reka-ui (no Vuetify). No analysis_requests, Stripe, job, LLM, or mail report. No lang files for en/es/pt. Queue default is database — change to Redis per ADR-005.
-- **Order:** Implement in the order above; within each section order by dependency (e.g. migration before model; Stripe config before webhook; LLM interface before adapter; adapter before Job full implementation).
-- **Discovery (FDR-004.1):** The last Stripe setup task "Register webhook in Stripe" is an ops/dashboard step (not code); the webhook endpoint code is done in FDR-004.3. Consider marking it done or deferring to deployment docs.
-- **Discovery (Browser tests):** 14 browser tests fail on `main` (pre-existing, unrelated to queue work). They need Vite dev server or a Chrome environment fix. Tracked here for visibility.
+- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. The only remaining FDR in ToDo is FDR-011 (persist report before email). Job already does not delete the record after send; missing: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests.
+- **Order:** Implement in the order above; within each section order by dependency.
+- **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
+- **Discovery (Browser tests):** If browser tests fail locally, ensure Vite dev server is running or run `npm run build` before tests.

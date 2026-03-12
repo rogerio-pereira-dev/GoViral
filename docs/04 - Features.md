@@ -183,20 +183,27 @@ Cada feature é descrita de forma isolada e completa; quando houver dependência
 
 ---
 
-## 10. Scheduler para limpeza de dados
+## 10. Scheduler para limpeza de dados — Closed
 
-**Objetivo:** Aplicar a política de retenção mínima (ADR-011): remover registros antigos ou em estado final que não devem permanecer no banco.
+**Status:** Closed. Analyses will be used as case studies; sent report content must be retained in the database. The scheduler cleanup approach is no longer desired. See ADR-020 (Data Retention — Retain for Case Studies) and FDR-011 (persist report before email). FDR-010 is in `docs/FDRs/Closed/`.
+
+**Objetivo (original):** Aplicar a política de retenção mínima (ADR-011): remover registros antigos ou em estado final.
+
+**Escopo (original):** Laravel Scheduler, job de cleanup (sent, > 24h, failed com 12 tentativas).
+
+---
+
+## 11. Persist report in database before sending email
+
+**Objetivo:** Ensure the report content (HTML) sent by email is stored in the database for internal case studies (ADR-020).
 
 **Escopo:**
-- Laravel Scheduler (cron) configurado no ambiente (local e produção).
-- Job agendado (ex.: diário ou a cada X horas) que:
-  - Remove registros de `analysis_requests` com `processing_status = sent` (entrega já feita) — se ainda existirem por algum atraso na deleção no Job.
-  - Remove registros com mais de 24 horas de idade (`created_at`), independentemente do status.
-  - Remove registros que atingiram 12 falhas de processamento (processing_status = failed e attempt_count >= 12), se não forem já removidos pelo próprio Job.
-- Logs opcionais para auditoria (quantidade de registros removidos); sem repositório de relatórios (ADR-011, ADR-012).
+- New migration: column(s) to store report HTML (e.g. `report_html` on `analysis_requests`, or dedicated table).
+- In the Job (Feature 5): after generating report HTML, save it to the database **before** queueing/sending the email; then send the email. Order: generate HTML → persist → send.
+- The `analysis_requests` record is not deleted after successful send; it remains with the stored report for internal use.
 
-**Dependências:** Nenhuma (feature operacional).  
-**Relacionada com:** Feature 5 (Job também remove em sucesso/falha), ADR-011.
+**Dependências:** Feature 5 (Job), Feature 7 (report content), Feature 8 (email).  
+**Relacionada com:** ADR-020, FDR-011.
 
 ---
 
@@ -213,6 +220,7 @@ Cada feature é descrita de forma isolada e completa; quando houver dependência
 | 7. Integração LLM (7.1–7.3) | ADR-014 (decisão) | 5, 8 |
 | 8. E-mail com relatório | 5, 7 | — |
 | 9. Captcha Turnstile | 3 (formulário) | 3 |
-| 10. Scheduler limpeza | — | — |
+| 10. Scheduler limpeza | — | — (closed) |
+| 11. Persist report before email | 5, 7, 8 | — |
 
 Documento vivo: novas features ou refinamentos devem ser adicionados aqui e, quando for o caso, refletidos em ADRs.

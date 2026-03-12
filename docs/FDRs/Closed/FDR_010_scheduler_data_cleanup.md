@@ -1,7 +1,10 @@
 # FDR-010: Scheduler for data cleanup
 
+**Status:** Closed  
 **Feature:** 10  
-**Reference:** docs/04 - Features.md, ADR-011
+**Reference:** docs/04 - Features.md, ADR-011 (superseded by ADR-020)
+
+**Reason for closure:** Analyses will be used as case studies. Retaining sent report content in the database is required; the scheduled cleanup approach (removing records after send or by age) is no longer desired. The report will be persisted before sending the email (see FDR-011), and records will be retained for internal use. See ADR-020 (Data Retention — Retain for Case Studies).
 
 ---
 
