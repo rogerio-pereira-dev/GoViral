@@ -207,6 +207,20 @@ Each feature is described in isolation; when there are dependencies, other featu
 
 ---
 
+## 12. Conversion tracking for ads and shared public layout
+
+**Objective:** Enable conversion tracking for paid ads (Google, Meta, TikTok) and ensure a consistent public layout so tracking (e.g. GTM) loads on all funnel pages.
+
+**Scope:**
+- **Conversion model:** Lead = visit to `/`; conversion starts at `/start-growth`, completes at `/thank-you`. These three moments are used to link ads (ADR-021).
+- **Shared layout:** All public funnel pages (`/`, `/start-growth`, `/thank-you`) use the same header (logo, language selector) and footer (GoViral tagline) as the landing page. A single public layout component wraps these pages so the GTM container loads once and consistently.
+- **Tracking:** Pixels and conversion tags are configured in Google Tag Manager (GTM), not hardcoded in the app. The app provides stable URLs and the shared layout; setup guides in `docs/Setup/` describe how to implement Facebook, Google, and TikTok conversions and how to configure GTM.
+
+**Dependencies:** Feature 2 (Landing), Feature 3 (Form).  
+**Related to:** ADR-021, FDR-012, docs/Setup/ (Facebook, Google, TikTok, GTM guides).
+
+---
+
 ## Feature dependency summary
 
 | Feature | Depends on | Blocks / feeds |
@@ -222,5 +236,6 @@ Each feature is described in isolation; when there are dependencies, other featu
 | 9. Captcha Turnstile | 3 (form) | 3 |
 | 10. Scheduler cleanup | — | — (closed) |
 | 11. Persist report before email | 5, 7, 8 | — |
+| 12. Conversion tracking + shared layout | 2, 3 | — |
 
 Living document: new features or refinements should be added here and, when applicable, reflected in ADRs.

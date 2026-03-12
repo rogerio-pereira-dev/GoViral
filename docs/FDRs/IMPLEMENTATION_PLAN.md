@@ -20,6 +20,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Email report (FDR-008) -> feat/email-report`
 - `Captcha (FDR-009) -> feat/captcha`
 - `Persist report before email (FDR-011) -> feat/persist-report`
+- `Conversion tracking + shared layout (FDR-012) -> feat/conversion-tracking-shared-layout`
 
 ---
 
@@ -118,6 +119,16 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - Ensure record is not deleted after successful send (already the case; remove or keep commented delete per ADR-020).
 - Add tests: persistence before send; persisted HTML matches email content; record retained with `processing_status = sent`; retry after persist only resends email (idempotent).
 
+### Conversion tracking and shared public layout (FDR-012)
+
+- Create a reusable **public layout** Vue component (e.g. `PublicLayout.vue` or `LandingLayout.vue`) that contains: (1) the same app bar as the landing (logo "GoViral", language selector en/es/pt); (2) the same footer as the landing (GoViral branding, tagline); (3) a default slot for main content.
+- Refactor **Landing.vue** to use this layout; move hero and sections into the layout’s default slot.
+- Refactor **Form/StartGrowth.vue** to use this layout; form and payment UI in the layout’s default slot.
+- Refactor **Form/ThankYou.vue** to use this layout; thank-you message and CTA in the layout’s default slot.
+- Add GTM snippet to the public layout (or root Blade/Inertia template): head script + noscript in body; use `GTM_ID` from env (optional); if not set, do not inject GTM.
+- Ensure no visual or behavioural regressions; run existing browser and smoke tests (landing, form, thank-you, locale).
+- Setup guides already exist in `docs/Setup/`: facebook-conversion-setup.md, google-conversion-setup.md, tiktok-conversion-setup.md, gtm-pixels-conversion-setup.md (no code change required for this bullet).
+
 ### Scheduler cleanup (FDR-010) — closed
 
 - **N/A.** FDR-010 is closed (see docs/FDRs/Closed/). ADR-020: retain reports for case studies; no scheduled cleanup. Do not implement analysis:cleanup or scheduler for deletion.
@@ -127,7 +138,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. The only remaining FDR in ToDo is FDR-011 (persist report before email). Job already does not delete the record after send; missing: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests.
+- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout). Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
 - **Discovery (Browser tests):** If browser tests fail locally, ensure Vite dev server is running or run `npm run build` before tests.
