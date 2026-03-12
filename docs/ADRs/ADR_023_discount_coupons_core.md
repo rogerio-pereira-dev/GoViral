@@ -10,16 +10,16 @@ The product owner wants logged-in users (admins) to create discount coupons that
 
 ## Decision
 
-1. **Model and storage:** A new table (e.g. `discount_coupons`) stores coupons with: `id` (UUID), `code` (string, unique, indexed), `value` (integer 0–100, percentage), and fields to support expiration: e.g. `expires_at` (nullable timestamp for "after X days"), `max_uses` (nullable integer for "after X uses"), `times_used` (integer, default 0). "Never expires" is represented by both `expires_at` and `max_uses` null. The **analysis_requests** table is altered to include the coupon used (e.g. `discount_coupon_id` nullable foreign key to `discount_coupons.id`).
+1. **Model and storage:** A new table (e.g. `discount_coupons`) stores coupons with: `id` (UUID), `code` (string, unique, indexed), `value` (integer 0–100, percentage), expiration fields (`expires_at`, `max_uses`, `times_used`), and `deleted_at` (nullable timestamp for soft delete). The **analysis_requests** table is altered to include the coupon used (e.g. `discount_coupon_id` nullable foreign key to `discount_coupons.id`). Because deletion is always soft delete, the coupon row is never removed and the reference is never lost; no ON DELETE SET NULL is required.
 
 2. **Usage tracking:** Every time a coupon is used (after payment is confirmed in the webhook), **increment** the coupon’s `times_used` field, regardless of expiration type (never, after X days, or after X uses). This allows consistent analytics and keeps the coupon record for reference from `analysis_requests`.
 
 3. **Expiration behaviour:**
-   - **Never expires:** `expires_at` and `max_uses` null; coupon remains valid for new uses until an admin disables or soft-deletes it (if such behaviour is implemented).
-   - **After X days:** Set `expires_at` at creation; when the current time is past `expires_at`, the coupon is **invalid for new uses** at checkout. The coupon row is **not deleted**; expired coupons remain in the database so that existing `analysis_requests` rows can still reference them.
-   - **After X uses:** Set `max_uses` at creation; when `times_used >= max_uses`, the coupon is **invalid for new uses** at checkout. The coupon row is **not deleted**; exhausted coupons remain in the database for the same reason.
+   - **Never expires:** `expires_at` and `max_uses` null; coupon remains valid for new uses until an admin soft-deletes it.
+   - **After X days:** Set `expires_at` at creation; when the current time is past `expires_at`, the coupon is **invalid for new uses** at checkout. A scheduler job will soft-delete such expired coupons (and exhausted ones) so the list stays manageable; the row remains in the database (soft delete), so `analysis_requests` never loses the reference.
+   - **After X uses:** Set `max_uses` at creation; when `times_used >= max_uses`, the coupon is **invalid for new uses** at checkout. The scheduler also soft-deletes exhausted coupons; the row remains (soft delete), so the reference is preserved.
 
-4. **No hard delete:** Coupons are **not hard-deleted** (no physical row removal). Admin "delete" may be implemented as soft delete (e.g. `deleted_at`) or as a status flag to hide from lists and invalidate for new uses; the row remains for referential integrity with `analysis_requests`. There is no scheduler job that deletes coupon rows; expiration and exhaustion only make the coupon invalid for new checkout uses.
+4. **Soft delete only:** Coupons are never hard-deleted (no physical row removal). Admin "delete" and the scheduler use **soft delete** (e.g. `deleted_at`). The row stays in the database, so `analysis_requests.discount_coupon_id` always keeps a valid reference; no ON DELETE SET NULL is needed. A **scheduler** job runs periodically and soft-deletes invalid coupons: (1) expired (`expires_at` is not null and `expires_at < now()`), (2) exhausted (`max_uses` is not null and `times_used >= max_uses`). Queries for "active" coupons (e.g. at checkout, in admin list) exclude soft-deleted rows.
 
 5. **Authorization:** All coupon CRUD is under routes prefixed with `/core/`, protected by the same `auth` (and optionally `verified`) middleware as the rest of the core. No coupon creation or update is possible from public or unauthenticated requests.
 
