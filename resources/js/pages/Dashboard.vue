@@ -2,7 +2,6 @@
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,31 +16,70 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div
-            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
-        >
-            <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-            </div>
-            <div
-                class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
-            >
-                <PlaceholderPattern />
-            </div>
-        </div>
+        <v-container class="dashboard-content py-6">
+            <v-row class="mb-4">
+                <v-col cols="12" md="4">
+                    <v-card
+                        class="dashboard-card"
+                        elevation="0"
+                        rounded="xl"
+                    >
+                        <v-card-text class="text-body-1 text-medium-emphasis">
+                            Welcome to your dashboard.
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                    <v-card
+                        class="dashboard-card"
+                        elevation="0"
+                        rounded="xl"
+                    >
+                        <v-card-text class="text-body-1 text-medium-emphasis">
+                            Content area
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                    <v-card
+                        class="dashboard-card"
+                        elevation="0"
+                        rounded="xl"
+                    >
+                        <v-card-text class="text-body-1 text-medium-emphasis">
+                            Content area
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="12">
+                    <v-card
+                        class="dashboard-card dashboard-card-main"
+                        elevation="0"
+                        rounded="xl"
+                    >
+                        <v-card-text class="text-body-1 text-medium-emphasis">
+                            Main content
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </AppLayout>
 </template>
+
+<style scoped>
+.dashboard-content {
+    max-width: 100%;
+}
+
+.dashboard-card {
+    border: 1px solid rgba(254, 44, 85, 0.25);
+    background: rgba(18, 18, 18, 0.6);
+}
+
+.dashboard-card-main {
+    min-height: 200px;
+}
+</style>

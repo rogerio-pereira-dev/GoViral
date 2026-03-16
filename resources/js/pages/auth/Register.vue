@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import TextLink from '@/components/TextLink.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 </script>
@@ -12,15 +11,20 @@ import { login } from '@/routes';
     >
         <Head title="Register" />
 
-        <div class="space-y-4 text-center">
-            <p class="text-sm text-muted-foreground">
+        <div class="d-flex flex-column align-center gap-4 text-center">
+            <p class="text-body-2 text-medium-emphasis">
                 Registration is currently disabled. If you already have an account, you can log in
                 below.
             </p>
 
-            <TextLink :href="login()" class="underline underline-offset-4">
+            <v-btn
+                :href="login()"
+                color="primary"
+                variant="tonal"
+                data-test="register-login-link"
+            >
                 Log in
-            </TextLink>
+            </v-btn>
         </div>
     </AuthBase>
 </template>
