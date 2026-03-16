@@ -49,24 +49,37 @@ class ProcessAnalysisRequest implements ShouldQueue
         ]);
 
         try {
-            $payload = [
-                'tiktok_username' => $analysisRequest->tiktok_username,
-                'bio' => $analysisRequest->bio,
-                'aspiring_niche' => $analysisRequest->aspiring_niche,
-                'video_url_1' => $analysisRequest->video_url_1,
-                'video_url_2' => $analysisRequest->video_url_2,
-                'video_url_3' => $analysisRequest->video_url_3,
-                'notes' => $analysisRequest->notes,
-            ];
             $locale = $analysisRequest->locale ?? 'en';
-            $reportHtml = $reportService->generateReportHtml($payload, $locale);
+            $reportHtml = $analysisRequest->report_html;
+
+            if ($reportHtml === null) {
+                $payload = [
+                    'tiktok_username' => $analysisRequest->tiktok_username,
+                    'bio' => $analysisRequest->bio,
+                    'aspiring_niche' => $analysisRequest->aspiring_niche,
+                    'video_url_1' => $analysisRequest->video_url_1,
+                    'video_url_2' => $analysisRequest->video_url_2,
+                    'video_url_3' => $analysisRequest->video_url_3,
+                    'notes' => $analysisRequest->notes,
+                ];
+
+                $reportHtml = $reportService->generateReportHtml($payload, $locale);
+
+                $analysisRequest->update([
+                    'report_html' => $reportHtml,
+                    'last_error' => null,
+                ]);
+            }
 
             Mail::to($analysisRequest->email)
                 ->queue(
                     (new GrowthReportMail($reportHtml, $locale))->onQueue('emails')
                 );
 
-            $analysisRequest->update(['processing_status' => 'sent']);
+            $analysisRequest->update([
+                'processing_status' => 'sent',
+                'sent_at' => now(),
+            ]);
 
             /*
              * After some thinking, i'm not sure if i want to delete the reports

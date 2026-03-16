@@ -117,9 +117,9 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 - [x] Add migration: column `report_html` (longText, nullable) and optionally `sent_at` (timestamp, nullable) on `analysis_requests`.
 - [x] Add `report_html` and `sent_at` to AnalysisRequest `$fillable`; cast `sent_at` to `datetime`.
-- In ProcessAnalysisRequest: after generating HTML, save `report_html` (and set `sent_at` when sending) to the record **before** calling Mail::queue; then queue email; then set `processing_status = sent`. On retry, if `report_html` is already set, use it and only resend email (no duplicate LLM call).
-- Ensure record is not deleted after successful send (already the case; remove or keep commented delete per ADR-020).
-- Add tests: persistence before send; persisted HTML matches email content; record retained with `processing_status = sent`; retry after persist only resends email (idempotent).
+- [x] In ProcessAnalysisRequest: after generating HTML, save `report_html` (and set `sent_at` when sending) to the record **before** calling Mail::queue; then queue email; then set `processing_status = sent`. On retry, if `report_html` is already set, use it and only resend email (no duplicate LLM call).
+- [x] Ensure record is not deleted after successful send (already the case; remove or keep commented delete per ADR-020).
+- [x] Add tests: persistence before send; persisted HTML matches email content; record retained with `processing_status = sent`; retry after persist only resends email (idempotent).
 
 ### Conversion tracking and shared public layout (FDR-012)
 
