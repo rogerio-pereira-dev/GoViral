@@ -31,6 +31,8 @@ class AnalysisRequest extends Model
         'processing_status',
         'attempt_count',
         'last_error',
+        'report_html',
+        'sent_at',
     ];
 
     /**
@@ -38,6 +40,7 @@ class AnalysisRequest extends Model
      */
     protected $casts = [
         'attempt_count' => 'integer',
+        'sent_at' => 'datetime',
     ];
 
     protected $keyType = 'string';
