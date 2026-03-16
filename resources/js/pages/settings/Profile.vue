@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import DeleteUser from '@/components/DeleteUser.vue';
-import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
-import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem } from '@/types';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { edit } from '@/routes/profile';
@@ -35,96 +30,140 @@ const user = page.props.auth.user;
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head title="Profile settings" />
 
-        <h1 class="sr-only">Profile Settings</h1>
+        <v-container class="py-4">
+            <v-row justify="center">
+                <v-col cols="12" md="8">
+                    <v-card
+                        class="goviral-card"
+                        elevation="6"
+                    >
+                        <v-card-title class="text-h6">
+                            Profile information
+                        </v-card-title>
+                        <v-card-subtitle class="mb-4">
+                            Update your name and email address
+                        </v-card-subtitle>
 
-        <SettingsLayout>
-            <div class="flex flex-col space-y-6">
-                <Heading
-                    variant="small"
-                    title="Profile information"
-                    description="Update your name and email address"
-                />
-
-                <Form
-                    v-bind="ProfileController.update.form()"
-                    class="space-y-6"
-                    v-slot="{ errors, processing, recentlySuccessful }"
-                >
-                    <div class="grid gap-2">
-                        <Label for="name">Name</Label>
-                        <Input
-                            id="name"
-                            class="mt-1 block w-full"
-                            name="name"
-                            :default-value="user.name"
-                            required
-                            autocomplete="name"
-                            placeholder="Full name"
-                        />
-                        <InputError class="mt-2" :message="errors.name" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            class="mt-1 block w-full"
-                            name="email"
-                            :default-value="user.email"
-                            required
-                            autocomplete="username"
-                            placeholder="Email address"
-                        />
-                        <InputError class="mt-2" :message="errors.email" />
-                    </div>
-
-                    <div v-if="mustVerifyEmail && !user.email_verified_at">
-                        <p class="-mt-4 text-sm text-muted-foreground">
-                            Your email address is unverified.
-                            <Link
-                                :href="send()"
-                                as="button"
-                                class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                        <v-card-text>
+                            <Form
+                                v-bind="ProfileController.update.form()"
+                                v-slot="{ errors, processing, recentlySuccessful }"
                             >
-                                Click here to resend the verification email.
-                            </Link>
-                        </p>
+                                <v-row dense>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            id="name"
+                                            name="name"
+                                            label="Name"
+                                            :model-value="user.name"
+                                            autocomplete="name"
+                                            placeholder="Full name"
+                                            color="primary"
+                                            variant="outlined"
+                                            density="comfortable"
+                                            :error-messages="errors.name"
+                                        />
+                                        <InputError :message="errors.name" />
+                                    </v-col>
 
-                        <div
-                            v-if="status === 'verification-link-sent'"
-                            class="mt-2 text-sm font-medium text-green-600"
-                        >
-                            A new verification link has been sent to your email
-                            address.
-                        </div>
-                    </div>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            label="Email address"
+                                            :model-value="user.email"
+                                            autocomplete="username"
+                                            placeholder="Email address"
+                                            color="primary"
+                                            variant="outlined"
+                                            density="comfortable"
+                                            :error-messages="errors.email"
+                                        />
+                                        <InputError :message="errors.email" />
+                                    </v-col>
+                                </v-row>
 
-                    <div class="flex items-center gap-4">
-                        <Button
-                            :disabled="processing"
-                            data-test="update-profile-button"
-                            >Save</Button
-                        >
+                                <div
+                                    v-if="mustVerifyEmail && !user.email_verified_at"
+                                    class="mt-4"
+                                >
+                                    <p class="text-body-2 text-medium-emphasis">
+                                        Your email address is unverified.
+                                        <Link
+                                            :href="send()"
+                                            as="button"
+                                            class="text-primary text-decoration-underline ms-1"
+                                        >
+                                            Click here to resend the verification email.
+                                        </Link>
+                                    </p>
 
-                        <Transition
-                            enter-active-class="transition ease-in-out"
-                            enter-from-class="opacity-0"
-                            leave-active-class="transition ease-in-out"
-                            leave-to-class="opacity-0"
-                        >
-                            <p
-                                v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
-                            >
-                                Saved.
-                            </p>
-                        </Transition>
-                    </div>
-                </Form>
-            </div>
+                                    <v-alert
+                                        v-if="status === 'verification-link-sent'"
+                                        type="success"
+                                        density="comfortable"
+                                        variant="tonal"
+                                        class="mt-3"
+                                    >
+                                        A new verification link has been sent to your email
+                                        address.
+                                    </v-alert>
+                                </div>
 
-            <DeleteUser />
-        </SettingsLayout>
+                                <div class="d-flex align-center gap-4 mt-6">
+                                    <v-btn
+                                        type="submit"
+                                        color="primary"
+                                        :loading="processing"
+                                        :disabled="processing"
+                                        data-test="update-profile-button"
+                                    >
+                                        Save
+                                    </v-btn>
+
+                                    <Transition
+                                        enter-active-class="transition-opacity"
+                                        enter-from-class="opacity-0"
+                                        leave-active-class="transition-opacity"
+                                        leave-to-class="opacity-0"
+                                    >
+                                        <p
+                                            v-show="recentlySuccessful"
+                                            class="text-body-2 text-medium-emphasis"
+                                        >
+                                            Saved.
+                                        </p>
+                                    </Transition>
+                                </div>
+                            </Form>
+                        </v-card-text>
+                    </v-card>
+
+                    <v-card
+                        class="goviral-card mt-6"
+                        elevation="6"
+                    >
+                        <v-card-title class="text-h6">
+                            Danger zone
+                        </v-card-title>
+                        <v-card-subtitle class="mb-3">
+                            Permanently delete your account and all associated data.
+                        </v-card-subtitle>
+                        <v-card-text>
+                            <DeleteUser />
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </AppLayout>
 </template>
+
+<style scoped>
+.goviral-card {
+    background: rgba(18, 18, 18, 0.96);
+    border-radius: 18px;
+    border: 1px solid rgba(254, 44, 85, 0.3);
+}
+</style>
