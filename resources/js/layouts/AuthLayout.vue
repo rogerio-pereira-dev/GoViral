@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import AppLogo from '@/components/AppLogo.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -23,9 +23,9 @@ defineProps<{
                             class="d-flex flex-column align-center text-decoration-none"
                         >
                             <div class="mb-2">
-                                <AppLogoIcon class="auth-logo" />
+                                <AppLogo />
                             </div>
-                            <span class="visually-hidden">{{ title }}</span>
+                            <span class="visually-hidden">GoViral</span>
                         </Link>
 
                         <div class="text-center mt-2">
