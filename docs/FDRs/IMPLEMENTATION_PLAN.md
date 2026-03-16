@@ -133,7 +133,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Auth and dashboard Vuetify branding (FDR-013)
 
-- Create a Vuetify auth layout: `v-app` theme goviralDark, same background as thank-you/start-growth (radial gradients, #121212), centered card with GoViral logo and default slot; used by all auth pages. No Tailwind/reka-ui in this layout.
+- [x] Create a Vuetify auth layout: `v-app` theme goviralDark, same background as thank-you/start-growth (radial gradients, #121212), centered card with GoViral logo and default slot; used by all auth pages. No Tailwind/reka-ui in this layout.
 - Refactor auth pages to use the new layout and Vuetify components: Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge. Use `v-text-field`, `v-btn`, `v-checkbox`, `v-alert`; keep Inertia Form and route helpers. Copy English only.
 - Refactor Dashboard.vue content to Vuetify: `v-container`, `v-row`, `v-col`, `v-card`; match GoViral branding (dark theme, card borders). Sidebar/wrapper as needed.
 - Ensure existing auth and dashboard Feature tests pass.
