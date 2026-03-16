@@ -1,13 +1,32 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { dashboard } from '@/routes';
+import { edit as editProfile } from '@/routes/profile';
 import { type BreadcrumbItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
+
+const primaryNav = [
+    {
+        title: 'Dashboard',
+        href: dashboard().url,
+        icon: 'mdi-view-dashboard-outline',
+    },
+];
+
+const footerNav = [
+    {
+        title: 'Profile',
+        href: editProfile().url,
+        icon: 'mdi-account-circle-outline',
+    },
+];
 </script>
 
 <template>
@@ -36,13 +55,52 @@ withDefaults(defineProps<Props>(), {
 
                 <v-list nav density="comfortable">
                     <v-list-item
-                        v-for="item in breadcrumbs"
+                        v-for="item in primaryNav"
                         :key="item.title"
-                        :to="item.href"
-                        :title="item.title"
                         color="primary"
                         class="goviral-nav-item"
-                    />
+                    >
+                        <Link
+                            :href="item.href"
+                            class="goviral-nav-link"
+                            data-test="sidebar-dashboard-link"
+                        >
+                            <v-icon
+                                v-if="item.icon"
+                                :icon="item.icon"
+                                size="20"
+                                class="mr-3"
+                            />
+                            {{ item.title }}
+                        </Link>
+                    </v-list-item>
+                </v-list>
+
+                <v-spacer />
+
+                <v-divider class="mx-4 mb-2" />
+
+                <v-list nav density="comfortable">
+                    <v-list-item
+                        v-for="item in footerNav"
+                        :key="item.title"
+                        color="primary"
+                        class="goviral-nav-item goviral-nav-footer-item"
+                    >
+                        <Link
+                            :href="item.href"
+                            class="goviral-nav-link"
+                            data-test="sidebar-profile-link"
+                        >
+                            <v-icon
+                                v-if="item.icon"
+                                :icon="item.icon"
+                                size="20"
+                                class="mr-3"
+                            />
+                            {{ item.title }}
+                        </Link>
+                    </v-list-item>
                 </v-list>
             </v-navigation-drawer>
 
@@ -89,5 +147,16 @@ withDefaults(defineProps<Props>(), {
 
 .goviral-nav-item :deep(.v-list-item-title) {
     font-weight: 500;
+}
+
+.goviral-nav-link {
+    display: inline-flex;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+}
+
+.goviral-nav-link:hover {
+    color: rgb(var(--v-theme-primary));
 }
 </style>

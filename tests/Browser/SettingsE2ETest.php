@@ -10,7 +10,7 @@ it('allows updating profile information via the settings page', function () {
 
     $this->actingAs($user);
 
-    $page = visit('/settings/profile');
+    $page = visit('/core/settings/profile');
 
     $page
         ->assertSee('Profile information')
@@ -29,7 +29,7 @@ it('allows updating the password via the settings page', function () {
 
     $this->actingAs($user);
 
-    $page = visit('/settings/password');
+    $page = visit('/core/settings/password');
 
     $page
         ->assertSee('Update password')
@@ -47,7 +47,7 @@ it('shows the two-factor authentication settings page', function () {
 
     $this->actingAs($user);
 
-    $page = visit('/settings/two-factor');
+    $page = visit('/core/settings/two-factor');
 
     $page->assertNoSmoke();
 });
@@ -57,7 +57,7 @@ it('shows the appearance settings page', function () {
 
     $this->actingAs($user);
 
-    $page = visit('/settings/appearance');
+    $page = visit('/core/settings/appearance');
 
     $page
         ->assertSee('Appearance settings')

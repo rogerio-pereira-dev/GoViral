@@ -28,11 +28,11 @@ it('runs smoke checks for authenticated web routes without JavaScript errors', f
 
     $pages = visit([
         '/core/dashboard',
-        '/settings',
-        '/settings/profile',
-        '/settings/password',
-        '/settings/appearance',
-        '/settings/two-factor',
+        '/core/settings',
+        '/core/settings/profile',
+        '/core/settings/password',
+        '/core/settings/appearance',
+        '/core/settings/two-factor',
     ]);
 
     $pages->assertNoSmoke();

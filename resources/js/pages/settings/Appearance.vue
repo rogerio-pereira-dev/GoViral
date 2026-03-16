@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
+import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { edit } from '@/routes/appearance';
 
@@ -16,56 +17,26 @@ const breadcrumbItems: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head title="Appearance settings" />
 
-        <v-container class="py-4">
-            <v-row justify="center">
-                <v-col cols="12" md="8">
-                    <v-card
-                        class="goviral-card"
-                        elevation="6"
-                    >
-                        <v-card-title class="text-h6">
-                            Appearance settings
-                        </v-card-title>
-                        <v-card-subtitle class="mb-4">
-                            Update your account's appearance preferences.
-                        </v-card-subtitle>
+        <SettingsLayout>
+            <v-card
+                class="goviral-card"
+                elevation="6"
+            >
+                <v-card-title class="text-h6">
+                    Appearance settings
+                </v-card-title>
+                <v-card-subtitle class="mb-4">
+                    Appearance is fixed to the GoViral dark theme.
+                </v-card-subtitle>
 
-                        <v-card-text>
-                            <v-row dense>
-                                <v-col cols="12">
-                                    <v-switch
-                                        name="dark_mode"
-                                        label="Use dark mode"
-                                        color="secondary"
-                                        inset
-                                    />
-                                </v-col>
-
-                                <v-col cols="12">
-                                    <v-select
-                                        name="accent_color"
-                                        label="Accent color"
-                                        :items="[
-                                            { title: 'Pink (default)', value: 'pink' },
-                                            { title: 'Teal', value: 'teal' },
-                                        ]"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        color="primary"
-                                        model-value="pink"
-                                    />
-                                </v-col>
-                            </v-row>
-
-                            <p class="mt-4 text-body-2 text-medium-emphasis">
-                                These settings are visual only and do not affect your reports
-                                or email content.
-                            </p>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-container>
+                <v-card-text>
+                    <p class="mt-4 text-body-2 text-medium-emphasis">
+                        Theme customization is currently disabled. The dashboard always uses
+                        the GoViral dark layout defined in the branding manual.
+                    </p>
+                </v-card-text>
+            </v-card>
+        </SettingsLayout>
     </AppLayout>
 </template>
 
