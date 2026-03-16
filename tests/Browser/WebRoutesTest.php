@@ -12,6 +12,15 @@ it('runs smoke checks for all public web routes without JavaScript errors', func
     $pages->assertNoSmoke();
 });
 
+it('runs smoke checks for auth routes without JavaScript errors', function () {
+    $pages = visit([
+        '/login',
+        '/forgot-password',
+    ]);
+
+    $pages->assertNoSmoke();
+});
+
 it('runs smoke checks for authenticated web routes without JavaScript errors', function () {
     $user = \App\Models\User::factory()->create();
 
@@ -19,11 +28,11 @@ it('runs smoke checks for authenticated web routes without JavaScript errors', f
 
     $pages = visit([
         '/core/dashboard',
-        '/settings',
-        '/settings/profile',
-        '/settings/password',
-        '/settings/appearance',
-        '/settings/two-factor',
+        '/core/settings',
+        '/core/settings/profile',
+        '/core/settings/password',
+        '/core/settings/appearance',
+        '/core/settings/two-factor',
     ]);
 
     $pages->assertNoSmoke();

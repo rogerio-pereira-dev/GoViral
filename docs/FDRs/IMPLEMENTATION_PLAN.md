@@ -131,13 +131,13 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - Ensure no visual or behavioural regressions; run existing browser and smoke tests (landing, form, thank-you, locale).
 - Setup guides already exist in `docs/Setup/`: facebook-conversion-setup.md, google-conversion-setup.md, tiktok-conversion-setup.md, gtm-pixels-conversion-setup.md (no code change required for this bullet).
 
-### Auth and dashboard Vuetify branding (FDR-013)
+### Auth and dashboard Vuetify branding (FDR-013) — done
 
-- Create a Vuetify auth layout: `v-app` theme goviralDark, same background as thank-you/start-growth (radial gradients, #121212), centered card with GoViral logo and default slot; used by all auth pages. No Tailwind/reka-ui in this layout.
-- Refactor auth pages to use the new layout and Vuetify components: Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge. Use `v-text-field`, `v-btn`, `v-checkbox`, `v-alert`; keep Inertia Form and route helpers. Copy English only.
-- Refactor Dashboard.vue content to Vuetify: `v-container`, `v-row`, `v-col`, `v-card`; match GoViral branding (dark theme, card borders). Sidebar/wrapper as needed.
-- Ensure existing auth and dashboard Feature tests pass.
-- Add or update Browser tests: smoke checks for auth routes (e.g. `/login`, `/forgot-password`) and for dashboard (guest redirect to login, authenticated sees dashboard); at least one E2E flow (e.g. login → dashboard). Use stable selectors (e.g. `data-test` or `dusk`) for login button and key fields.
+- [x] Create a Vuetify auth layout: `v-app` theme goviralDark, same background as thank-you/start-growth (radial gradients, #121212), centered card with GoViral logo and default slot; used by all auth pages. No Tailwind/reka-ui in this layout.
+- [x] Refactor auth pages to use the new layout and Vuetify components: Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge. Use `v-text-field`, `v-btn`, `v-checkbox`, `v-alert`; keep Inertia Form and route helpers. Copy English only.
+- [x] Refactor Dashboard.vue content to Vuetify: `v-container`, `v-row`, `v-col`, `v-card`; match GoViral branding (dark theme, card borders). Sidebar/wrapper as needed.
+- [x] Ensure existing auth and dashboard Feature tests pass.
+- [x] Add or update Browser tests: smoke checks for auth routes (e.g. `/login`, `/forgot-password`) and for dashboard (guest redirect to login, authenticated sees dashboard); at least one E2E flow (e.g. login → dashboard). Use stable selectors (e.g. `data-test` or Pest `@selector`) for login button and key fields.
 
 ### Core discount coupons (FDR-014)
 
@@ -158,7 +158,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout), FDR-013 (auth and dashboard Vuetify branding), FDR-014 (core discount coupons). Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/. For FDR-013: auth layout and all auth pages + Dashboard.vue refactor to Vuetify; Browser tests for auth/dashboard. For FDR-014: discount_coupons table and model (SoftDeletes); analysis_requests.discount_coupon_id; CRUD under /core/* (soft delete); checkout integration; webhook increments times_used; scheduler soft-deletes invalid coupons (expired + exhausted). No ON DELETE SET NULL; soft delete keeps reference.
+- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout), FDR-014 (core discount coupons). FDR-013 (auth and dashboard Vuetify branding) is done. Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/. For FDR-013: auth layout and all auth pages + Dashboard.vue refactor to Vuetify; Browser tests for auth/dashboard. For FDR-014: discount_coupons table and model (SoftDeletes); analysis_requests.discount_coupon_id; CRUD under /core/* (soft delete); checkout integration; webhook increments times_used; scheduler soft-deletes invalid coupons (expired + exhausted). No ON DELETE SET NULL; soft delete keeps reference.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
 - **Discovery (Browser tests):** If browser tests fail locally, ensure Vite dev server is running or run `npm run build` before tests.

@@ -1,16 +1,27 @@
-<script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
-    <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
-    >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold"
-            >Laravel Starter Kit</span
-        >
+    <div class="app-logo">
+        <span class="app-logo-text">Go</span>
+        <span class="app-logo-text app-logo-accent">Viral</span>
     </div>
 </template>
+
+<style scoped>
+.app-logo {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.app-logo-text {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.app-logo-accent {
+    color: #fe2c55;
+    margin-left: 0.15rem;
+}
+</style>

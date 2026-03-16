@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { toUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
@@ -15,18 +11,17 @@ const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: editProfile(),
+        icon: 'mdi-account-circle-outline',
     },
     {
         title: 'Password',
         href: editPassword(),
+        icon: 'mdi-lock-outline',
     },
     {
         title: 'Two-Factor Auth',
         href: show(),
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
+        icon: 'mdi-shield-key-outline',
     },
 ];
 
@@ -34,43 +29,61 @@ const { isCurrentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
-        <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
-        />
-
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
+    <v-container class="py-4">
+        <v-row>
+            <v-col cols="12" md="3">
+                <v-list
+                    nav
+                    density="comfortable"
                     aria-label="Settings"
+                    class="goviral-settings-nav"
                 >
-                    <Button
+                    <v-list-item
                         v-for="item in sidebarNavItems"
-                        :key="toUrl(item.href)"
-                        variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentUrl(item.href) },
-                        ]"
-                        as-child
+                        :key="item.title"
+                        color="primary"
+                        :class="{ 'goviral-settings-nav-active': isCurrentUrl(item.href) }"
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
+                        <Link
+                            :href="item.href"
+                            class="goviral-settings-nav-link"
+                            :data-test="`settings-nav-${item.title.toLowerCase().replace(/\\s+/g, '-')}`"
+                        >
+                            <v-icon
+                                v-if="item.icon"
+                                :icon="item.icon"
+                                size="20"
+                                class="mr-3"
+                            />
                             {{ item.title }}
                         </Link>
-                    </Button>
-                </nav>
-            </aside>
+                    </v-list-item>
+                </v-list>
+            </v-col>
 
-            <Separator class="my-6 lg:hidden" />
-
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+            <v-col cols="12" md="9">
+                <section>
                     <slot />
                 </section>
-            </div>
-        </div>
-    </div>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
+
+<style scoped>
+.goviral-settings-nav {
+    background: transparent;
+}
+
+.goviral-settings-nav-link {
+    display: inline-flex;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+}
+
+.goviral-settings-nav-active .goviral-settings-nav-link {
+    color: rgb(var(--v-theme-primary));
+    font-weight: 600;
+}
+</style>

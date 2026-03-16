@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/password/confirm';
 </script>
@@ -21,32 +17,33 @@ import { store } from '@/routes/password/confirm';
             reset-on-success
             v-slot="{ errors, processing }"
         >
-            <div class="space-y-6">
-                <div class="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
+            <div class="d-flex flex-column gap-4">
+                <div>
+                    <v-text-field
                         id="password"
-                        type="password"
                         name="password"
-                        class="mt-1 block w-full"
-                        required
+                        type="password"
+                        label="Password"
                         autocomplete="current-password"
                         autofocus
+                        variant="outlined"
+                        density="comfortable"
+                        color="primary"
+                        :error-messages="errors.password"
                     />
-
                     <InputError :message="errors.password" />
                 </div>
 
-                <div class="flex items-center">
-                    <Button
-                        class="w-full"
-                        :disabled="processing"
-                        data-test="confirm-password-button"
-                    >
-                        <Spinner v-if="processing" />
-                        Confirm Password
-                    </Button>
-                </div>
+                <v-btn
+                    type="submit"
+                    block
+                    color="primary"
+                    :loading="processing"
+                    :disabled="processing"
+                    data-test="confirm-password-button"
+                >
+                    Confirm Password
+                </v-btn>
             </div>
         </Form>
     </AuthLayout>

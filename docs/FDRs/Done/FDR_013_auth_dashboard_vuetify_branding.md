@@ -19,17 +19,17 @@
 
 - **Visual:** Visit `/login`, `/register`, `/forgot-password`, reset-password, verify-email, confirm-password, two-factor challenge, and `/core/dashboard`; confirm they use Vuetify, goviralDark theme, and match the branding (background #121212, primary/secondary colors, typography, CTAs with subtle glow where applicable). No Tailwind-only styling on these pages.
 - **Functional:** Existing auth and dashboard behaviour unchanged: login, logout, password reset, email verification, two-factor challenge, password confirmation, and dashboard access for authenticated users. All existing Feature tests pass.
-- **Browser:** Smoke checks for auth routes (e.g. `/login`, `/forgot-password`, `/core/dashboard` when guest vs authenticated) and at least one E2E flow (e.g. guest visits dashboard → redirect to login → log in → see dashboard). Selectors (e.g. `data-test` or `dusk`) remain stable for auth buttons and key form fields.
+- **Browser:** Smoke checks for auth routes (e.g. `/login`, `/forgot-password`, `/core/dashboard` when guest vs authenticated) and at least one E2E flow (e.g. guest visits dashboard → redirect to login → log in → see dashboard). Selectors (e.g. `data-test` or Pest Browser `@selector`) remain stable for auth buttons and key form fields.
 
 ---
 
 ## Acceptance criteria
 
-- [ ] Auth layout is implemented with Vuetify (`v-app`, goviralDark theme, gradient background, centered card, GoViral logo). No Tailwind/reka-ui in auth layout.
-- [ ] All auth pages (Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge) use Vuetify components and the new auth layout; copy in English only.
-- [ ] Dashboard page uses Vuetify for content (e.g. `v-container`, `v-row`, `v-col`, `v-card`) and matches GoViral branding.
-- [ ] Existing auth and dashboard Feature tests pass (no regressions).
-- [ ] Browser tests cover auth and dashboard: smoke checks for relevant routes and at least one E2E flow (e.g. login → dashboard). Auth routes included in smoke suite where appropriate.
+- [x] Auth layout is implemented with Vuetify (`v-app`, goviralDark theme, gradient background, centered card, GoViral logo). No Tailwind/reka-ui in auth layout.
+- [x] All auth pages (Login, Register, ForgotPassword, ResetPassword, VerifyEmail, ConfirmPassword, TwoFactorChallenge) use Vuetify components and the new auth layout; copy in English only.
+- [x] Dashboard page uses Vuetify for content (e.g. `v-container`, `v-row`, `v-col`, `v-card`) and matches GoViral branding.
+- [x] Existing auth and dashboard Feature tests pass (no regressions).
+- [x] Browser tests cover auth and dashboard: smoke checks for relevant routes and at least one E2E flow (e.g. login → dashboard). Auth routes included in smoke suite where appropriate.
 
 ---
 

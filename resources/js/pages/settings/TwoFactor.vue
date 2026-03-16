@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { ShieldBan, ShieldCheck } from 'lucide-vue-next';
 import { onUnmounted, ref } from 'vue';
-import Heading from '@/components/Heading.vue';
 import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue';
 import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -42,84 +38,111 @@ onUnmounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <Head title="Two-Factor Authentication" />
 
-        <h1 class="sr-only">Two-Factor Authentication Settings</h1>
-
         <SettingsLayout>
-            <div class="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Two-Factor Authentication"
-                    description="Manage your two-factor authentication settings"
-                />
+            <v-card
+                class="goviral-card"
+                elevation="6"
+            >
+                <v-card-title class="text-h6">
+                    Two-Factor Authentication
+                </v-card-title>
+                <v-card-subtitle class="mb-4">
+                    Manage your two-factor authentication settings.
+                </v-card-subtitle>
 
-                <div
-                    v-if="!twoFactorEnabled"
-                    class="flex flex-col items-start justify-start space-y-4"
-                >
-                    <Badge variant="destructive">Disabled</Badge>
-
-                    <p class="text-muted-foreground">
-                        When you enable two-factor authentication, you will be
-                        prompted for a secure pin during login. This pin can be
-                        retrieved from a TOTP-supported application on your
-                        phone.
-                    </p>
-
-                    <div>
-                        <Button
-                            v-if="hasSetupData"
-                            @click="showSetupModal = true"
+                <v-card-text>
+                    <div v-if="!twoFactorEnabled">
+                        <v-chip
+                            label
+                            color="error"
+                            variant="outlined"
+                            class="mb-4"
                         >
-                            <ShieldCheck />Continue Setup
-                        </Button>
-                        <Form
-                            v-else
-                            v-bind="enable.form()"
-                            @success="showSetupModal = true"
-                            #default="{ processing }"
-                        >
-                            <Button type="submit" :disabled="processing">
-                                <ShieldCheck />Enable 2FA</Button
-                            ></Form
-                        >
-                    </div>
-                </div>
+                            Disabled
+                        </v-chip>
 
-                <div
-                    v-else
-                    class="flex flex-col items-start justify-start space-y-4"
-                >
-                    <Badge variant="default">Enabled</Badge>
+                        <p class="text-body-2 text-medium-emphasis mb-4">
+                            When you enable two-factor authentication, you will be
+                            prompted for a secure pin during login. This pin can be
+                            retrieved from a TOTP-supported application on your
+                            phone.
+                        </p>
 
-                    <p class="text-muted-foreground">
-                        With two-factor authentication enabled, you will be
-                        prompted for a secure, random pin during login, which
-                        you can retrieve from the TOTP-supported application on
-                        your phone.
-                    </p>
-
-                    <TwoFactorRecoveryCodes />
-
-                    <div class="relative inline">
-                        <Form v-bind="disable.form()" #default="{ processing }">
-                            <Button
-                                variant="destructive"
-                                type="submit"
-                                :disabled="processing"
+                        <div>
+                            <v-btn
+                                v-if="hasSetupData"
+                                color="primary"
+                                @click="showSetupModal = true"
                             >
-                                <ShieldBan />
-                                Disable 2FA
-                            </Button>
-                        </Form>
+                                Continue setup
+                            </v-btn>
+                            <Form
+                                v-else
+                                v-bind="enable.form()"
+                                @success="showSetupModal = true"
+                                #default="{ processing }"
+                            >
+                                <v-btn
+                                    type="submit"
+                                    color="primary"
+                                    :loading="processing"
+                                    :disabled="processing"
+                                >
+                                    Enable 2FA
+                                </v-btn>
+                            </Form>
+                        </div>
                     </div>
-                </div>
 
-                <TwoFactorSetupModal
-                    v-model:isOpen="showSetupModal"
-                    :requiresConfirmation="requiresConfirmation"
-                    :twoFactorEnabled="twoFactorEnabled"
-                />
-            </div>
+                    <div v-else>
+                        <v-chip
+                            label
+                            color="success"
+                            variant="outlined"
+                            class="mb-4"
+                        >
+                            Enabled
+                        </v-chip>
+
+                        <p class="text-body-2 text-medium-emphasis mb-4">
+                            With two-factor authentication enabled, you will be
+                            prompted for a secure, random pin during login, which
+                            you can retrieve from the TOTP-supported application on
+                            your phone.
+                        </p>
+
+                        <TwoFactorRecoveryCodes />
+
+                        <div class="mt-4">
+                            <Form v-bind="disable.form()" #default="{ processing }">
+                                <v-btn
+                                    type="submit"
+                                    color="error"
+                                    variant="outlined"
+                                    :loading="processing"
+                                    :disabled="processing"
+                                >
+                                    Disable 2FA
+                                </v-btn>
+                            </Form>
+                        </div>
+                    </div>
+
+                    <TwoFactorSetupModal
+                        v-model:isOpen="showSetupModal"
+                        :requiresConfirmation="requiresConfirmation"
+                        :twoFactorEnabled="twoFactorEnabled"
+                    />
+                </v-card-text>
+            </v-card>
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<style scoped>
+.goviral-card {
+    background: rgba(18, 18, 18, 0.96);
+    border-radius: 18px;
+    border: 1px solid rgba(254, 44, 85, 0.3);
+}
+</style>
