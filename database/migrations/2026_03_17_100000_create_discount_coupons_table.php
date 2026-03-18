@@ -15,8 +15,8 @@ return new class extends Migration
             $table->date('expires_at')->nullable();
             $table->unsignedInteger('max_uses')->nullable();
             $table->unsignedInteger('times_used')->default(0);
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
