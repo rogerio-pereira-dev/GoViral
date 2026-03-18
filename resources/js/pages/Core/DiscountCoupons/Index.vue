@@ -88,7 +88,7 @@ const headers = [
                 data-test="discount-coupons-table"
             >
                 <template #item.expires_at="{ item }">
-                    {{ item.expires_at ? new Date(item.expires_at).toLocaleString() : '—' }}
+                    {{ item.expires_at ?? '—' }}
                 </template>
                 <template #item.max_uses="{ item }">
                     {{ item.max_uses ?? '—' }}

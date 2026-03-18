@@ -34,7 +34,7 @@ class DiscountCoupon extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'expires_at' => 'date',
+        'expires_at' => 'date:Y-m-d',
         'value' => 'integer',
         'max_uses' => 'integer',
         'times_used' => 'integer',
