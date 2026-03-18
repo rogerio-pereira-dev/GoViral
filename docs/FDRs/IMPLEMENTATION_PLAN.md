@@ -160,6 +160,15 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Scheduler: add job that soft-deletes invalid coupons (expired: `expires_at` is not null and `expires_at < now()`; exhausted: `max_uses` is not null and `times_used >= max_uses`). Schedule in Laravel Scheduler. Because it is soft delete, the row remains and analysis_requests never loses the reference.
 - [x] Tests: Feature tests for CRUD (auth, validation, soft delete); checkout and webhook; scheduler soft-deletes invalid coupons and references remain valid; Browser E2E for admin flows and invalid-coupon payment regression; i18n for coupon copy on form (en/es/pt).
 
+### Discount coupon expiration by date (FDR-015)
+
+- [ ] Adjust `discount_coupons` schema and model so `expires_at` is treated consistently as a **date-only** value (casts, queries, scheduler) and coupons remain valid through the expiration date.
+- [ ] Update core admin coupon Form Requests and controller helpers so creation and update of coupons use explicit date-based expiration (`after date X`) instead of relative “after X days” calculations.
+- [ ] Refactor core coupon Vue pages to replace the “after X days” UI with an “after date X” option that uses a date field, loading and persisting the exact `expires_at` date with no intermediate day-count logic.
+- [ ] Update checkout and any supporting logic that validates coupons to respect the date-only semantics of `expires_at` (valid on or before the expiration date; invalid after), while preserving behavior for “never expires” and “after X uses”.
+- [ ] Extend/update backend tests to cover the new date-based expiration behavior and to ensure no regressions for existing coupon types (never and usage-based).
+- [ ] Extend/update Browser tests for the core coupon screens and checkout flow to cover creating, editing and using date-based coupons end to end.
+
 ### Scheduler cleanup (FDR-010) — closed
 
 - **N/A.** FDR-010 is closed (see docs/FDRs/Closed/). ADR-020: retain reports for case studies; no scheduled cleanup. Do not implement analysis:cleanup or scheduler for deletion.
