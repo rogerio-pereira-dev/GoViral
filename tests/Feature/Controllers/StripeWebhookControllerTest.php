@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers;
 
 use App\Jobs\ProcessAnalysisRequest;
+use App\Jobs\SyncPaymentIntentSucceeded;
 use App\Models\AnalysisRequest;
 use App\Models\DiscountCoupon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -143,6 +144,43 @@ it('returns 200 and skips update when payment_intent.succeeded has no object id'
 
     $response->assertStatus(200)->assertJson(['received' => true]);
     expect(AnalysisRequest::count())->toBe(0);
+    Queue::assertNotPushed(ProcessAnalysisRequest::class);
+});
+
+it('dispatches a sync job when payment_intent.succeeded has no matching analysis request yet', function (): void {
+    Queue::fake();
+
+    $payload = [
+        'type' => 'payment_intent.succeeded',
+        'data' => [
+            'object' => [
+                'id' => 'pi_live_race_1',
+            ],
+        ],
+    ];
+    $body = json_encode($payload);
+    $stripeConfig = config('cashier.webhook.secret');
+    $header = stripeWebhookSignature($body, $stripeConfig);
+
+    $response = $this->call(
+        'POST',
+        route('stripe.webhook'),
+        [],
+        [],
+        [],
+        [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_STRIPE_SIGNATURE' => $header,
+        ],
+        $body
+    );
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'received' => true,
+        ]);
+
+    Queue::assertPushed(SyncPaymentIntentSucceeded::class, fn ($job) => $job->paymentIntentId === 'pi_live_race_1');
     Queue::assertNotPushed(ProcessAnalysisRequest::class);
 });
 
