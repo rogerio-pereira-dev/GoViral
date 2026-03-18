@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])
             ->name('dashboard');
 
         Route::resource('discount-coupons', DiscountCouponController::class)
-            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->except(['show'])
             ->names('core.discount-coupons');
     });
 
