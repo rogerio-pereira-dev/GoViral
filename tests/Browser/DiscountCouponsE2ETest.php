@@ -59,6 +59,8 @@ it('creates coupon and redirects to index', function (): void {
         ->assertPresent('[data-test="discount-coupon-create-form"]')
         ->fill('#discount-coupon-code', 'E2E10')
         ->fill('#discount-coupon-value', '10')
+        ->click('@discount-coupon-expiration-type')
+        ->click('div[role="option"]:has-text("After X uses")') // open menu and close without changing, default remains "Never expires"
         ->click('@discount-coupon-submit')
         ->assertPathIs('/core/discount-coupons')
         ->assertSee('E2E10')

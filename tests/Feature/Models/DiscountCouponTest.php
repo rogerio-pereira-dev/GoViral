@@ -34,3 +34,30 @@ it('findValidByCode returns null for blank code', function (): void {
     expect(DiscountCoupon::findValidByCode(''))->toBeNull();
     expect(DiscountCoupon::findValidByCode('   '))->toBeNull();
 });
+
+it('treats expires_at as date-only and keeps coupons valid through expiration date', function (): void {
+    $today = now()->toDateString();
+
+    $couponToday = DiscountCoupon::factory()->create([
+        'expires_at' => $today,
+        'max_uses' => null,
+        'times_used' => 0,
+    ]);
+
+    $couponTomorrow = DiscountCoupon::factory()->create([
+        'expires_at' => now()->addDay()->toDateString(),
+        'max_uses' => null,
+        'times_used' => 0,
+    ]);
+
+    $couponYesterday = DiscountCoupon::factory()->create([
+        'expires_at' => now()->subDay()->toDateString(),
+        'max_uses' => null,
+        'times_used' => 0,
+    ]);
+
+    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponToday->id)->exists())->toBeTrue();
+    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponTomorrow->id)->exists())->toBeTrue();
+    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponYesterday->id)->exists())->toBeFalse();
+}
+);

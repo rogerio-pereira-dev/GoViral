@@ -7,13 +7,21 @@ use Illuminate\Support\Facades\Artisan;
 uses(RefreshDatabase::class);
 
 it('soft deletes expired coupons via command', function (): void {
-    $expired = DiscountCoupon::factory()->expired()->create();
-    $active = DiscountCoupon::factory()->create();
+    $expired = DiscountCoupon::factory()->create([
+        'expires_at' => now()->subDay()->toDateString(),
+    ]);
+    $activeToday = DiscountCoupon::factory()->create([
+        'expires_at' => now()->toDateString(),
+    ]);
+    $activeTomorrow = DiscountCoupon::factory()->create([
+        'expires_at' => now()->addDay()->toDateString(),
+    ]);
 
     Artisan::call('discount-coupons:soft-delete-invalid');
 
     expect($expired->fresh()->trashed())->toBeTrue();
-    expect($active->fresh()->trashed())->toBeFalse();
+    expect($activeToday->fresh()->trashed())->toBeFalse();
+    expect($activeTomorrow->fresh()->trashed())->toBeFalse();
 });
 
 it('soft deletes exhausted coupons via command', function (): void {

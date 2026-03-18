@@ -155,9 +155,9 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Adjust `discount_coupons` schema and model so `expires_at` is treated consistently as a **date-only** value (casts, queries, scheduler) and coupons remain valid through the expiration date.
 - [x] Update core admin coupon Form Requests and controller helpers so creation and update of coupons use explicit date-based expiration (`after date X`) instead of relative “after X days” calculations.
 - [x] Refactor core coupon Vue pages to replace the “after X days” UI with an “after date X” option that uses a date field, loading and persisting the exact `expires_at` date with no intermediate day-count logic.
-- [ ] Update checkout and any supporting logic that validates coupons to respect the date-only semantics of `expires_at` (valid on or before the expiration date; invalid after), while preserving behavior for “never expires” and “after X uses”.
-- [ ] Extend/update backend tests to cover the new date-based expiration behavior and to ensure no regressions for existing coupon types (never and usage-based).
-- [ ] Extend/update Browser tests for the core coupon screens and checkout flow to cover creating, editing and using date-based coupons end to end.
+- [x] Update checkout and any supporting logic that validates coupons to respect the date-only semantics of `expires_at` (valid on or before the expiration date; invalid after), while preserving behavior for “never expires” and “after X uses”.
+- [x] Extend/update backend tests to cover the new date-based expiration behavior and to ensure no regressions for existing coupon types (never and usage-based).
+- [x] Extend/update Browser tests for the core coupon screens and checkout flow to cover creating, editing and using date-based coupons end to end.
 
 ### Scheduler cleanup (FDR-010) — closed
 
