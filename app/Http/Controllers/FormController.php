@@ -95,13 +95,21 @@ class FormController extends Controller
             }
         }
 
-        $amountCents = $coupon !== null
-            ? DiscountCoupon::discountedAmountCents($baseCents, $coupon->value)
-            : $baseCents;
+        $amountCents = $baseCents;
+
+        if ($coupon !== null) {
+            $amountCents = DiscountCoupon::discountedAmountCents($baseCents, $coupon->value);
+        }
+
+        $discountCouponId = '';
+
+        if ($coupon !== null) {
+            $discountCouponId = $coupon->id;
+        }
 
         $metadata = [
             'goviral_base_cents' => (string) $baseCents,
-            'discount_coupon_id' => $coupon !== null ? $coupon->id : '',
+            'discount_coupon_id' => $discountCouponId,
         ];
 
         try {
@@ -119,13 +127,19 @@ class FormController extends Controller
             ], 500);
         }
 
+        $discountPercent = null;
+
+        if ($coupon !== null) {
+            $discountPercent = $coupon->value;
+        }
+
         return response()->json([
             'paymentIntentId' => $paymentIntent->id,
             'clientSecret' => $paymentIntent->client_secret,
             'publishableKey' => $publishableKey,
             'amountCents' => $amountCents,
             'currency' => $currency,
-            'discountPercent' => $coupon !== null ? $coupon->value : null,
+            'discountPercent' => $discountPercent,
         ]);
     }
 
@@ -145,8 +159,17 @@ class FormController extends Controller
             ], 422);
         }
 
-        $meta = is_object($paymentIntent->metadata) ? $paymentIntent->metadata->toArray() : [];
-        $metaBase = $meta['goviral_base_cents'] ?? '';
+        $meta = [];
+
+        if (is_object($paymentIntent->metadata)) {
+            $meta = $paymentIntent->metadata->toArray();
+        }
+
+        $metaBase = '';
+
+        if (array_key_exists('goviral_base_cents', $meta)) {
+            $metaBase = $meta['goviral_base_cents'];
+        }
 
         if ($metaBase !== (string) $baseCents) {
             return response()->json([
@@ -154,7 +177,11 @@ class FormController extends Controller
             ], 422);
         }
 
-        $discountCouponId = $meta['discount_coupon_id'] ?? '';
+        $discountCouponId = '';
+
+        if (array_key_exists('discount_coupon_id', $meta)) {
+            $discountCouponId = $meta['discount_coupon_id'];
+        }
 
         if (is_string($discountCouponId) && $discountCouponId !== '') {
             $coupon = DiscountCoupon::withTrashed()->find($discountCouponId);

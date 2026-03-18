@@ -21,6 +21,10 @@ Combine this skill with:
 
 All backend code must be in **English** and follow PSRs.
 
+- **Conditional style:**
+  - Do not use ternary operators (`condition ? a : b`) in backend PHP code.
+  - Prefer explicit `if` / `else` blocks or early returns for clarity.
+
 - **Formatting convention (controllers, requests, commands, models):**
   - Use one statement per line (including fluent chains).
   - Match the indentation / line-break style used in `app/Http/Controllers/Core/DiscountCouponController.php`:
