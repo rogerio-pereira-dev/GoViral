@@ -33,8 +33,8 @@ class UpdateDiscountCouponRequest extends FormRequest
                     ->ignore($coupon->id),
             ],
             'value' => ['required', 'integer', 'min:0', 'max:100'],
-            'expiration_type' => ['required', 'string', Rule::in(['never', 'days', 'uses'])],
-            'expiration_days' => ['required_if:expiration_type,days', 'nullable', 'integer', 'min:1', 'max:3650'],
+            'expiration_type' => ['required', 'string', Rule::in(['never', 'date', 'uses'])],
+            'expiration_date' => ['required_if:expiration_type,date', 'nullable', 'date'],
             'max_uses_input' => ['required_if:expiration_type,uses', 'nullable', 'integer', 'min:1', 'max:999999'],
         ];
     }
@@ -49,9 +49,10 @@ class UpdateDiscountCouponRequest extends FormRequest
         $expiresAt = null;
         $maxUses = null;
 
-        if ($type === 'days') {
-            $days = (int) $this->validated('expiration_days');
-            $expiresAt = now()->addDays($days);
+        if ($type === 'date') {
+            /** @var string|null $date */
+            $date = $this->validated('expiration_date');
+            $expiresAt = $date;
         }
 
         if ($type === 'uses') {

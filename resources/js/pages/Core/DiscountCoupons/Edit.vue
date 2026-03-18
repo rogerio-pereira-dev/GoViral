@@ -9,8 +9,8 @@ const props = defineProps<{
         id: string;
         code: string;
         value: number;
-        expiration_type: 'never' | 'days' | 'uses';
-        expiration_days: number;
+        expiration_type: 'never' | 'date' | 'uses';
+        expiration_date: string | null;
         max_uses_input: number;
     };
 }>();
@@ -25,7 +25,7 @@ const form = useForm({
     code: props.coupon.code,
     value: props.coupon.value,
     expiration_type: props.coupon.expiration_type,
-    expiration_days: props.coupon.expiration_days,
+    expiration_date: props.coupon.expiration_date,
     max_uses_input: props.coupon.max_uses_input,
 });
 
@@ -35,7 +35,7 @@ function submit(): void {
 
 const expirationItems = [
     { title: 'Never expires', value: 'never' },
-    { title: 'After X days', value: 'days' },
+    { title: 'After date X', value: 'date' },
     { title: 'After X uses', value: 'uses' },
 ];
 </script>
@@ -82,15 +82,14 @@ const expirationItems = [
                     data-test="discount-coupon-expiration-type"
                 />
                 <v-text-field
-                    v-if="form.expiration_type === 'days'"
-                    v-model.number="form.expiration_days"
-                    label="Valid for (days from now)"
-                    type="number"
-                    min="1"
+                    v-if="form.expiration_type === 'date'"
+                    v-model="form.expiration_date"
+                    label="Expiration date"
+                    type="date"
                     variant="outlined"
                     class="mt-2"
-                    :error-messages="form.errors.expiration_days"
-                    data-test="discount-coupon-expiration-days"
+                    :error-messages="form.errors.expiration_date"
+                    data-test="discount-coupon-expiration-date"
                 />
                 <v-text-field
                     v-if="form.expiration_type === 'uses'"

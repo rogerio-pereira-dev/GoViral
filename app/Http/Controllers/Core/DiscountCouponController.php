@@ -43,17 +43,15 @@ class DiscountCouponController extends Controller
         $c = $discountCoupon;
 
         $expirationType = 'never';
-        $expirationDays = 30;
+        $expirationDate = null;
         $maxUsesInput = 100;
 
         $expiresByDateOnly = $c->expires_at !== null && $c->max_uses === null;
         $expiresByUsageLimit = $c->max_uses !== null;
 
         if ($expiresByDateOnly) {
-            $expirationType = 'days';
-
-            $secondsUntilExpiry = $c->expires_at->getTimestamp() - now()->getTimestamp();
-            $expirationDays = max(1, (int) ceil($secondsUntilExpiry / 86400));
+            $expirationType = 'date';
+            $expirationDate = $c->expires_at?->toDateString();
         }
 
         if ($expiresByUsageLimit) {
@@ -67,7 +65,7 @@ class DiscountCouponController extends Controller
                 'code' => $c->code,
                 'value' => $c->value,
                 'expiration_type' => $expirationType,
-                'expiration_days' => $expirationDays,
+                'expiration_date' => $expirationDate,
                 'max_uses_input' => $maxUsesInput,
             ],
         ]);

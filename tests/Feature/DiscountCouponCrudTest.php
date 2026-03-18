@@ -92,7 +92,7 @@ it('builds edit payload with days expiration from controller helper', function (
             ->component('Core/DiscountCoupons/Edit')
             ->where('coupon.id', $coupon->id)
             ->where('coupon.value', 15)
-            ->where('coupon.expiration_type', 'days')
+            ->where('coupon.expiration_type', 'date')
         );
 });
 
@@ -123,8 +123,8 @@ it('creates coupon with days expiration using store request rules', function ():
         ->post('/core/discount-coupons', [
             'code' => 'FLOWDAYS',
             'value' => 5,
-            'expiration_type' => 'days',
-            'expiration_days' => 3,
+            'expiration_type' => 'date',
+            'expiration_date' => now()->addDays(3)->toDateString(),
         ])
         ->assertRedirect('/core/discount-coupons');
 
@@ -169,8 +169,8 @@ it('updates coupon to days expiration using update request rules', function (): 
         ->put("/core/discount-coupons/{$coupon->id}", [
             'code' => 'TODAYS',
             'value' => 15,
-            'expiration_type' => 'days',
-            'expiration_days' => 4,
+            'expiration_type' => 'date',
+            'expiration_date' => now()->addDays(4)->toDateString(),
         ])
         ->assertRedirect('/core/discount-coupons');
 
