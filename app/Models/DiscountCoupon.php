@@ -47,8 +47,6 @@ class DiscountCoupon extends Model
 
     public function scopeValidForCheckout(Builder $query): Builder
     {
-        $today = now()->toDateString();
-
         return $query
             ->where(function (Builder $q): void {
                 $q->whereNull('expires_at')
@@ -58,6 +56,19 @@ class DiscountCoupon extends Model
                 $q->whereNull('max_uses')
                     ->orWhereColumn('times_used', '<', 'max_uses');
             });
+    }
+
+    public function scopeInvalidForUse(Builder $query): Builder
+    {
+        return $query->where(function (Builder $q): void {
+            $q->where(function (Builder $q2): void {
+                $q2->whereNotNull('expires_at')
+                    ->whereDate('expires_at', '<', now()->toDateString());
+            })->orWhere(function (Builder $q2): void {
+                $q2->whereNotNull('max_uses')
+                    ->whereColumn('times_used', '>=', 'max_uses');
+            });
+        });
     }
 
     public static function discountedAmountCents(int $baseCents, int $percentOff): int

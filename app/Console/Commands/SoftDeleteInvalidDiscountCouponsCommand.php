@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\DiscountCoupon;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
 
 class SoftDeleteInvalidDiscountCouponsCommand extends Command
 {
@@ -14,24 +13,12 @@ class SoftDeleteInvalidDiscountCouponsCommand extends Command
 
     public function handle(): int
     {
-        $today = now()->toDateString();
-
-        $coupons = DiscountCoupon::where(function (Builder $q): void {
-                        // Expired by date
-                        $q->where(function (Builder $q2): void {
-                            $q2->whereNotNull('expires_at')
-                                ->whereDate('expires_at', '<', $today);
-                            // Used times > max_uses
-                        })->orWhere(function (Builder $q2): void {
-                            $q2->whereNotNull('max_uses')
-                                ->whereColumn('times_used', '>=', 'max_uses');
-                        });
-                    })
-                    ->get();
+        $coupons = DiscountCoupon::invalidForUse()
+                        ->get();
 
         $count = 0;
 
-        foreach($coupons as $coupon) {
+        foreach ($coupons as $coupon) {
             $coupon->delete();
             $count++;
         }
