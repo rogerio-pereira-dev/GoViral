@@ -20,7 +20,7 @@ class SoftDeleteInvalidDiscountCouponsCommand extends Command
                         // Expired by date
                         $q->where(function (Builder $q2): void {
                             $q2->whereNotNull('expires_at')
-                                ->whereDate('expires_at', '<', now()->toDateString());
+                                ->whereDate('expires_at', '<', $today);
                             // Used times > max_uses
                         })->orWhere(function (Builder $q2): void {
                             $q2->whereNotNull('max_uses')
