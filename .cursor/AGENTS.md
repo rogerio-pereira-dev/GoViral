@@ -48,7 +48,7 @@ Primary value proposition:
 - All pages must have dedicated browser tests and be included in smoke route checks (`tests/Browser/WebRoutesTest.php`).
 - Every new public page (ignore Core Routes (Admin) Group) must also have translation coverage tests (en/es/pt), preferably via Feature tests asserting Inertia props.
 - Critical user journeys must include at least one end-to-end browser test covering validation, successful submit, and expected persistence/redirect outcomes.
-- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors (for example, `dusk` attributes) and/or explicit form field names.
+- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit form `name` attributes. Avoid Laravel Dusk–only `dusk` unless the suite uses Dusk.
 - Although i can write instructions to you (ai) in portguese all code should be in english
 
 ## Environment and Commands
