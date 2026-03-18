@@ -46,6 +46,10 @@ const props = defineProps<{
         payment_insufficient_funds_error: string;
         payment_amount_label: string;
         validation_failed_message: string;
+        coupon_code_label: string;
+        coupon_apply_cta: string;
+        coupon_invalid: string;
+        coupon_applied_hint: string;
     };
 }>();
 
@@ -72,6 +76,9 @@ const amountDisplay = ref('');
 const turnstileToken = ref('');
 const turnstileReady = ref(false);
 const showValidationFailedMessage = ref(false);
+const couponCodeInput = ref('');
+const couponError = ref('');
+const appliedDiscountPercent = ref<number | null>(null);
 
 function csrfToken(): string {
     const tokenFromMeta = document
@@ -146,10 +153,38 @@ function formatAmount(cents: number, currency: string): string {
     }).format(cents / 100);
 }
 
-async function initializePayment(): Promise<void> {
+type InitPaymentOptions = {
+    /** When re-fetching after invalid coupon, keep the error message visible. */
+    skipClearCouponError?: boolean;
+};
+
+async function initializePayment(
+    couponForIntent?: string,
+    options?: InitPaymentOptions,
+): Promise<void> {
     paymentError.value = '';
+    if (! options?.skipClearCouponError) {
+        couponError.value = '';
+    }
     paymentLoading.value = true;
+
+    if (cardElement.value) {
+        try {
+            cardElement.value.unmount();
+        } catch {
+            //
+        }
+        cardElement.value = null;
+    }
+    paymentInitialized.value = false;
+    stripeClient.value = null;
+
     const paymentIntentUrl = new URL('/start-growth/payment-intent', window.location.origin);
+    const trimmed = couponForIntent !== undefined ? String(couponForIntent).trim() : '';
+    if (trimmed !== '') {
+        paymentIntentUrl.searchParams.set('coupon_code', trimmed);
+    }
+
     const response = await fetch(paymentIntentUrl.toString(), {
         method: 'GET',
         credentials: 'same-origin',
@@ -160,7 +195,19 @@ async function initializePayment(): Promise<void> {
 
     if (! response.ok) {
         const data = await response.json().catch(() => ({}));
-        paymentError.value = data.message ?? props.translations.payment_init_error;
+        const msg = data.message ?? props.translations.payment_init_error;
+        if (response.status === 422) {
+            couponError.value = msg;
+            appliedDiscountPercent.value = null;
+            if (trimmed !== '') {
+                await initializePayment('', { skipClearCouponError: true });
+            } else {
+                paymentLoading.value = false;
+            }
+
+            return;
+        }
+        paymentError.value = msg;
         paymentLoading.value = false;
 
         return;
@@ -171,6 +218,8 @@ async function initializePayment(): Promise<void> {
     paymentIntentId.value = data.paymentIntentId;
     clientSecret.value = data.clientSecret;
     amountDisplay.value = formatAmount(data.amountCents, data.currency);
+    appliedDiscountPercent.value =
+        typeof data.discountPercent === 'number' ? data.discountPercent : null;
 
     await loadStripeLibrary();
 
@@ -199,6 +248,10 @@ async function initializePayment(): Promise<void> {
     await nextTick();
     cardElement.value.mount('#stripe-card-element');
     paymentLoading.value = false;
+}
+
+async function applyCouponCode(): Promise<void> {
+    await initializePayment(couponCodeInput.value);
 }
 
 async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<void> {
@@ -319,7 +372,7 @@ onMounted(async () => {
         await loadTurnstileScript();
         turnstileReady.value = true;
     }
-    await initializePayment();
+    await initializePayment('');
 });
 </script>
 
@@ -356,7 +409,7 @@ onMounted(async () => {
                                                 required
                                                 persistent-hint
                                                 :hint="translations.email_hint"
-                                                dusk="start-growth-email"
+                                                data-test="start-growth-email"
                                             />
                                         </v-col>
 
@@ -367,7 +420,7 @@ onMounted(async () => {
                                                 :label="translations.tiktok_username_label"
                                                 :placeholder="translations.tiktok_username_placeholder"
                                                 :error-messages="form.errors.tiktok_username"
-                                                dusk="start-growth-tiktok"
+                                                data-test="start-growth-tiktok"
                                             />
                                         </v-col>
 
@@ -439,6 +492,60 @@ onMounted(async () => {
                                             />
                                         </v-col>
 
+                                        <v-col cols="12">
+                                            <v-row dense align="end">
+                                                <v-col cols="12" sm="8">
+                                                    <v-text-field
+                                                        v-model="couponCodeInput"
+                                                        name="coupon_code"
+                                                        :label="translations.coupon_code_label"
+                                                        variant="outlined"
+                                                        density="comfortable"
+                                                        data-test="start-growth-coupon-code"
+                                                        hide-details="auto"
+                                                        @update:model-value="couponError = ''"
+                                                    />
+                                                </v-col>
+                                                <v-col cols="12" sm="4">
+                                                    <v-btn
+                                                        color="secondary"
+                                                        variant="tonal"
+                                                        block
+                                                        :loading="paymentLoading"
+                                                        data-test="start-growth-coupon-apply"
+                                                        @click="applyCouponCode"
+                                                    >
+                                                        {{ translations.coupon_apply_cta }}
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                            <v-alert
+                                                v-if="couponError"
+                                                type="warning"
+                                                variant="tonal"
+                                                class="mt-2"
+                                                density="compact"
+                                                data-test="start-growth-coupon-error"
+                                            >
+                                                {{ couponError }}
+                                            </v-alert>
+                                            <v-alert
+                                                v-if="appliedDiscountPercent !== null"
+                                                type="success"
+                                                variant="tonal"
+                                                class="mt-2"
+                                                density="compact"
+                                                data-test="start-growth-coupon-applied"
+                                            >
+                                                {{
+                                                    translations.coupon_applied_hint.replace(
+                                                        ':percent',
+                                                        String(appliedDiscountPercent),
+                                                    )
+                                                }}
+                                            </v-alert>
+                                        </v-col>
+
                                         <v-col v-if="paymentInitialized" cols="12">
                                             <label class="payment-card-label mb-2 d-block">
                                                 {{ translations.payment_card_label }}
@@ -459,13 +566,13 @@ onMounted(async () => {
                                                 :data-sitekey="turnstileSiteKey"
                                                 data-callback="onTurnstileSuccess"
                                                 data-expired-callback="onTurnstileExpired"
-                                                dusk="turnstile-widget"
+                                                data-test="turnstile-widget"
                                             />
                                         </v-col>
                                     </v-row>
 
                                     <v-btn
-                                        dusk="start-growth-submit"
+                                        data-test="start-growth-submit"
                                         type="submit"
                                         color="primary"
                                         variant="flat"
@@ -487,7 +594,7 @@ onMounted(async () => {
                                         type="warning"
                                         variant="tonal"
                                         class="mt-4"
-                                        dusk="validation-failed-message"
+                                        data-test="validation-failed-message"
                                     >
                                         {{ translations.validation_failed_message }}
                                     </v-alert>
