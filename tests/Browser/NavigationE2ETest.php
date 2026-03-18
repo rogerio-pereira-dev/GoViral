@@ -17,6 +17,8 @@ it('navigates sidebar and settings navigation', function () {
 
     $page
         ->assertSee('Dashboard')
+        ->assertSee('Horizon')
+        ->assertSee('Log out')
         ->assertNoSmoke();
 
     // Sidebar -> Profile (core settings profile)
@@ -37,5 +39,12 @@ it('navigates sidebar and settings navigation', function () {
     $page = visit('/core/settings/two-factor');
 
     $page
+        ->assertNoSmoke();
+
+    $page = visit('/core/dashboard');
+
+    $page
+        ->click('@sidebar-logout-button')
+        ->assertPathIs('/')
         ->assertNoSmoke();
 });

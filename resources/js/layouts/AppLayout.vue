@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { dashboard } from '@/routes';
+import { logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import { type BreadcrumbItem } from '@/types';
 
@@ -33,6 +35,14 @@ const footerNav = [
         icon: 'mdi-account-circle-outline',
     },
 ];
+
+const page = usePage();
+const horizonUrl = computed(() => String(page.props.horizonUrl ?? '/horizon'));
+
+const flushAndLogout = (): void => {
+    router.flushAll();
+    router.post(logout().url);
+};
 </script>
 
 <template>
@@ -96,7 +106,11 @@ const footerNav = [
                         <Link
                             :href="item.href"
                             class="goviral-nav-link"
-                            data-test="sidebar-profile-link"
+                            :data-test="
+                                item.title === 'Profile'
+                                    ? 'sidebar-profile-link'
+                                    : undefined
+                            "
                         >
                             <v-icon
                                 v-if="item.icon"
@@ -106,6 +120,43 @@ const footerNav = [
                             />
                             {{ item.title }}
                         </Link>
+                    </v-list-item>
+
+                    <v-list-item
+                        color="primary"
+                        class="goviral-nav-item goviral-nav-footer-item"
+                    >
+                        <a
+                            :href="horizonUrl"
+                            class="goviral-nav-link"
+                            data-test="sidebar-horizon-link"
+                        >
+                            <v-icon
+                                icon="mdi-chart-timeline-variant"
+                                size="20"
+                                class="mr-3"
+                            />
+                            Horizon
+                        </a>
+                    </v-list-item>
+
+                    <v-list-item
+                        color="primary"
+                        class="goviral-nav-item goviral-nav-footer-item"
+                    >
+                        <button
+                            type="button"
+                            class="goviral-nav-link goviral-nav-logout"
+                            data-test="sidebar-logout-button"
+                            @click="flushAndLogout"
+                        >
+                            <v-icon
+                                icon="mdi-logout-variant"
+                                size="20"
+                                class="mr-3"
+                            />
+                            Log out
+                        </button>
                     </v-list-item>
                 </v-list>
             </v-navigation-drawer>
@@ -164,5 +215,16 @@ const footerNav = [
 
 .goviral-nav-link:hover {
     color: rgb(var(--v-theme-primary));
+}
+
+.goviral-nav-logout {
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
 }
 </style>

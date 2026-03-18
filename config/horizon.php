@@ -87,6 +87,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allowed Horizon dashboard users (non-local)
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of authenticated user emails that may access the
+    | Horizon dashboard when the app environment is not local. In local,
+    | Horizon still allows access regardless of this list. If empty, no
+    | authenticated user passes the gate in non-local environments.
+    |
+    */
+
+    'allowed_emails' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('HORIZON_ALLOWED_EMAILS', ''))
+    ))),
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue Wait Time Thresholds
     |--------------------------------------------------------------------------
     |
