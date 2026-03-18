@@ -39,6 +39,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'locale' => app()->getLocale(),
+            'supportedLocales' => ['en', 'es', 'pt'],
+            'footerTagline' => __('landing.footer_tagline'),
             'auth' => [
                 'user' => $request->user(),
             ],
