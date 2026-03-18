@@ -22,8 +22,15 @@ it('renders the start growth form page with current locale', function () {
 });
 
 it('stores a new analysis request and returns checkout payload', function () {
-    config(['services.turnstile.secret' => 'test-secret']);
+    config([
+        'services.turnstile.secret' => 'test-secret',
+        'services.stripe.price_in_cents' => 3500,
+    ]);
     Turnstile::fake();
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => '',
+    ]);
 
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
@@ -54,12 +61,20 @@ it('stores a new analysis request and returns checkout payload', function () {
         'locale' => 'es',
         'payment_status' => 'pending',
         'processing_status' => 'waiting_payment_confirmation',
+        'discount_coupon_id' => null,
     ]);
 });
 
 it('stores not informed placeholders for optional empty profile fields', function () {
-    config(['services.turnstile.secret' => 'test-secret']);
+    config([
+        'services.turnstile.secret' => 'test-secret',
+        'services.stripe.price_in_cents' => 3500,
+    ]);
     Turnstile::fake();
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => '',
+    ]);
 
     $payload = array_merge(validFormPayload(), [
         'tiktok_username' => '',
@@ -167,6 +182,215 @@ it('returns 422 when turnstile token is missing or invalid and turnstile is conf
     expect(AnalysisRequest::count())->toBe(0);
 });
 
+it('returns 422 when payment intent retrieval fails in store', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    app()->bind(StripeClient::class, function () {
+        return new class
+        {
+            public object $paymentIntents;
+
+            public function __construct()
+            {
+                $this->paymentIntents = new class
+                {
+                    public function retrieve(string $id): object
+                    {
+                        throw new RuntimeException('Stripe failure');
+                    }
+                };
+            }
+        };
+    });
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson([
+            'message' => trans('form.payment_confirm_error'),
+        ]);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when base cents in metadata does not match configured price', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '9999',
+        'discount_coupon_id' => '',
+    ]);
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson([
+            'message' => trans('form.payment_confirm_error'),
+        ]);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when coupon id in payment intent metadata does not resolve to coupon', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => (string) \Ramsey\Uuid\Uuid::uuid4(),
+    ]);
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson([
+            'message' => trans('form.coupon_invalid'),
+        ]);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when discounted amount does not match metadata coupon', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    $coupon = \App\Models\DiscountCoupon::factory()->create(['value' => 20]);
+
+    bindStripeClientForFormStore('pi_test_init', 3000, [ // wrong discounted amount
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => $coupon->id,
+    ]);
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson([
+            'message' => trans('form.payment_confirm_error'),
+        ]);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('returns 422 when amount does not match base cents and there is no coupon', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    bindStripeClientForFormStore('pi_test_init', 3400, [ // wrong base amount
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => '',
+    ]);
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson([
+            'message' => trans('form.payment_confirm_error'),
+        ]);
+
+    expect(AnalysisRequest::count())->toBe(0);
+});
+
+it('stores analysis request with discount_coupon_id when payment intent metadata is valid', function () {
+    config([
+        'services.stripe.price_in_cents' => 3500,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+        'services.turnstile.secret' => 'test-secret',
+    ]);
+    Turnstile::fake();
+
+    $coupon = \App\Models\DiscountCoupon::factory()->create(['value' => 10]);
+    $base = 3500;
+    $discounted = \App\Models\DiscountCoupon::discountedAmountCents($base, $coupon->value);
+
+    bindStripeClientForFormStore('pi_test_init', $discounted, [
+        'goviral_base_cents' => (string) $base,
+        'discount_coupon_id' => $coupon->id,
+    ]);
+
+    $payload = validFormPayload();
+    $payload['cf-turnstile-response'] = Turnstile::dummy();
+
+    $response = $this
+        ->withSession(['locale' => 'en'])
+        ->postJson(route('form.store'), $payload);
+
+    $response
+        ->assertOk()
+        ->assertJsonStructure([
+            'analysisRequestId',
+            'thankYouUrl',
+        ]);
+
+    /** @var AnalysisRequest $saved */
+    $saved = AnalysisRequest::firstOrFail();
+
+    expect($saved->discount_coupon_id)->toBe($coupon->id);
+});
+
 it('returns 422 when turnstile token is missing and turnstile is configured', function () {
     config(['services.turnstile.secret' => 'test-secret']);
 
@@ -251,10 +475,14 @@ it('returns payment intent payload when stripe api succeeds', function () {
                 {
                     public function create(array $payload): object
                     {
-                        expect($payload)->toBe([
+                        expect($payload)->toMatchArray([
                             'amount' => 3500,
                             'currency' => 'usd',
                             'automatic_payment_methods' => ['enabled' => true],
+                        ]);
+                        expect($payload['metadata'])->toBe([
+                            'goviral_base_cents' => '3500',
+                            'discount_coupon_id' => '',
                         ]);
 
                         return (object) [
@@ -286,6 +514,109 @@ it('returns payment intent payload when stripe api succeeds', function () {
             'currency' => 'usd',
         ]);
 });
+
+it('returns discounted payment intent payload when valid coupon code is provided', function () {
+    config([
+        'services.stripe.price_in_cents' => 10000,
+        'services.stripe.currency' => 'usd',
+        'cashier.key' => 'pk_test_example',
+        'cashier.secret' => 'sk_test_example',
+    ]);
+
+    $coupon = \App\Models\DiscountCoupon::factory()->create([
+        'code' => 'SAVE20',
+        'value' => 20,
+    ]);
+
+    app()->bind(StripeClient::class, function () {
+        return new class
+        {
+            public object $paymentIntents;
+
+            public function __construct()
+            {
+                $this->paymentIntents = new class
+                {
+                    public function create(array $payload): object
+                    {
+                        expect($payload)->toMatchArray([
+                            'amount' => 8000,
+                            'currency' => 'usd',
+                            'automatic_payment_methods' => ['enabled' => true],
+                        ]);
+
+                        expect($payload['metadata']['goviral_base_cents'] ?? null)->toBe('10000');
+                        expect($payload['metadata']['discount_coupon_id'] ?? null)->not->toBe('');
+
+                        return (object) [
+                            'id' => 'pi_mock_discounted',
+                            'client_secret' => 'pi_mock_discounted_secret',
+                        ];
+                    }
+                };
+            }
+        };
+    });
+
+    $response = $this->get(route('form.payment-intent', ['coupon_code' => 'save20']));
+
+    $response
+        ->assertOk()
+        ->assertJson([
+            'paymentIntentId' => 'pi_mock_discounted',
+            'clientSecret' => 'pi_mock_discounted_secret',
+            'publishableKey' => 'pk_test_example',
+            'amountCents' => 8000,
+            'currency' => 'usd',
+            'discountPercent' => $coupon->value,
+        ]);
+});
+
+function bindStripeClientForFormStore(string $paymentIntentId, int $amountCents, array $metadata): void
+{
+    app()->bind(StripeClient::class, function () use ($paymentIntentId, $amountCents, $metadata) {
+        return new class($paymentIntentId, $amountCents, $metadata)
+        {
+            public object $paymentIntents;
+
+            public function __construct(
+                private string $paymentIntentId,
+                private int $amountCents,
+                private array $metadata,
+            ) {
+                $pid = $paymentIntentId;
+                $amt = $amountCents;
+                $meta = $metadata;
+                $this->paymentIntents = new class($pid, $amt, $meta)
+                {
+                    public function __construct(
+                        private string $paymentIntentId,
+                        private int $amountCents,
+                        private array $metadata,
+                    ) {}
+
+                    public function retrieve(string $id): object
+                    {
+                        expect($id)->toBe($this->paymentIntentId);
+
+                        return (object) [
+                            'amount' => $this->amountCents,
+                            'metadata' => new class($this->metadata)
+                            {
+                                public function __construct(private array $m) {}
+
+                                public function toArray(): array
+                                {
+                                    return $this->m;
+                                }
+                            },
+                        ];
+                    }
+                };
+            }
+        };
+    });
+}
 
 function validFormPayload(): array
 {

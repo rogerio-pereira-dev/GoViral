@@ -115,3 +115,14 @@ test('analysis request processing status scope filters by status', function () {
     expect($processingRecordCount)->toBe(1);
     expect($firstProcessingRecordId)->toBe($processing->id);
 });
+
+test('analysis request relates to discount coupon when discount_coupon_id is set', function () {
+    $coupon = \App\Models\DiscountCoupon::factory()->create();
+
+    $analysisRequest = AnalysisRequest::factory()->create([
+        'discount_coupon_id' => $coupon->id,
+    ]);
+
+    expect($analysisRequest->discountCoupon)->not->toBeNull()
+        ->and($analysisRequest->discountCoupon->id)->toBe($coupon->id);
+});

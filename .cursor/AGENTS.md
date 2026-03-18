@@ -37,9 +37,9 @@ Primary value proposition:
 - For assigned fluent chains, use a deeper continuation indent for `->` lines.
 - For standalone fluent chains, use a single continuation indent level for `->` lines.
 - In tests, chained expectations are allowed when each method call is on its own line.
-- Follow Clean code and you have the motto: 
-    > Any idiot can write code a computer understand, but only good developer write code that idiots can understand.
-- Prefer readable code over cleverness
+- Follow Clean Code and treat this motto as non‑negotiable:
+    > Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Robert C. Martin
+- Prefer readable code over cleverness.
 - Keep controllers thin and move business logic to services.
 - Prefer Form Requests for validation.
 - Use interfaces for services when appropriate.
@@ -48,8 +48,8 @@ Primary value proposition:
 - All pages must have dedicated browser tests and be included in smoke route checks (`tests/Browser/WebRoutesTest.php`).
 - Every new public page (ignore Core Routes (Admin) Group) must also have translation coverage tests (en/es/pt), preferably via Feature tests asserting Inertia props.
 - Critical user journeys must include at least one end-to-end browser test covering validation, successful submit, and expected persistence/redirect outcomes.
-- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors (for example, `dusk` attributes) and/or explicit form field names.
-- Although i can write instructions to you (ai) in portguese all code should be in english
+- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit form `name` attributes. Avoid Laravel Dusk–only `dusk` unless the suite uses Dusk.
+- Although I can write instructions to you (AI) in Portuguese, all code should be in English.
 
 ## Environment and Commands
 

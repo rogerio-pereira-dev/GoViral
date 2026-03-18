@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Form\StoreAnalysisRequest;
 use App\Models\AnalysisRequest;
+use App\Models\DiscountCoupon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Cashier\Cashier;
@@ -54,6 +56,10 @@ class FormController extends Controller
             'payment_insufficient_funds_error' => __('form.payment_insufficient_funds_error'),
             'payment_amount_label' => __('form.payment_amount_label'),
             'validation_failed_message' => __('form.validation_failed_message'),
+            'coupon_code_label' => __('form.coupon_code_label'),
+            'coupon_apply_cta' => __('form.coupon_apply_cta'),
+            'coupon_invalid' => __('form.coupon_invalid'),
+            'coupon_applied_hint' => __('form.coupon_applied_hint'),
         ];
 
         return Inertia::render('Form/StartGrowth', [
@@ -63,9 +69,9 @@ class FormController extends Controller
         ]);
     }
 
-    public function paymentIntent(): JsonResponse
+    public function paymentIntent(Request $request): JsonResponse
     {
-        $amountCents = config('services.stripe.price_in_cents');
+        $baseCents = (int) config('services.stripe.price_in_cents');
         $currency = config('services.stripe.currency');
         $publishableKey = config('cashier.key');
         $secretKey = config('cashier.secret');
@@ -76,11 +82,42 @@ class FormController extends Controller
             ], 500);
         }
 
+        $couponCode = $request->query('coupon_code');
+        $coupon = null;
+
+        if (is_string($couponCode) && trim($couponCode) !== '') {
+            $coupon = DiscountCoupon::findValidByCode($couponCode);
+
+            if (! $coupon) {
+                return response()->json([
+                    'message' => __('form.coupon_invalid'),
+                ], 422);
+            }
+        }
+
+        $amountCents = $baseCents;
+
+        if ($coupon !== null) {
+            $amountCents = DiscountCoupon::discountedAmountCents($baseCents, $coupon->value);
+        }
+
+        $discountCouponId = '';
+
+        if ($coupon !== null) {
+            $discountCouponId = $coupon->id;
+        }
+
+        $metadata = [
+            'goviral_base_cents' => (string) $baseCents,
+            'discount_coupon_id' => $discountCouponId,
+        ];
+
         try {
             $paymentIntent = Cashier::stripe()->paymentIntents->create([
                 'amount' => $amountCents,
                 'currency' => $currency,
                 'automatic_payment_methods' => ['enabled' => true],
+                'metadata' => $metadata,
             ]);
         } catch (\Throwable $e) {
             report($e);
@@ -90,18 +127,89 @@ class FormController extends Controller
             ], 500);
         }
 
+        $discountPercent = null;
+
+        if ($coupon !== null) {
+            $discountPercent = $coupon->value;
+        }
+
         return response()->json([
             'paymentIntentId' => $paymentIntent->id,
             'clientSecret' => $paymentIntent->client_secret,
             'publishableKey' => $publishableKey,
             'amountCents' => $amountCents,
             'currency' => $currency,
+            'discountPercent' => $discountPercent,
         ]);
     }
 
     public function store(StoreAnalysisRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
+        $paymentIntentId = $validatedData['payment_intent_id'];
+        $baseCents = (int) config('services.stripe.price_in_cents');
+
+        try {
+            $paymentIntent = Cashier::stripe()->paymentIntents->retrieve($paymentIntentId);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => __('form.payment_confirm_error'),
+            ], 422);
+        }
+
+        $meta = [];
+
+        if (is_object($paymentIntent->metadata)) {
+            $meta = $paymentIntent->metadata->toArray();
+        }
+
+        $metaBase = '';
+
+        if (array_key_exists('goviral_base_cents', $meta)) {
+            $metaBase = $meta['goviral_base_cents'];
+        }
+
+        if ($metaBase !== (string) $baseCents) {
+            return response()->json([
+                'message' => __('form.payment_confirm_error'),
+            ], 422);
+        }
+
+        $discountCouponId = '';
+
+        if (array_key_exists('discount_coupon_id', $meta)) {
+            $discountCouponId = $meta['discount_coupon_id'];
+        }
+
+        if (is_string($discountCouponId) && $discountCouponId !== '') {
+            $coupon = DiscountCoupon::withTrashed()->find($discountCouponId);
+
+            if (! $coupon) {
+                return response()->json([
+                    'message' => __('form.coupon_invalid'),
+                ], 422);
+            }
+
+            $expectedCents = DiscountCoupon::discountedAmountCents($baseCents, $coupon->value);
+
+            if ((int) $paymentIntent->amount !== $expectedCents) {
+                return response()->json([
+                    'message' => __('form.payment_confirm_error'),
+                ], 422);
+            }
+        } elseif ((int) $paymentIntent->amount !== $baseCents) {
+            return response()->json([
+                'message' => __('form.payment_confirm_error'),
+            ], 422);
+        }
+
+        $normalizedDiscountCouponId = null;
+
+        if (is_string($discountCouponId) && $discountCouponId !== '') {
+            $normalizedDiscountCouponId = $discountCouponId;
+        }
 
         $analysisRequest = AnalysisRequest::create([
             ...$validatedData,
@@ -111,9 +219,10 @@ class FormController extends Controller
             'video_url_2' => $this->normalizeNotInformed($validatedData['video_url_2'] ?? null),
             'video_url_3' => $this->normalizeNotInformed($validatedData['video_url_3'] ?? null),
             'locale' => app()->getLocale(),
-            'stripe_payment_intent_id' => $validatedData['payment_intent_id'],
+            'stripe_payment_intent_id' => $paymentIntentId,
             'payment_status' => 'pending',
             'processing_status' => 'waiting_payment_confirmation',
+            'discount_coupon_id' => $normalizedDiscountCouponId,
         ]);
 
         $request->session()->put('thank_you_allowed', true);

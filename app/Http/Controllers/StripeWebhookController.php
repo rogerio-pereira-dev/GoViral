@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessAnalysisRequest;
 use App\Models\AnalysisRequest;
+use App\Models\DiscountCoupon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -85,6 +86,12 @@ class StripeWebhookController extends Controller
             'payment_status' => 'paid',
             'processing_status' => 'queued',
         ]);
+
+        if ($analysisRequest->discount_coupon_id !== null) {
+            DiscountCoupon::query()
+                ->whereKey($analysisRequest->discount_coupon_id)
+                ->increment('times_used');
+        }
 
         ProcessAnalysisRequest::dispatch($analysisRequest->id);
     }

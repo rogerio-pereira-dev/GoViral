@@ -4,6 +4,7 @@ namespace Tests\Feature\Controllers;
 
 use App\Jobs\ProcessAnalysisRequest;
 use App\Models\AnalysisRequest;
+use App\Models\DiscountCoupon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 
@@ -203,6 +204,38 @@ it('updates record and dispatches job on payment_intent.succeeded', function ():
         ->and($analysisRequest->processing_status)->toBe('queued');
 
     Queue::assertPushed(ProcessAnalysisRequest::class, fn ($job) => $job->analysisRequestId === $analysisRequest->id);
+});
+
+it('increments coupon times_used when analysis request has discount_coupon_id', function (): void {
+    Queue::fake();
+
+    $coupon = DiscountCoupon::factory()->create(['times_used' => 0]);
+
+    $analysisRequest = AnalysisRequest::factory()->create([
+        'stripe_payment_intent_id' => 'pi_coupon_1',
+        'payment_status' => 'pending',
+        'processing_status' => 'waiting_payment_confirmation',
+        'discount_coupon_id' => $coupon->id,
+    ]);
+
+    $payload = [
+        'type' => 'payment_intent.succeeded',
+        'data' => ['object' => ['id' => 'pi_coupon_1']],
+    ];
+    $body = json_encode($payload);
+    $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
+
+    $this->call(
+        'POST',
+        route('stripe.webhook'),
+        [],
+        [],
+        [],
+        ['CONTENT_TYPE' => 'application/json', 'HTTP_STRIPE_SIGNATURE' => $header],
+        $body
+    )->assertStatus(200);
+
+    expect($coupon->fresh()->times_used)->toBe(1);
 });
 
 it('handles retry idempotently when record already paid', function (): void {

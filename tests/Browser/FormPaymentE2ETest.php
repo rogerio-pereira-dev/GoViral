@@ -25,6 +25,28 @@ it('loads payment form with card element when Stripe is configured', function ()
     $page->assertPresent('#stripe-card-element');
 });
 
+it('keeps stripe card element visible after applying an invalid coupon', function () {
+    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+        $this->markTestSkipped('Stripe test keys (STRIPE_KEY, STRIPE_SECRET) required. See docs/Setup/STRIPE_SETUP.md.');
+    }
+
+    $page = visit('/start-growth');
+    $page->waitForEvent('networkidle');
+
+    $page->assertPresent('#stripe-card-element');
+
+    $page
+        ->fill('input[name="coupon_code"]', 'INVALID_COUPON_XYZ')
+        ->click('@start-growth-coupon-apply')
+        ->waitForEvent('networkidle');
+
+    $page
+        ->assertPresent('@start-growth-coupon-error')
+        ->assertSee('This coupon is not valid')
+        ->assertPresent('#stripe-card-element')
+        ->assertNoSmoke();
+});
+
 it('shows payment declined error when card is declined', function () {
     if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
         $this->markTestSkipped('Stripe test keys required for declined card flow. See docs/Setup/STRIPE_SETUP.md.');

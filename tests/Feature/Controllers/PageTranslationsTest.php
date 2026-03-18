@@ -40,16 +40,22 @@ it('renders form page translations for supported locales', function () {
             'title' => 'Start My Growth',
             'what_you_get_title' => 'What you get in your report',
             'validation_failed_message' => 'Validation failed. Please check the fields above.',
+            'coupon_code_label' => 'Coupon code (optional)',
+            'coupon_apply_cta' => 'Apply',
         ],
         'es' => [
             'title' => 'Comenzar mi crecimiento',
             'what_you_get_title' => 'Qué recibes en tu informe',
             'validation_failed_message' => 'La validación falló. Revisa los campos anteriores.',
+            'coupon_code_label' => 'Código de cupón (opcional)',
+            'coupon_apply_cta' => 'Aplicar',
         ],
         'pt' => [
             'title' => 'Começar meu crescimento',
             'what_you_get_title' => 'O que você recebe no relatório',
             'validation_failed_message' => 'A validação falhou. Verifique os campos acima.',
+            'coupon_code_label' => 'Código do cupom (opcional)',
+            'coupon_apply_cta' => 'Aplicar',
         ],
     ];
 
@@ -66,6 +72,8 @@ it('renders form page translations for supported locales', function () {
                 ->where('translations.title', $expected['title'])
                 ->where('translations.what_you_get_title', $expected['what_you_get_title'])
                 ->where('translations.validation_failed_message', $expected['validation_failed_message'])
+                ->where('translations.coupon_code_label', $expected['coupon_code_label'])
+                ->where('translations.coupon_apply_cta', $expected['coupon_apply_cta'])
             );
     }
 });

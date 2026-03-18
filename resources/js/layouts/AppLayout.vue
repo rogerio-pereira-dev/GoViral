@@ -18,6 +18,12 @@ const primaryNav = [
         href: dashboard().url,
         icon: 'mdi-view-dashboard-outline',
     },
+    {
+        title: 'Discount coupons',
+        href: '/core/discount-coupons',
+        icon: 'mdi-ticket-percent-outline',
+        testId: 'sidebar-discount-coupons-link',
+    },
 ];
 
 const footerNav = [
@@ -63,7 +69,7 @@ const footerNav = [
                         <Link
                             :href="item.href"
                             class="goviral-nav-link"
-                            data-test="sidebar-dashboard-link"
+                            :data-test="item.testId ?? (item.title === 'Dashboard' ? 'sidebar-dashboard-link' : undefined)"
                         >
                             <v-icon
                                 v-if="item.icon"
