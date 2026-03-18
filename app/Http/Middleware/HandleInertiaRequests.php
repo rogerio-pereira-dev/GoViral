@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'horizonUrl' => '/'.ltrim((string) config('horizon.path', 'horizon'), '/'),
         ];
     }
 }
