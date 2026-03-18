@@ -21,6 +21,13 @@ Combine this skill with:
 
 All backend code must be in **English** and follow PSRs.
 
+- **Formatting convention (controllers, requests, commands, models):**
+  - Use one statement per line (including fluent chains).
+  - Match the indentation / line-break style used in `app/Http/Controllers/Core/DiscountCouponController.php`:
+    - continuation lines aligned to the surrounding block;
+    - one method call per line in chained calls;
+    - multi-line argument lists and arrays formatted consistently and readably.
+
 ---
 
 ## When to use this skill

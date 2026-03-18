@@ -14,7 +14,8 @@ class DiscountCouponController extends Controller
 {
     public function index(): Response
     {
-        $coupons = DiscountCoupon::orderByDesc('created_at')->get();
+        $coupons = DiscountCoupon::orderByDesc('created_at')
+                        ->get();
 
         return Inertia::render('Core/DiscountCoupons/Index', [
             'coupons' => $coupons,
@@ -30,10 +31,11 @@ class DiscountCouponController extends Controller
 
     public function store(StoreDiscountCouponRequest $request): RedirectResponse
     {
-        DiscountCoupon::create($request->couponAttributes());
+        $data = $request->couponAttributes();
+        DiscountCoupon::create($data);
 
         return redirect()->route('core.discount-coupons.index')
-            ->with('success', 'Coupon created.');
+                    ->with('success', 'Coupon created.');
     }
 
     public function edit(DiscountCoupon $discountCoupon): Response
@@ -44,11 +46,17 @@ class DiscountCouponController extends Controller
         $expirationDays = 30;
         $maxUsesInput = 100;
 
-        if ($c->expires_at !== null && $c->max_uses === null) {
+        $expiresByDateOnly = $c->expires_at !== null && $c->max_uses === null;
+        $expiresByUsageLimit = $c->max_uses !== null;
+
+        if ($expiresByDateOnly) {
             $expirationType = 'days';
-            $seconds = $c->expires_at->getTimestamp() - now()->getTimestamp();
-            $expirationDays = max(1, (int) ceil($seconds / 86400));
-        } elseif ($c->max_uses !== null) {
+
+            $secondsUntilExpiry = $c->expires_at->getTimestamp() - now()->getTimestamp();
+            $expirationDays = max(1, (int) ceil($secondsUntilExpiry / 86400));
+        }
+
+        if ($expiresByUsageLimit) {
             $expirationType = 'uses';
             $maxUsesInput = $c->max_uses;
         }
@@ -73,7 +81,7 @@ class DiscountCouponController extends Controller
         $discountCoupon->update($attrs);
 
         return redirect()->route('core.discount-coupons.index')
-            ->with('success', 'Coupon updated.');
+                    ->with('success', 'Coupon updated.');
     }
 
     public function destroy(DiscountCoupon $discountCoupon): RedirectResponse
@@ -81,6 +89,6 @@ class DiscountCouponController extends Controller
         $discountCoupon->delete();
 
         return redirect()->route('core.discount-coupons.index')
-            ->with('success', 'Coupon removed.');
+                    ->with('success', 'Coupon removed.');
     }
 }

@@ -15,6 +15,10 @@ class DiscountCoupon extends Model
     use HasUuids;
     use SoftDeletes;
 
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+
     /**
      * @var list<string>
      */
@@ -35,10 +39,6 @@ class DiscountCoupon extends Model
         'max_uses' => 'integer',
         'times_used' => 'integer',
     ];
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
 
     public function analysisRequests(): HasMany
     {
