@@ -1,0 +1,36 @@
+---
+description: Commit rules – always make small, incremental, well-scoped commits.
+alwaysApply: true
+---
+
+# Commit Rules – Small, Incremental, Contextual
+
+- **Commit size**
+  - Prefer **small, self-contained commits** (single concern or tiny group of closely related changes).
+  - Avoid \"mega commits\" that bundle migration, backend, frontend, tests, and docs all together.
+  - If you could describe the change only com a frase longa com vários \"e\", provavelmente são **vários commits**.
+
+- **Commit boundaries**
+  - Separe, sempre que possível:
+    - **DB/migrations** (estrutura de dados).
+    - **Models / services / controllers** (backend).
+    - **Frontend / Vue / Vuetify** (UI/comportamento).
+    - **Tests** (Feature, Browser, unit).
+    - **Docs / FDR / IMPLEMENTATION_PLAN**.
+  - Cada commit deve **compilar e passar testes relevantes** (pelo menos unit/feature afetados).
+
+- **Mensagem de commit**
+  - Use prefixos claros e consistentes, por exemplo:
+    - `chore(db): …` – migrações, ajustes estruturais.
+    - `feat(core): …` – funcionalidade de domínio.
+    - `fix(...): …` – correções de bug.
+    - `test(...): …` – apenas testes.
+    - `docs(...): …` – apenas documentação / FDR / plano.
+  - A primeira linha resume **o que** e **porquê**; detalhes entram em bullets, se necessário.
+
+- **Fluxo com Ralph Building**
+  - Para cada tarefa do plano Ralph:
+    - Implementar em commits pequenos, seguindo as regras acima.
+    - Garantir que o último commit da tarefa deixe o projeto em estado saudável (build + testes OK).
+  - Só depois disso atualizar `IMPLEMENTATION_PLAN.md` e o FDR (marcações `[x]`), em um commit separado de código.
+
