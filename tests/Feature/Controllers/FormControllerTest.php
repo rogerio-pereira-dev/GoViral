@@ -22,8 +22,15 @@ it('renders the start growth form page with current locale', function () {
 });
 
 it('stores a new analysis request and returns checkout payload', function () {
-    config(['services.turnstile.secret' => 'test-secret']);
+    config([
+        'services.turnstile.secret' => 'test-secret',
+        'services.stripe.price_in_cents' => 3500,
+    ]);
     Turnstile::fake();
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => '',
+    ]);
 
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
@@ -54,12 +61,20 @@ it('stores a new analysis request and returns checkout payload', function () {
         'locale' => 'es',
         'payment_status' => 'pending',
         'processing_status' => 'waiting_payment_confirmation',
+        'discount_coupon_id' => null,
     ]);
 });
 
 it('stores not informed placeholders for optional empty profile fields', function () {
-    config(['services.turnstile.secret' => 'test-secret']);
+    config([
+        'services.turnstile.secret' => 'test-secret',
+        'services.stripe.price_in_cents' => 3500,
+    ]);
     Turnstile::fake();
+    bindStripeClientForFormStore('pi_test_init', 3500, [
+        'goviral_base_cents' => '3500',
+        'discount_coupon_id' => '',
+    ]);
 
     $payload = array_merge(validFormPayload(), [
         'tiktok_username' => '',
@@ -251,10 +266,14 @@ it('returns payment intent payload when stripe api succeeds', function () {
                 {
                     public function create(array $payload): object
                     {
-                        expect($payload)->toBe([
+                        expect($payload)->toMatchArray([
                             'amount' => 3500,
                             'currency' => 'usd',
                             'automatic_payment_methods' => ['enabled' => true],
+                        ]);
+                        expect($payload['metadata'])->toBe([
+                            'goviral_base_cents' => '3500',
+                            'discount_coupon_id' => '',
                         ]);
 
                         return (object) [
@@ -286,6 +305,52 @@ it('returns payment intent payload when stripe api succeeds', function () {
             'currency' => 'usd',
         ]);
 });
+
+function bindStripeClientForFormStore(string $paymentIntentId, int $amountCents, array $metadata): void
+{
+    app()->bind(StripeClient::class, function () use ($paymentIntentId, $amountCents, $metadata) {
+        return new class($paymentIntentId, $amountCents, $metadata)
+        {
+            public object $paymentIntents;
+
+            public function __construct(
+                private string $paymentIntentId,
+                private int $amountCents,
+                private array $metadata,
+            ) {
+                $pid = $paymentIntentId;
+                $amt = $amountCents;
+                $meta = $metadata;
+                $this->paymentIntents = new class($pid, $amt, $meta)
+                {
+                    public function __construct(
+                        private string $paymentIntentId,
+                        private int $amountCents,
+                        private array $metadata,
+                    ) {}
+
+                    public function retrieve(string $id): object
+                    {
+                        expect($id)->toBe($this->paymentIntentId);
+
+                        return (object) [
+                            'amount' => $this->amountCents,
+                            'metadata' => new class($this->metadata)
+                            {
+                                public function __construct(private array $m) {}
+
+                                public function toArray(): array
+                                {
+                                    return $this->m;
+                                }
+                            },
+                        ];
+                    }
+                };
+            }
+        };
+    });
+}
 
 function validFormPayload(): array
 {
