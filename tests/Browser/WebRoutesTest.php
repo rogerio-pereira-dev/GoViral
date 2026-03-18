@@ -28,6 +28,7 @@ it('runs smoke checks for authenticated web routes without JavaScript errors', f
 
     $pages = visit([
         '/core/dashboard',
+        '/core/discount-coupons',
         '/core/settings',
         '/core/settings/profile',
         '/core/settings/password',
