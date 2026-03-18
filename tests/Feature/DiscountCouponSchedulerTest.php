@@ -26,6 +26,29 @@ it('soft deletes exhausted coupons via command', function (): void {
     expect($active->fresh()->trashed())->toBeFalse();
 });
 
+it('does nothing when there is no expired or exhausted coupon', function (): void {
+    $valid = DiscountCoupon::factory()->create([
+        'expires_at' => null,
+        'max_uses' => null,
+        'times_used' => 0,
+    ]);
+
+    $exitCode = Artisan::call('discount-coupons:soft-delete-invalid');
+
+    expect($exitCode)->toBe(0)
+        ->and($valid->fresh()->trashed())->toBeFalse();
+});
+
+it('skips coupons that are already soft deleted', function (): void {
+    $expired = DiscountCoupon::factory()->expired()->create();
+    $expired->delete();
+
+    $exitCode = Artisan::call('discount-coupons:soft-delete-invalid');
+
+    expect($exitCode)->toBe(0)
+        ->and($expired->fresh()->trashed())->toBeTrue();
+});
+
 it('keeps analysis_requests reference after coupon soft deleted', function (): void {
     $coupon = DiscountCoupon::factory()->expired()->create();
     $id = $coupon->id;
