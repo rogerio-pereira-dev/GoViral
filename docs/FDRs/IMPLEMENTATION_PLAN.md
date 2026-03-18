@@ -139,28 +139,22 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Ensure existing auth and dashboard Feature tests pass.
 - [x] Add or update Browser tests: smoke checks for auth routes (e.g. `/login`, `/forgot-password`) and for dashboard (guest redirect to login, authenticated sees dashboard); at least one E2E flow (e.g. login → dashboard). Use stable selectors (e.g. `data-test` or Pest `@selector`) for login button and key fields.
 
-### Core discount coupons (FDR-014)
+### Core discount coupons (FDR-014) — done
 
-- **Before implementing any FDR-014 task:** Read `.cursor/skills/laravel-vue-crud/SKILL.md` and follow its backend + frontend workflow (and combine with `frontend-vue-vuetify` for UI rules).
-- Add migration for `discount_coupons`: id (UUID), code (string, unique), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
-- Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
-- Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
-- **Core UI — one task per bullet (small scope). Do not proceed to the next bullet until browser tests for the current one pass.**
-  - Create **Index page**: list coupons (use `v-data-table` per frontend skill), link to create, action column with Edit and Delete; no delete confirmation yet.
-  - **Browser tests for Index**: navigation (route loads when authenticated), smoke (table/link visible), page behavior (e.g. link to create). Do not proceed until tests pass.
-  - **Understand how existing POST forms work** in the project; use as reference `resources/js/pages/auth/Login.vue` (form submit, Inertia, validation errors). Then implement:
-    - Create **Create page**: form with code, value (0–100), expiration type (never / after X days / after X uses) and related fields; submit to store; redirect to index on success.
-  - **Browser tests for Create**: navigation, smoke (form visible), behavior (submit, validation errors, redirect to index on success). Do not proceed until tests pass.
-  - **Understand how existing PUT forms work** in the project; use as reference `resources/js/pages/settings/Password.vue` (update flow, form binding). Then implement:
-    - Reuse **Create for Edit**: same form component or page, prefilled with coupon data; submit to update; redirect to index on success.
-  - **Browser tests for Edit**: navigation (edit route with id), smoke (form prefilled), behavior (submit, redirect to index on success). Do not proceed until tests pass.
-  - Add **v-dialog for delete confirmation**: on Index, when user clicks Delete open a Vuetify `v-dialog` (no `window.confirm`); Cancel and Confirm buttons; on Confirm call destroy and close dialog.
-  - **Browser tests for delete**: dialog opens on Delete click; Cancel closes without deleting; Confirm calls destroy and row disappears or list updates. Do not proceed until tests pass.
-  - Add **sidebar/menu link** to discount coupons Index (e.g. "Discount coupons" in core nav).
-  - **Browser test for menu**: authenticated user can reach coupons Index via sidebar/menu link. Do not proceed until test passes.
-- Checkout at `/start-growth`: add optional coupon code input; backend validates (exists, not soft-deleted, not expired, not exhausted) and applies discount; store coupon id on analysis_requests. Webhook: increment coupon `times_used` when payment succeeded and coupon was used.
-- Scheduler: add job that soft-deletes invalid coupons (expired: `expires_at` is not null and `expires_at < now()`; exhausted: `max_uses` is not null and `times_used >= max_uses`). Schedule in Laravel Scheduler. Because it is soft delete, the row remains and analysis_requests never loses the reference.
-- Tests: Feature tests for CRUD (auth, validation, soft delete); checkout and webhook; scheduler soft-deletes invalid coupons and references remain valid.
+- [x] **Before implementing any FDR-014 task:** Read `.cursor/skills/laravel-vue-crud/SKILL.md` and follow its backend + frontend workflow (and combine with `frontend-vue-vuetify` for UI rules).
+- [x] Add migration for `discount_coupons`: id (UUID), code (string, indexed), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout).
+- [x] Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
+- [x] Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
+- [x] **Core UI** (Index → Create → Edit → delete dialog → menu; browser tests cover flows):
+  - [x] **Index page**: list coupons (`v-data-table`), link to create, Edit and Delete actions.
+  - [x] **Create page**: code, value (0–100), expiration (never / after X days / after X uses); store; redirect to index.
+  - [x] **Edit page**: same form prefilled; update; redirect to index.
+  - [x] **v-dialog** for delete confirmation (Cancel / Confirm); soft delete on confirm.
+  - [x] **Sidebar link** to discount coupons Index; browser test via menu.
+- [x] Checkout at `/start-growth`: optional coupon code; backend validates; PI metadata + discounted amount; store `discount_coupon_id` on analysis request; **restore card UI after invalid coupon** (re-fetch PI without coupon).
+- [x] Webhook: increment coupon `times_used` when payment succeeded and coupon was used.
+- [x] Scheduler: `discount-coupons:soft-delete-invalid` daily (expired + exhausted); soft delete only.
+- [x] Tests: Feature (CRUD, scheduler, checkout, webhook); Browser (admin CRUD, invalid-coupon payment regression); translation keys for coupon copy (en/es/pt).
 
 ### Scheduler cleanup (FDR-010) — closed
 
@@ -171,8 +165,8 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** Landing, form, Stripe (Payment Element + webhook), queue (Redis + Horizon), LLM (Gemini), email report, captcha (Turnstile), and Job orchestration are implemented. FDRs in ToDo: FDR-011 (persist report before email), FDR-012 (conversion tracking + shared public layout), FDR-014 (core discount coupons). FDR-013 (auth and dashboard Vuetify branding) is done. Job already does not delete the record after send; missing for FDR-011: migration for `report_html`/`sent_at`, persist-before-send in Job, and tests. For FDR-012: shared public layout component and GTM snippet; Setup guides are already in docs/Setup/. For FDR-013: auth layout and all auth pages + Dashboard.vue refactor to Vuetify; Browser tests for auth/dashboard. For FDR-014: discount_coupons table and model (SoftDeletes); analysis_requests.discount_coupon_id; CRUD under /core/* (soft delete); checkout integration; webhook increments times_used; scheduler soft-deletes invalid coupons (expired + exhausted). No ON DELETE SET NULL; soft delete keeps reference.
+- **Current codebase:** FDR-014 done. FDRs in ToDo: FDR-012 (conversion tracking + shared public layout). FDR-011, FDR-013 done.
 - **Order:** Implement in the order above; within each section order by dependency.
-- **FDR-014 (Core discount coupons):** Before any implementation, read `.cursor/skills/laravel-vue-crud/SKILL.md`. Implement one UI bullet at a time (Index → tests → Create → tests → Edit → tests → v-dialog delete → tests → menu link → test). Do not move to the next step until the browser tests for the current step pass.
+- **FDR-014:** See `docs/FDRs/Done/FDR_014_core_discount_coupons.md`; plan steps above kept for reference.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
 - **Discovery (Browser tests):** If browser tests fail locally, ensure Vite dev server is running or run `npm run build` before tests.

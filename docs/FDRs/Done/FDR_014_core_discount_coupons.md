@@ -45,14 +45,14 @@
 
 ## Acceptance criteria
 
-- [ ] Migration for discount coupons table: id (UUID), code (unique), value (0–100), expires_at (nullable), max_uses (nullable), times_used (default 0), deleted_at (nullable), timestamps. Model uses SoftDeletes.
-- [ ] Migration (or alter) for analysis_requests: add nullable `discount_coupon_id` (foreign key to discount_coupons.id). No ON DELETE SET NULL (soft delete keeps the row).
-- [ ] CRUD routes under `/core/*` protected by auth; only authenticated users can create, read, update, delete coupons. Admin delete = soft delete.
-- [ ] Admin UI (core) to list, create, edit, update, delete coupons; expiration type (never / after X days / after X uses) and related fields; validation (unique code, value 0–100). Delete = soft delete.
-- [ ] Checkout at `/start-growth`: user can enter coupon code; backend validates (exists, not soft-deleted, not expired, not exhausted) and applies percentage discount; store coupon id on analysis request. On payment confirmation (webhook): increment coupon `times_used`.
-- [ ] Scheduler job: periodically soft-delete invalid coupons (expired: expires_at < now(); exhausted: times_used >= max_uses). Row remains so analysis_requests never loses the reference.
-- [ ] Coupons are never hard-deleted; only soft delete (admin and scheduler). Reference from analysis_requests is always valid.
-- [ ] Unauthenticated users cannot create or manipulate coupons; authorization and validation prevent abuse (e.g. prompt injection, forged requests).
+- [x] Migration for discount coupons table: id (UUID), code (unique), value (0–100), expires_at (nullable), max_uses (nullable), times_used (default 0), deleted_at (nullable), timestamps. Model uses SoftDeletes.
+- [x] Migration (or alter) for analysis_requests: add nullable `discount_coupon_id` (foreign key to discount_coupons.id). No ON DELETE SET NULL (soft delete keeps the row).
+- [x] CRUD routes under `/core/*` protected by auth; only authenticated users can create, read, update, delete coupons. Admin delete = soft delete.
+- [x] Admin UI (core) to list, create, edit, update, delete coupons; expiration type (never / after X days / after X uses) and related fields; validation (unique code, value 0–100). Delete = soft delete.
+- [x] Checkout at `/start-growth`: user can enter coupon code; backend validates (exists, not soft-deleted, not expired, not exhausted) and applies percentage discount; store coupon id on analysis request. On payment confirmation (webhook): increment coupon `times_used`.
+- [x] Scheduler job: periodically soft-delete invalid coupons (expired: expires_at < now(); exhausted: times_used >= max_uses). Row remains so analysis_requests never loses the reference.
+- [x] Coupons are never hard-deleted; only soft delete (admin and scheduler). Reference from analysis_requests is always valid.
+- [x] Unauthenticated users cannot create or manipulate coupons; authorization and validation prevent abuse (e.g. prompt injection, forged requests).
 
 ---
 
