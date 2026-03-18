@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AnalysisRequest extends Model
 {
@@ -33,6 +34,7 @@ class AnalysisRequest extends Model
         'last_error',
         'report_html',
         'sent_at',
+        'discount_coupon_id',
     ];
 
     /**
@@ -60,5 +62,10 @@ class AnalysisRequest extends Model
     public function scopeProcessingStatus(Builder $query, string $status): Builder
     {
         return $query->where('processing_status', $status);
+    }
+
+    public function discountCoupon(): BelongsTo
+    {
+        return $this->belongsTo(DiscountCoupon::class, 'discount_coupon_id');
     }
 }
