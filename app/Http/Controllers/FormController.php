@@ -205,6 +205,12 @@ class FormController extends Controller
             ], 422);
         }
 
+        $normalizedDiscountCouponId = null;
+
+        if (is_string($discountCouponId) && $discountCouponId !== '') {
+            $normalizedDiscountCouponId = $discountCouponId;
+        }
+
         $analysisRequest = AnalysisRequest::create([
             ...$validatedData,
             'tiktok_username' => $this->normalizeNotInformed($validatedData['tiktok_username'] ?? null),
@@ -216,9 +222,7 @@ class FormController extends Controller
             'stripe_payment_intent_id' => $paymentIntentId,
             'payment_status' => 'pending',
             'processing_status' => 'waiting_payment_confirmation',
-            'discount_coupon_id' => is_string($discountCouponId) && $discountCouponId !== ''
-                ? $discountCouponId
-                : null,
+            'discount_coupon_id' => $normalizedDiscountCouponId,
         ]);
 
         $request->session()->put('thank_you_allowed', true);
