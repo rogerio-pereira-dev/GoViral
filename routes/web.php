@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Core\DashboardController;
+use App\Http\Controllers\Core\DiscountCouponController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
@@ -39,6 +40,10 @@ Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
+
+        Route::resource('discount-coupons', DiscountCouponController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->names('core.discount-coupons');
     });
 
 require __DIR__.'/settings.php';
