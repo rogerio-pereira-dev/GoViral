@@ -151,13 +151,13 @@ it('dispatches a sync job when payment_intent.succeeded has no matching analysis
     Queue::fake();
 
     $payload = [
-            'type' => 'payment_intent.succeeded',
-            'data' => [
-                'object' => [
-                    'id' => 'pi_live_race_1',
-                ],
+        'type' => 'payment_intent.succeeded',
+        'data' => [
+            'object' => [
+                'id' => 'pi_live_race_1',
             ],
-        ];
+        ],
+    ];
     $body = json_encode($payload);
     $stripeConfig = config('cashier.webhook.secret');
     $header = stripeWebhookSignature($body, $stripeConfig);
@@ -169,15 +169,15 @@ it('dispatches a sync job when payment_intent.succeeded has no matching analysis
         [],
         [],
         [
-            'CONTENT_TYPE' => 'application/json', 
-            'HTTP_STRIPE_SIGNATURE' => $header
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_STRIPE_SIGNATURE' => $header,
         ],
         $body
     );
 
     $response->assertStatus(200)
         ->assertJson([
-            'received' => true
+            'received' => true,
         ]);
 
     Queue::assertPushed(SyncPaymentIntentSucceeded::class, fn ($job) => $job->paymentIntentId === 'pi_live_race_1');

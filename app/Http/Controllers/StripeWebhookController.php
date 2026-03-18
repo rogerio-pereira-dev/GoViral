@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SyncPaymentIntentSucceeded;
 use App\Jobs\ProcessAnalysisRequest;
+use App\Jobs\SyncPaymentIntentSucceeded;
 use App\Models\AnalysisRequest;
 use App\Models\DiscountCoupon;
 use Illuminate\Http\JsonResponse;
@@ -51,8 +51,7 @@ class StripeWebhookController extends Controller
 
         if ($payload['type'] === 'payment_intent.succeeded') {
             $this->handlePaymentIntentSucceeded($payload);
-        } 
-        elseif ($payload['type'] === 'payment_intent.payment_failed') {
+        } elseif ($payload['type'] === 'payment_intent.payment_failed') {
             $this->handlePaymentIntentPaymentFailed($payload);
         }
 
