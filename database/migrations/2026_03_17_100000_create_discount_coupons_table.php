@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('code')->index();
             $table->unsignedTinyInteger('value');
-            $table->timestamp('expires_at')->nullable();
+            $table->date('expires_at')->nullable();
             $table->unsignedInteger('max_uses')->nullable();
             $table->unsignedInteger('times_used')->default(0);
             $table->softDeletes();
