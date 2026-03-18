@@ -14,12 +14,14 @@ class SoftDeleteInvalidDiscountCouponsCommand extends Command
 
     public function handle(): int
     {
+        $today = now()->toDateString();
+
         $query = DiscountCoupon::query()
             ->where(function (Builder $q): void {
                 // Expired by date
                 $q->where(function (Builder $q2): void {
                     $q2->whereNotNull('expires_at')
-                        ->where('expires_at', '<=', now());
+                        ->whereDate('expires_at', '<', now()->toDateString());
                     // Used times > max_uses
                 })->orWhere(function (Builder $q2): void {
                     $q2->whereNotNull('max_uses')

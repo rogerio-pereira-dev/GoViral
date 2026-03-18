@@ -142,17 +142,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ### Core discount coupons (FDR-014) — done
 
 - [x] **Before implementing any FDR-014 task:** Read `.cursor/skills/laravel-vue-crud/SKILL.md` and follow its backend + frontend workflow (and combine with `frontend-vue-vuetify` for UI rules).
-- [x] Add migration for `discount_coupons`: id (UUID), code (string, indexed; unique among active via validation), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
-- [x] Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
-- [x] Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
-- [x] **Core UI — one task per bullet (small scope).** Browser tests cover each area.
-  - [x] Create **Index page**: list coupons (use `v-data-table` per frontend skill), link to create, action column with Edit and Delete; delete confirmation via dialog (see below).
-  - [x] **Browser tests for Index**: navigation (route loads when authenticated), smoke (table/link visible), page behavior (e.g. link to create).
-  - [x] **Create page**: form with code, value (0–100), expiration type (never / after X days / after X uses) and related fields; submit to store; redirect to index on success.
-  - [x] **Browser tests for Create**: navigation, smoke (form visible), behavior (submit, redirect to index on success).
-  - [x] **Edit page**: same form prefilled with coupon data; submit to update; redirect to index on success.
-  - [x] **Browser tests for Edit**: navigation (edit route with id), smoke (form prefilled), behavior (submit, redirect to index on success).
-  - [x] **v-dialog for delete confirmation**: on Index, when user clicks Delete open a Vuetify `v-dialog` (no `window.confirm`); Cancel and Confirm; on Confirm call destroy and close dialog.
+- [x] Add migration for `discount_coupons`: id (UUID), code (string, indexed; unique among active via validation), value (integer 0–100), e
   - [x] **Browser tests for delete**: dialog opens on Delete click; Cancel closes without deleting; Confirm calls destroy and list updates.
   - [x] Add **sidebar/menu link** to discount coupons Index (e.g. "Discount coupons" in core nav).
   - [x] **Browser test for menu**: authenticated user can reach coupons Index via sidebar/menu link.
@@ -162,7 +152,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Discount coupon expiration by date (FDR-015)
 
-- [ ] Adjust `discount_coupons` schema and model so `expires_at` is treated consistently as a **date-only** value (casts, queries, scheduler) and coupons remain valid through the expiration date.
+- [x] Adjust `discount_coupons` schema and model so `expires_at` is treated consistently as a **date-only** value (casts, queries, scheduler) and coupons remain valid through the expiration date.
 - [ ] Update core admin coupon Form Requests and controller helpers so creation and update of coupons use explicit date-based expiration (`after date X`) instead of relative “after X days” calculations.
 - [ ] Refactor core coupon Vue pages to replace the “after X days” UI with an “after date X” option that uses a date field, loading and persisting the exact `expires_at` date with no intermediate day-count logic.
 - [ ] Update checkout and any supporting logic that validates coupons to respect the date-only semantics of `expires_at` (valid on or before the expiration date; invalid after), while preserving behavior for “never expires” and “after X uses”.

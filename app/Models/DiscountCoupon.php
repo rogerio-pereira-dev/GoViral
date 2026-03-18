@@ -34,7 +34,7 @@ class DiscountCoupon extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'expires_at' => 'datetime',
+        'expires_at' => 'date',
         'value' => 'integer',
         'max_uses' => 'integer',
         'times_used' => 'integer',
@@ -47,10 +47,12 @@ class DiscountCoupon extends Model
 
     public function scopeValidForCheckout(Builder $query): Builder
     {
+        $today = now()->toDateString();
+
         return $query
             ->where(function (Builder $q): void {
                 $q->whereNull('expires_at')
-                    ->orWhere('expires_at', '>', now());
+                    ->orWhereDate('expires_at', '>=', now()->toDateString());
             })
             ->where(function (Builder $q): void {
                 $q->whereNull('max_uses')
