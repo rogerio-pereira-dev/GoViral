@@ -11,5 +11,18 @@ it('renders the dashboard page for authenticated users', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Dashboard')
+            ->where('horizonUrl', '/'.ltrim(config('horizon.path', 'horizon'), '/'))
+        );
+});
+
+it('shares custom horizon path as horizonUrl', function () {
+    config(['horizon.path' => 'queue-dashboard']);
+
+    $this->actingAs(\App\Models\User::factory()->create());
+
+    $this->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('horizonUrl', '/queue-dashboard')
         );
 });
