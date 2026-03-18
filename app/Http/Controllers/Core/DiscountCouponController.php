@@ -14,18 +14,7 @@ class DiscountCouponController extends Controller
 {
     public function index(): Response
     {
-        $coupons = DiscountCoupon::query()
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(fn (DiscountCoupon $c) => [
-                'id' => $c->id,
-                'code' => $c->code,
-                'value' => $c->value,
-                'expires_at' => $c->expires_at?->toIso8601String(),
-                'max_uses' => $c->max_uses,
-                'times_used' => $c->times_used,
-                'created_at' => $c->created_at->toIso8601String(),
-            ]);
+        $coupons = DiscountCoupon::orderByDesc('created_at')->get();
 
         return Inertia::render('Core/DiscountCoupons/Index', [
             'coupons' => $coupons,
@@ -41,7 +30,7 @@ class DiscountCouponController extends Controller
 
     public function store(StoreDiscountCouponRequest $request): RedirectResponse
     {
-        DiscountCoupon::query()->create($request->couponAttributes());
+        DiscountCoupon::create($request->couponAttributes());
 
         return redirect()->route('core.discount-coupons.index')
             ->with('success', 'Coupon created.');
