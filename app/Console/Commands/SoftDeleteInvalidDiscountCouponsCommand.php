@@ -16,26 +16,25 @@ class SoftDeleteInvalidDiscountCouponsCommand extends Command
     {
         $today = now()->toDateString();
 
-        $query = DiscountCoupon::query()
-            ->where(function (Builder $q): void {
-                // Expired by date
-                $q->where(function (Builder $q2): void {
-                    $q2->whereNotNull('expires_at')
-                        ->whereDate('expires_at', '<', now()->toDateString());
-                    // Used times > max_uses
-                })->orWhere(function (Builder $q2): void {
-                    $q2->whereNotNull('max_uses')
-                        ->whereColumn('times_used', '>=', 'max_uses');
-                });
-            });
+        $coupons = DiscountCoupon::where(function (Builder $q): void {
+                        // Expired by date
+                        $q->where(function (Builder $q2): void {
+                            $q2->whereNotNull('expires_at')
+                                ->whereDate('expires_at', '<', now()->toDateString());
+                            // Used times > max_uses
+                        })->orWhere(function (Builder $q2): void {
+                            $q2->whereNotNull('max_uses')
+                                ->whereColumn('times_used', '>=', 'max_uses');
+                        });
+                    })
+                    ->get();
 
         $count = 0;
 
-        // Soft-delete each invalid coupon and keep a counter for observability
-        $query->each(function (DiscountCoupon $coupon) use ($count): void {
+        foreach($coupons as $coupon) {
             $coupon->delete();
             $count++;
-        });
+        }
 
         $this->info("Soft-deleted {$count} invalid coupon(s).");
 
