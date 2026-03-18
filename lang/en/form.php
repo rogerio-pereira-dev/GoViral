@@ -40,6 +40,10 @@ return [
     'payment_declined_error' => 'Your card was declined. Please use another card.',
     'payment_insufficient_funds_error' => 'Your card has insufficient funds.',
     'payment_amount_label' => 'Amount',
+    'coupon_code_label' => 'Coupon code (optional)',
+    'coupon_apply_cta' => 'Apply',
+    'coupon_invalid' => 'This coupon is not valid or no longer available.',
+    'coupon_applied_hint' => ':percent% discount applied.',
     'turnstile_label' => 'Security check',
     'validation_failed_message' => 'Validation failed. Please check the fields above.',
 

@@ -40,6 +40,10 @@ return [
     'payment_declined_error' => 'Seu cartão foi recusado. Use outro cartão.',
     'payment_insufficient_funds_error' => 'Seu cartão não tem saldo suficiente.',
     'payment_amount_label' => 'Valor',
+    'coupon_code_label' => 'Código do cupom (opcional)',
+    'coupon_apply_cta' => 'Aplicar',
+    'coupon_invalid' => 'Este cupom não é válido ou não está mais disponível.',
+    'coupon_applied_hint' => 'Desconto de :percent% aplicado.',
     'turnstile_label' => 'Verificação de segurança',
     'validation_failed_message' => 'A validação falhou. Verifique os campos acima.',
 
