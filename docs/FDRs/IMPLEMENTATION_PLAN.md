@@ -142,19 +142,23 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ### Core discount coupons (FDR-014) — done
 
 - [x] **Before implementing any FDR-014 task:** Read `.cursor/skills/laravel-vue-crud/SKILL.md` and follow its backend + frontend workflow (and combine with `frontend-vue-vuetify` for UI rules).
-- [x] Add migration for `discount_coupons`: id (UUID), code (string, indexed), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout).
+- [x] Add migration for `discount_coupons`: id (UUID), code (string, indexed; unique among active via validation), value (integer 0–100), expires_at (nullable timestamp), max_uses (nullable integer), times_used (integer, default 0), `$table->softDeletes();`, timestamps. Model with SoftDeletes, fillable, casts, and scopes (e.g. valid for checkout, exclude soft-deleted).
 - [x] Add migration to alter `analysis_requests`: nullable `discount_coupon_id` (foreign key to `discount_coupons.id`). No ON DELETE SET NULL (soft delete keeps the row). Update AnalysisRequest model (fillable, relationship to DiscountCoupon).
 - [x] Add CRUD routes under `/core/*`, protected by auth. Controller(s) for index, create, store, edit, update, destroy; Form Requests for validation. Admin delete = soft delete (e.g. `deleted_at`).
-- [x] **Core UI** (Index → Create → Edit → delete dialog → menu; browser tests cover flows):
-  - [x] **Index page**: list coupons (`v-data-table`), link to create, Edit and Delete actions.
-  - [x] **Create page**: code, value (0–100), expiration (never / after X days / after X uses); store; redirect to index.
-  - [x] **Edit page**: same form prefilled; update; redirect to index.
-  - [x] **v-dialog** for delete confirmation (Cancel / Confirm); soft delete on confirm.
-  - [x] **Sidebar link** to discount coupons Index; browser test via menu.
-- [x] Checkout at `/start-growth`: optional coupon code; backend validates; PI metadata + discounted amount; store `discount_coupon_id` on analysis request; **restore card UI after invalid coupon** (re-fetch PI without coupon).
-- [x] Webhook: increment coupon `times_used` when payment succeeded and coupon was used.
-- [x] Scheduler: `discount-coupons:soft-delete-invalid` daily (expired + exhausted); soft delete only.
-- [x] Tests: Feature (CRUD, scheduler, checkout, webhook); Browser (admin CRUD, invalid-coupon payment regression); translation keys for coupon copy (en/es/pt).
+- [x] **Core UI — one task per bullet (small scope).** Browser tests cover each area.
+  - [x] Create **Index page**: list coupons (use `v-data-table` per frontend skill), link to create, action column with Edit and Delete; delete confirmation via dialog (see below).
+  - [x] **Browser tests for Index**: navigation (route loads when authenticated), smoke (table/link visible), page behavior (e.g. link to create).
+  - [x] **Create page**: form with code, value (0–100), expiration type (never / after X days / after X uses) and related fields; submit to store; redirect to index on success.
+  - [x] **Browser tests for Create**: navigation, smoke (form visible), behavior (submit, redirect to index on success).
+  - [x] **Edit page**: same form prefilled with coupon data; submit to update; redirect to index on success.
+  - [x] **Browser tests for Edit**: navigation (edit route with id), smoke (form prefilled), behavior (submit, redirect to index on success).
+  - [x] **v-dialog for delete confirmation**: on Index, when user clicks Delete open a Vuetify `v-dialog` (no `window.confirm`); Cancel and Confirm; on Confirm call destroy and close dialog.
+  - [x] **Browser tests for delete**: dialog opens on Delete click; Cancel closes without deleting; Confirm calls destroy and list updates.
+  - [x] Add **sidebar/menu link** to discount coupons Index (e.g. "Discount coupons" in core nav).
+  - [x] **Browser test for menu**: authenticated user can reach coupons Index via sidebar/menu link.
+- [x] Checkout at `/start-growth`: add optional coupon code input; backend validates (exists, not soft-deleted, not expired, not exhausted) and applies discount; store coupon id on analysis_requests (via PI metadata). **After invalid coupon, re-fetch PI without coupon so card element stays available.** Webhook: increment coupon `times_used` when payment succeeded and coupon was used.
+- [x] Scheduler: add job that soft-deletes invalid coupons (expired: `expires_at` is not null and `expires_at < now()`; exhausted: `max_uses` is not null and `times_used >= max_uses`). Schedule in Laravel Scheduler. Because it is soft delete, the row remains and analysis_requests never loses the reference.
+- [x] Tests: Feature tests for CRUD (auth, validation, soft delete); checkout and webhook; scheduler soft-deletes invalid coupons and references remain valid; Browser E2E for admin flows and invalid-coupon payment regression; i18n for coupon copy on form (en/es/pt).
 
 ### Scheduler cleanup (FDR-010) — closed
 
