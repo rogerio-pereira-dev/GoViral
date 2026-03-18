@@ -43,4 +43,3 @@ class DiscountCouponSeeder extends Seeder
         );
     }
 }
-
