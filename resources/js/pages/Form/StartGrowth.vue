@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { nextTick, onMounted, ref } from 'vue';
 
 const props = defineProps<{
@@ -379,8 +380,8 @@ onMounted(async () => {
 <template>
     <Head :title="translations.title" />
 
-    <v-app theme="goviralDark">
-        <v-main class="start-growth-main">
+    <PublicLayout>
+        <div class="start-growth-main">
             <v-container class="start-growth-container" max-width="1200">
                 <v-row class="ga-6" align="stretch">
                     <v-col cols="12" md="7" order="1" order-md="2">
@@ -642,8 +643,8 @@ onMounted(async () => {
                     </v-col>
                 </v-row>
             </v-container>
-        </v-main>
-    </v-app>
+        </div>
+    </PublicLayout>
 </template>
 
 <style scoped>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 defineProps<{
     translations: {
@@ -13,8 +14,8 @@ defineProps<{
 <template>
     <Head :title="translations.title" />
 
-    <v-app theme="goviralDark">
-        <v-main class="thank-you-main">
+    <PublicLayout>
+        <div class="thank-you-main">
             <v-container class="thank-you-container" max-width="760">
                 <v-card class="thank-you-card text-center" elevation="12">
                     <v-card-text class="py-12 px-8">
@@ -41,8 +42,8 @@ defineProps<{
                     </v-card-text>
                 </v-card>
             </v-container>
-        </v-main>
-    </v-app>
+        </div>
+    </PublicLayout>
 </template>
 
 <style scoped>

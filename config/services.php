@@ -45,4 +45,8 @@ return [
         'secret' => env('TURNSTILE_SECRET_KEY'),
     ],
 
+    'gtm' => [
+        'id' => env('GTM_ID'),
+    ],
+
 ];

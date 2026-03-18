@@ -123,13 +123,13 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 
 ### Conversion tracking and shared public layout (FDR-012)
 
-- Create a reusable **public layout** Vue component (e.g. `PublicLayout.vue` or `LandingLayout.vue`) that contains: (1) the same app bar as the landing (logo "GoViral", language selector en/es/pt); (2) the same footer as the landing (GoViral branding, tagline); (3) a default slot for main content.
-- Refactor **Landing.vue** to use this layout; move hero and sections into the layout’s default slot.
-- Refactor **Form/StartGrowth.vue** to use this layout; form and payment UI in the layout’s default slot.
-- Refactor **Form/ThankYou.vue** to use this layout; thank-you message and CTA in the layout’s default slot.
-- Add GTM snippet to the public layout (or root Blade/Inertia template): head script + noscript in body; use `GTM_ID` from env (optional); if not set, do not inject GTM.
-- Ensure no visual or behavioural regressions; run existing browser and smoke tests (landing, form, thank-you, locale).
-- Setup guides already exist in `docs/Setup/`: facebook-conversion-setup.md, google-conversion-setup.md, tiktok-conversion-setup.md, gtm-pixels-conversion-setup.md (no code change required for this bullet).
+- [x] Create a reusable **public layout** Vue component (e.g. `PublicLayout.vue` or `LandingLayout.vue`) that contains: (1) the same app bar as the landing (logo "GoViral", language selector en/es/pt); (2) the same footer as the landing (GoViral branding, tagline); (3) a default slot for main content.
+- [x] Refactor **Landing.vue** to use this layout; move hero and sections into the layout’s default slot.
+- [x] Refactor **Form/StartGrowth.vue** to use this layout; form and payment UI in the layout’s default slot.
+- [x] Refactor **Form/ThankYou.vue** to use this layout; thank-you message and CTA in the layout’s default slot.
+- [x] Add GTM snippet to the public layout (or root Blade/Inertia template): head script + noscript in body; use `GTM_ID` from env (optional); if not set, do not inject GTM.
+- [x] Ensure no visual or behavioural regressions; run existing browser and smoke tests (landing, form, thank-you, locale).
+- [x] Setup guides already exist in `docs/Setup/`: facebook-conversion-setup.md, google-conversion-setup.md, tiktok-conversion-setup.md, gtm-pixels-conversion-setup.md (no code change required for this bullet).
 
 ### Auth and dashboard Vuetify branding (FDR-013) — done
 
@@ -168,7 +168,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** FDR-014 done. FDRs in ToDo: FDR-012 (conversion tracking + shared public layout). FDR-011, FDR-013 done.
+- **Current codebase:** FDR-014 done. FDRs in ToDo: none. FDR-011, FDR-013 done.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-014:** See `docs/FDRs/Done/FDR_014_core_discount_coupons.md`; plan steps above kept for reference.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
