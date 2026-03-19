@@ -225,9 +225,10 @@ All backend changes should come with or update appropriate tests.
 - **Feature tests**:
   - For HTTP endpoints, Form Requests, database interactions, and integrated
     flows.
-- **Browser tests (Pest)**:
+- **Browser tests (Pest Browser)**:
   - For end-to-end flows where the backend and frontend meet; often managed
     under the frontend/testing rules but may require backend setup.
+  - Use **Pest Browser** only; **do not** use Laravel Dusk for this project.
 
 ### What to test for
 

@@ -5,7 +5,7 @@ description: >
   aligned with the branding manual. Use this skill whenever creating, changing
   or reviewing screens, Vue components, layouts, frontend navigation or UI
   tests, ensuring exclusive use of Vuetify components, respect for GoViral’s
-  dark neon theme, and presence of Pest browser tests (navigation and smoke).
+  dark neon theme, Pest Browser tests only (no Laravel Dusk), and stable E2E selectors.
 ---
 
 # Frontend Vue 3 + Vuetify 3 (GoViral)
@@ -113,10 +113,18 @@ For any tabular listing:
 
 ---
 
+## Stable selectors for E2E
+
+- Expose **stable** attributes on interactive elements used in tests: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit `v-text-field` / form **`name`** props.
+- Keeps tests resilient to copy and layout changes. Aligns with `.cursor/AGENTS.md` and `.cursor/rules/starting-environment.mdc`.
+
+---
+
 ## Frontend tests: Pest Browser (mandatory)
 
-All frontend flows/screens must have **Browser tests** using Pest:
+All frontend flows/screens must have **Browser tests** using **Pest Browser** only:
 
+- **Do not** add or use **Laravel Dusk** (`dusk` selectors, Dusk test cases, or Dusk-only setup).
 - Use the **Pest Browser plugin** as per official documentation:
   - Reference: [`https://pestphp.com/docs/browser-testing`](https://pestphp.com/docs/browser-testing)
 - For each new page or relevant flow:
@@ -206,6 +214,7 @@ When implementing or reviewing frontend work:
 - [ ] Dark mode `#121212` with highlights `#FE2C55` and `#25F4EE`?
 - [ ] Typography aligned (Space Grotesk + Inter) and CTAs with brand microcopy?
 - [ ] Tabular data using `v-data-table`?
-- [ ] **Pest Browser tests** created/updated covering navigation and smoke?
+- [ ] **Pest Browser tests** created/updated covering navigation and smoke (no Dusk)?
 - [ ] Main flows (forms, navigation, dashboards) covered with Browser tests?
+- [ ] Interactive elements use **`data-test`** (or equivalent stable hooks) where E2E needs them?
 

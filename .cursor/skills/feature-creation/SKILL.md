@@ -64,7 +64,7 @@ If the user’s answers are vague, ask one or two follow-ups. Do not invent scop
 
 3. **Create FDR (ToDo)**
    - File: `docs/FDRs/ToDo/FDR_XXX_<short_snake_case_title>.md`
-   - Use the next FDR number (check existing in ToDo, Closed and Done).
+   - Pick the next free FDR number by scanning filenames in `docs/FDRs/ToDo/`, `docs/FDRs/Done/`, and `docs/FDRs/Closed/` to avoid collisions. **`Closed/`** holds **human-archived discarded** specs only; agents do **not** move work there and do **not** treat it as part of the ToDo→Done delivery path.
    - Structure: **Feature** (number), **Reference** (e.g. docs/04 - Features.md, ADR-XXX), **How it works**, **How to test**, **Acceptance criteria** (checkboxes), **Deployment notes** (if any).
    - Add the feature to `docs/04 - Features.md` in the right place (dependency order) with **Objective**, **Scope**, **Dependencies**, and **Related to** (if needed). Update the **Feature dependency summary** table at the bottom if applicable.
 
@@ -120,7 +120,7 @@ Ask the user: **“Do you want to create another feature? (yes/no)”**
 |-------------------|--------|
 | Product/features  | `docs/01 - Product Requirement Document.md`, `docs/04 - Features.md` |
 | Architecture      | `docs/02 - High Level Design.md`, `docs/ADRs/` |
-| Feature specs     | `docs/FDRs/ToDo/*.md`, `docs/FDRs/Done/*.md` |
+| Feature specs     | `docs/FDRs/ToDo/*.md`, `docs/FDRs/Done/*.md` (`Closed/` = archived only) |
 | Plan              | `docs/FDRs/IMPLEMENTATION_PLAN.md` |
 | Ralph Planning    | `.cursor/ralph/PROMPT_plan.md` |
 | PR                | GitHub MCP `create_pull_request` (target `main`) |

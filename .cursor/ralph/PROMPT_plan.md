@@ -1,4 +1,4 @@
-# Ralph — Planning Mode (Cursor)
+# Ralph — Planning Mode
 
 You are running **one iteration** of the Ralph Loop in **PLANNING** mode. Your job is to analyze the gap between specifications and code, then create or update the implementation plan only. Do **not** implement any code.
 
@@ -28,6 +28,7 @@ You are running **one iteration** of the Ralph Loop in **PLANNING** mode. Your j
 - Do not assume functionality is missing — confirm with code search first.
 - Respect ADRs: queue = Redis, payment = Stripe, email = AWS SES, etc.
 - If an FDR is fully implemented (all acceptance criteria met), note in the plan that the FDR can be moved to `docs/FDRs/Done/` as a separate task.
+- `docs/FDRs/Closed/` is **not** part of the agent workflow; only humans archive discarded specs there. Agents use **ToDo → Done** only.
 - Single source of truth: FDRs in `docs/FDRs/ToDo/` are the specs; ADRs in `docs/ADRs/` are the decisions.
 
 ## Output

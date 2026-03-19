@@ -10,6 +10,7 @@ alwaysApply: true
 - Ensure that the tests pass before finalizing the task.
 - All code must be in English.
 - Keep code clean and follow PSRs (one instruction per line).
+- Do **not** use ternary operators (`condition ? a : b`) in PHP; use explicit `if` / `else` or early returns.
 - If `vendor` does not exist, install with the container `laravelsail/php85-composer:latest`
 (do not use local PHP/Composer).
 
@@ -50,6 +51,8 @@ grep -q "^APP_KEY=$" .env && \
 **Before running tests:** the full suite (including Browser tests per `phpunit.xml`) needs the frontend built or the dev server running. Either run `./vendor/bin/sail npm run build` once, or run `./vendor/bin/sail npm run dev` in a separate terminal and keep it running, then run the test commands above.
 
 ### Testing policy (mandatory)
+- Use **Pest Browser** for browser / E2E tests. **Do not** add or use Laravel Dusk.
+- Prefer stable selectors for interactive elements in E2E tests: **`data-test="..."`** (Pest Browser maps `@name` to `[data-test="name"]`) and/or explicit form `name` attributes.
 - Keep smoke coverage in `tests/Browser/WebRoutesTest.php` for public and authenticated routes.
 - Add a dedicated browser test file for each page (for example, Landing, Form, Thank You).
 - Add translation tests for each page (en/es/pt), preferably in Feature tests asserting Inertia translations.
