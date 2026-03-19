@@ -6,31 +6,30 @@ alwaysApply: true
 # Commit Rules – Small, Incremental, Contextual
 
 - **Commit size**
-  - Prefer **small, self-contained commits** (single concern or tiny group of closely related changes).
-  - Avoid \"mega commits\" that bundle migration, backend, frontend, tests, and docs all together.
-  - If you could describe the change only com a frase longa com vários \"e\", provavelmente são **vários commits**.
+  - Prefer **small, self-contained commits** (single concern or a tiny group of closely related changes).
+  - Avoid "mega commits" that bundle migration, backend, frontend, tests, and docs together.
+  - If you can only describe the change as one long sentence joined by many "and"s, it is probably **several commits**.
 
 - **Commit boundaries**
-  - Separe, sempre que possível:
-    - **DB/migrations** (estrutura de dados).
+  - Separate, whenever possible:
+    - **DB / migrations** (schema).
     - **Models / services / controllers** (backend).
-    - **Frontend / Vue / Vuetify** (UI/comportamento).
+    - **Frontend / Vue / Vuetify** (UI and behavior).
     - **Tests** (Feature, Browser, unit).
     - **Docs / FDR / IMPLEMENTATION_PLAN**.
-  - Cada commit deve **compilar e passar testes relevantes** (pelo menos unit/feature afetados).
+  - Each commit must **build and pass the relevant tests** (at least unit/feature for the touched areas).
 
-- **Mensagem de commit**
-  - Use prefixos claros e consistentes, por exemplo:
-    - `chore(db): …` – migrações, ajustes estruturais.
-    - `feat(core): …` – funcionalidade de domínio.
-    - `fix(...): …` – correções de bug.
-    - `test(...): …` – apenas testes.
-    - `docs(...): …` – apenas documentação / FDR / plano.
-  - A primeira linha resume **o que** e **porquê**; detalhes entram em bullets, se necessário.
+- **Commit messages (Conventional Commits)**
+  - Use clear, consistent type prefixes, for example:
+    - `chore(db): …` – migrations, structural data changes.
+    - `feat(core): …` – domain functionality.
+    - `fix(…): …` – bug fixes.
+    - `test(…): …` – tests only.
+    - `docs(…): …` – documentation only / FDR / implementation plan.
+  - The subject line states **what** and **why**; use the body for bullets when needed.
 
-- **Fluxo com Ralph Building**
-  - Para cada tarefa do plano Ralph:
-    - Implementar em commits pequenos, seguindo as regras acima.
-    - Garantir que o último commit da tarefa deixe o projeto em estado saudável (build + testes OK).
-  - Só depois disso atualizar `IMPLEMENTATION_PLAN.md` e o FDR (marcações `[x]`), em um commit separado de código.
-
+- **Ralph Building flow**
+  - For each plan task:
+    - Implement in small commits following the rules above.
+    - Ensure the last implementation commit for the task leaves the repo healthy (build + tests OK).
+  - After that, update `IMPLEMENTATION_PLAN.md` and the FDR (e.g. `[x]` checkboxes) in a **separate** `docs(...)` commit from application code.
