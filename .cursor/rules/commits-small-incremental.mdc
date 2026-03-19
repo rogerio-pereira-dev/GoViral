@@ -17,7 +17,7 @@ alwaysApply: true
     - **Frontend / Vue / Vuetify** (UI and behavior).
     - **Tests** (Feature, Browser, unit).
     - **Docs / FDR / IMPLEMENTATION_PLAN**.
-  - Each commit must **build and pass the relevant tests** (at least unit/feature for the touched areas).
+  - Each commit must **build and pass ALL relevant tests and linter** (see `.cursor/rules/starting-environment.mdc`).
 
 - **Commit messages (Conventional Commits)**
   - Use clear, consistent type prefixes, for example:
@@ -31,5 +31,5 @@ alwaysApply: true
 - **Ralph Building flow**
   - For each plan task:
     - Implement in small commits following the rules above.
-    - Ensure the last implementation commit for the task leaves the repo healthy (build + tests OK).
-  - After that, update `IMPLEMENTATION_PLAN.md` and the FDR (e.g. `[x]` checkboxes) in a **separate** `docs(...)` commit from application code.
+    - Ensure the last implementation commit for the task leaves the repo healthy (build + tests + linter OK).
+  - After that, update `IMPLEMENTATION_PLAN.md` (e.g. `[x]` checkboxes) and move FDR to `docs/FDRs/Done` in a **separate** `docs(...)` commit from application code.
