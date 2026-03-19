@@ -5,7 +5,7 @@ This README explains how to install and configure the GitHub MCP server in a gen
 ## Prerequisites
 
 - Docker installed and running
-- Cursor installed
+- An MCP-capable editor or agent host (any tool that loads `.cursor/mcp.json` or an equivalent project-local MCP definition)
 - A GitHub Personal Access Token (PAT)
 - Access to the target repository (personal or organization)
 
@@ -13,12 +13,12 @@ This README explains how to install and configure the GitHub MCP server in a gen
 
 Recommended: Fine-grained token.
 
-1. Go to GitHub -> Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens.
+1. Go to GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens.
 2. Generate a new token.
 3. Set:
    - Resource owner: account or organization that owns the target repo(s)
    - Repository access: selected repositories (recommended) or broader scope as needed
-   - Expiration: 30-90 days
+   - Expiration: 30–90 days
 4. Minimum permissions for PR workflows:
    - Contents: Read and write
    - Pull requests: Read and write
@@ -71,11 +71,9 @@ Ignore it in git:
 
 ## 4) Reload and validate
 
-1. Run `Developer: Reload Window` in Cursor.
+1. **Reload the IDE window** or restart the MCP connection so the server reloads configuration.
 2. Verify `github-official` appears connected in MCP settings.
-3. Validate in chat:
-   - `Use GitHub MCP get_me`
-   - `List pull requests for <owner>/<repo>`
+3. Validate using your client’s GitHub tools (e.g. identity check, list pull requests for `<owner>/<repo>`).
 
 ## 5) Troubleshooting
 
@@ -89,7 +87,7 @@ Ignore it in git:
 - Server not listed/connected:
   - invalid `.cursor/mcp.json`
   - Docker not running
-  - Cursor reload pending
+  - IDE/MCP reload pending
 
 ## 6) Safe operational flow
 
