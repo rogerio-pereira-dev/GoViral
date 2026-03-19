@@ -6,7 +6,7 @@ description: >
   CRUD-style resources, ensuring consistent backend workflow (migration, model,
   factory, seed, routes, controller, form requests, tests) and frontend
   workflow (Vue 3 + Vuetify 3 pages, shared snackbar, delete dialog, menu
-  integration) with complete automated test coverage.
+  integration) with complete automated test coverage (Pest Browser for E2E; no Dusk).
 ---
 
 # Laravel + Vue CRUD Workflow (GoViral)
@@ -37,7 +37,7 @@ this checklist.
 
 Backend:
 
-1. Read frontend skill `frontend-laravel/SKILL.md`.
+1. Read `.cursor/skills/backend-laravel/SKILL.md` for Laravel conventions (controllers, Form Requests, services, tests).
 2. Create **Migration**.
 3. Create **Model**.
 4. Create **Factory**.
@@ -286,6 +286,8 @@ provided by Pest/Laravel.
 
 ### 2. Frontend Browser tests (Pest)
 
+- Use **Pest Browser** only for browser tests. **Do not** add Laravel Dusk.
+- Add **`data-test`** (or other stable hooks) on interactive elements that tests target; see `.cursor/skills/frontend-vue-vuetify/SKILL.md`.
 - For each CRUD UI:
   - Add **Pest Browser tests** following the official docs:
     - [`https://pestphp.com/docs/browser-testing`](https://pestphp.com/docs/browser-testing)
