@@ -33,6 +33,7 @@ Primary value proposition:
 
 - All code must be in English.
 - Follow PSR standards (one statement per line).
+- Do **not** use ternary operators (`condition ? a : b`) in PHP; use explicit `if` / `else` or early returns.
 - For fluent chains, put one method call per line and keep indentation consistent.
 - For assigned fluent chains, use a deeper continuation indent for `->` lines.
 - For standalone fluent chains, use a single continuation indent level for `->` lines.
@@ -48,8 +49,9 @@ Primary value proposition:
 - All pages must have dedicated browser tests and be included in smoke route checks (`tests/Browser/WebRoutesTest.php`).
 - Every new public page (ignore Core Routes (Admin) Group) must also have translation coverage tests (en/es/pt), preferably via Feature tests asserting Inertia props.
 - Critical user journeys must include at least one end-to-end browser test covering validation, successful submit, and expected persistence/redirect outcomes.
-- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit form `name` attributes. Avoid Laravel Dusk–only `dusk` unless the suite uses Dusk.
-- Although I can write instructions to you (AI) in Portuguese, all code should be in English.
+- For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit form `name` attributes.
+- Browser automation in this project uses **Pest Browser** only. **Do not** add or use Laravel Dusk (`dusk` attributes, Dusk tests, or Dusk-only flows).
+- Natural-language instructions to the agent may be in any language agreed with the team; **all code and user-visible product copy per project i18n rules** must follow the English-first code standard and localization strategy.
 
 ## Environment and Commands
 
