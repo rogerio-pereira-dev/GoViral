@@ -110,7 +110,7 @@ The agent treats these as sources of truth; there is no separate top-level `spec
 ## Rules and skills (this repository)
 
 - **Rules:** `.cursor/rules/ralph-loop.mdc` — Ralph workflow and plan usage. `.cursor/rules/fdr-todo-done.mdc` — FDR ToDo/Done (always applied).
-- **Skill:** `.cursor/skills/ralph-cursor/SKILL.md` — when to use Planning vs Building and how to run the loop.
+- **Skill:** `.cursor/skills/ralph-loop/SKILL.md` — when to use Planning vs Building and how to run the loop.
 
 ---
 
