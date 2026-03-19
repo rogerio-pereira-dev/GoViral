@@ -51,7 +51,7 @@ Primary value proposition:
 - Critical user journeys must include at least one end-to-end browser test covering validation, successful submit, and expected persistence/redirect outcomes.
 - For browser automation reliability, interactive UI elements used in E2E tests should expose stable selectors: prefer **`data-test="..."`** (Pest Browser resolves `@name` to `[data-test="name"]`) and/or explicit form `name` attributes.
 - Browser automation in this project uses **Pest Browser** only. **Do not** add or use Laravel Dusk (`dusk` attributes, Dusk tests, or Dusk-only flows).
-- Natural-language instructions to the agent may be in any language agreed with the team; **all code and user-visible product copy per project i18n rules** must follow the English-first code standard and localization strategy.
+- Natural-language instructions to the agent may be Portuguese or English; **all code** must be in English (see localization tests for user-facing strings).
 
 ## Environment and Commands
 
