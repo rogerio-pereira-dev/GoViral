@@ -195,7 +195,8 @@ async function initializePayment(
     });
 
     if (! response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json()
+            .catch(() => ({}));
         const msg = data.message ?? props.translations.payment_init_error;
         if (response.status === 422) {
             couponError.value = msg;
@@ -281,7 +282,8 @@ async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<voi
     }
 
     if (! response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json()
+            .catch(() => ({}));
         paymentError.value = data.message ?? props.translations.payment_confirm_error;
         paymentLoading.value = false;
 
@@ -297,6 +299,17 @@ async function submit(): Promise<void> {
     await submitPayment();
 }
 
+function hasValidationErrors(): boolean {
+    if (! form.errors) {
+        return false;
+    }
+
+    const errorKeys = Object.keys(form.errors);
+    const errorCount = errorKeys.length;
+
+    return errorCount > 0;
+}
+
 function validateRequiredFields(): boolean {
     const errors: Record<string, string[]> = {};
     const email = String(form.email ?? '').trim();
@@ -307,7 +320,10 @@ function validateRequiredFields(): boolean {
     if (! aspiringNiche) {
         errors.aspiring_niche = [props.translations.validation_failed_message];
     }
-    if (Object.keys(errors).length > 0) {
+    const errorKeys = Object.keys(errors);
+    const errorCount = errorKeys.length;
+
+    if (errorCount > 0) {
         form.setError(errors);
         showValidationFailedMessage.value = true;
         return false;
@@ -591,7 +607,7 @@ onMounted(async () => {
                                     </v-btn>
 
                                     <v-alert
-                                        v-if="showValidationFailedMessage || (form.errors && Object.keys(form.errors).length > 0)"
+                                        v-if="showValidationFailedMessage || hasValidationErrors()"
                                         type="warning"
                                         variant="tonal"
                                         class="mt-4"
