@@ -13,6 +13,7 @@
 **Example (test request):**
 
 ```php
+// Bad
 $response = $this->withSession([
         'locale' => 'pt',
     ])
@@ -27,6 +28,54 @@ $response = $this->withSession([
             'video_url_3' => '',
         ]
     );
+
+$response = $this
+    ->withSession(['locale' => 'pt'])
+    ->post(route('form.store'), $payload);
+
+$page
+    ->assertSee('What you get in your report')
+    ->fill('email', 'flow-e2e@gmail.com')
+    ->fill('tiktok_username', '@flowe2e')
+    ->fill('aspiring_niche', 'Lifestyle')
+    ->fill('bio', 'Creator focused on fitness routines.')
+    ->fill('video_url_1', 'https://example.com/video-1')
+    ->fill('video_url_2', 'https://example.com/video-2')
+    ->fill('video_url_3', 'https://example.com/video-3')
+    ->fill('notes', 'Testing complete browser flow.');
+
+
+// Good
+$response = $this->withSession([                    // First call in line is ok
+                    'locale' => 'pt',               // aligned based on context -> inside [
+                ])                                  // aligned based on context -> closing ])
+                ->post(                             // aligned based on context -> one statement per line
+                    route('form.store'),            // aligned based on context -> inside ( 
+                    [                               // aligned based on context -> inside ( 
+                        ...validFormPayload(),      // aligned based on context -> inside [ 
+                        'tiktok_username' => '',    // aligned based on context -> inside [ 
+                        'bio' => '',                // aligned based on context -> inside [ 
+                        'video_url_1' => '',        // aligned based on context -> inside [ 
+                        'video_url_2' => '',        // aligned based on context -> inside [ 
+                        'video_url_3' => '',        // aligned based on context -> inside [ 
+                    ]                               // aligned based on context -> close ]
+                );                                  // aligned based on context -> close )
+
+$response = $this->withSession(['locale' => 'pt'])
+                ->post(route('form.store'), $payload);  // aligned based on context $this -> one statement per line
+
+
+
+
+$page->assertSee('What you get in your report')             // First call in line is ok
+    ->fill('email', 'flow-e2e@gmail.com')                   // aligned based on context $this -> one statement per line
+    ->fill('tiktok_username', '@flowe2e')                   // aligned based on context $this -> one statement per line
+    ->fill('aspiring_niche', 'Lifestyle')                   // aligned based on context $this -> one statement per line
+    ->fill('bio', 'Creator focused on fitness routines.')   // aligned based on context $this -> one statement per line
+    ->fill('video_url_1', 'https://example.com/video-1')    // aligned based on context $this -> one statement per line
+    ->fill('video_url_2', 'https://example.com/video-2')    // aligned based on context $this -> one statement per line
+    ->fill('video_url_3', 'https://example.com/video-3')    // aligned based on context $this -> one statement per line
+    ->fill('notes', 'Testing complete browser flow.');      // aligned based on context $this -> one statement per line
 ```
 
 - **Coordination with FDR-017:** Apply FDR-017 first where the same lines need extracted variables; FDR-018 then normalizes indentation without re-introducing nested calls in parameters.
