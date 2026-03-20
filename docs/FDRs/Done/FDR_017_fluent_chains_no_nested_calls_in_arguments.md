@@ -35,10 +35,10 @@ Mail::to($analysisRequest->email)
 
 ## Acceptance criteria
 
-- [ ] New or refactored code avoids **nested** `new Foo(...)->bar()` (and similar) **as arguments** where extraction to locals is straightforward.
-- [ ] Chained calls follow **one method per line** aligned with project conventions (see FDR-018 for indentation nuance).
-- [ ] No new ternary operators in PHP.
-- [ ] All tests pass; Pint passes.
+- [x] New or refactored code avoids **nested** `new Foo(...)->bar()` (and similar) **as arguments** where extraction to locals is straightforward.
+- [x] Chained calls follow **one method per line** aligned with project conventions (see FDR-018 for indentation nuance).
+- [x] No new ternary operators in PHP.
+- [x] All tests pass; Pint passes.
 
 ---
 

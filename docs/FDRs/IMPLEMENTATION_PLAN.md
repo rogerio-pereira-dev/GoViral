@@ -167,11 +167,11 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Update seeders (`UserSeeder`, `DiscountCouponSeeder`) and tests (`DiscountCouponTest`, `DiscountCouponCrudTest`, `DiscountCouponsE2ETest`, any other hits) the same way.
 - [x] Run Pint and full test suite; confirm no behavior change.
 
-### Fluent chains — one call per line; no nested calls in arguments (FDR-017)
+### Fluent chains — one call per line; no nested calls in arguments (FDR-017) — done
 
-- [ ] Audit jobs, controllers, mail, HTTP clients, and tests for (1) chains that should be split one method per line, (2) `new Foo(...)->bar()` or other calls nested inside argument lists — extract to variables (see FDR-017 examples).
-- [ ] Do not introduce ternary operators in PHP.
-- [ ] Run Pint and full test suite.
+- [x] Audit jobs, controllers, mail, HTTP clients, and tests for (1) chains that should be split one method per line, (2) `new Foo(...)->bar()` or other calls nested inside argument lists — extract to variables (see FDR-017 examples).
+- [x] Do not introduce ternary operators in PHP.
+- [x] Run Pint and full test suite.
 
 ### Logical alignment for multiline fluent calls (FDR-018)
 
@@ -188,7 +188,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** FDR-015 and FDR-016 done. FDRs in ToDo: FDR-017, FDR-018 (code style refactors). FDR-011, FDR-013 done.
+- **Current codebase:** FDR-015 through FDR-017 done. FDRs in ToDo: FDR-018 (code style refactors). FDR-011, FDR-013 done.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-014:** See `docs/FDRs/Done/FDR_014_core_discount_coupons.md`; plan steps above kept for reference.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
