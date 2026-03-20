@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import PublicLayout from '@/layouts/PublicLayout.vue';
 import { nextTick, onMounted, ref } from 'vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 const props = defineProps<{
     locale: string;
@@ -83,16 +83,16 @@ const appliedDiscountPercent = ref<number | null>(null);
 
 function csrfToken(): string {
     const tokenFromMeta = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content') ?? '';
+                              .querySelector('meta[name="csrf-token"]')
+                              ?.getAttribute('content') ?? '';
 
     if (tokenFromMeta) {
         return tokenFromMeta;
     }
 
     const xsrfCookie = document.cookie
-        .split('; ')
-        .find((item) => item.startsWith('XSRF-TOKEN='));
+                              .split('; ')
+                              .find((item) => item.startsWith('XSRF-TOKEN='));
 
     if (! xsrfCookie) {
         return '';
