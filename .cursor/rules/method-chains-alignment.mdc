@@ -36,3 +36,15 @@ const result = api.client()
                   .filter(activeFilter)
                   .sortBy('name');
 ```
+
+
+# Alignment Rules (**ALWAYS FOLLOWS THOSE RULES**)
+Imagine that everything uses a monospace font.
+Context-based alignment works as follows:
+1. Determine the starting position of the context (the element calling the function).
+2. Insert the exact number of spaces required to align the current line with the start of the function call (Line 1).
+3. Add spaces until the next tab stop (using a fixed tab width of 4 spaces).
+4. If arrays are present (even an array containing only one item), each array item must be indented by one tab stop (+4 spaces).
+4.2. Closing brackets ']' must be aligned with the same indentation level as the line containing the opening bracket.
+4.3. It is not necessary to align the '=>' symbols within key-value arrays.
+5. Regarding function arguments (excluding language constructs such as `if`, `for`, `foreach`, etc.): if there are more than two parameters, the rules outlined for arrays apply.
