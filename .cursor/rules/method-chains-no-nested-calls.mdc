@@ -11,6 +11,8 @@ Prefer extracting nested call expressions to named variables before passing them
 - Do not pass `new Foo(...)->bar()` directly as a method argument.
 - Do not pass deep call stacks directly in argument lists when they reduce readability.
 - Extract intermediate values to variables with clear names.
+- In PHP tests, avoid passing method calls directly to `expect(...)` when a named variable improves readability.
+- In validation setup, avoid passing nested request method calls inline (for example in `Validator::make` arguments); extract `rules`, `messages`, and `attributes` first.
 
 ```php
 // Bad
@@ -20,6 +22,35 @@ $service->send(new ReportBuilder($input)->buildHtml());
 $reportBuilder = new ReportBuilder($input);
 $reportHtml = $reportBuilder->buildHtml();
 $service->send($reportHtml);
+```
+
+```php
+// Bad
+expect($request->authorize())->toBeTrue();
+
+// Good
+$isAuthorized = $request->authorize();
+expect($isAuthorized)
+    ->toBeTrue();
+```
+
+```php
+// Bad
+$validator = Validator::make($payload, $request->rules(), $request->messages(), $request->attributes());
+
+// Good
+$rules = $request->rules();
+$messages = $request->messages();
+$attributes = $request->attributes();
+$validator = Validator::make($payload, $rules, $messages, $attributes);
+
+// Even better
+$validator = Validator::make(
+                                $payload, 
+                                $rules, 
+                                $messages, 
+                                $attributes
+                            );
 ```
 
 ```ts
