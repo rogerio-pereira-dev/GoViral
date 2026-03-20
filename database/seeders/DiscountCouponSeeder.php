@@ -10,7 +10,7 @@ class DiscountCouponSeeder extends Seeder
     public function run(): void
     {
         // Never expires (no date, no max uses)
-        DiscountCoupon::query()->firstOrCreate(
+        DiscountCoupon::firstOrCreate(
             ['code' => 'NEVER10'],
             [
                 'value' => 10,
@@ -21,7 +21,7 @@ class DiscountCouponSeeder extends Seeder
         );
 
         // Expires by date
-        DiscountCoupon::query()->firstOrCreate(
+        DiscountCoupon::firstOrCreate(
             ['code' => 'DATE20'],
             [
                 'value' => 20,
@@ -32,7 +32,7 @@ class DiscountCouponSeeder extends Seeder
         );
 
         // Expires by usage count
-        DiscountCoupon::query()->firstOrCreate(
+        DiscountCoupon::firstOrCreate(
             ['code' => 'USES30'],
             [
                 'value' => 30,

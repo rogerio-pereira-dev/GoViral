@@ -115,7 +115,7 @@ it('opens delete dialog and cancels without removing row', function (): void {
         ->assertPresent('[data-test="discount-coupon-delete-dialog"]')
         ->click('@discount-coupon-delete-cancel');
 
-    expect(\App\Models\DiscountCoupon::query()->whereKey($coupon->id)->exists())->toBeTrue();
+    expect(\App\Models\DiscountCoupon::whereKey($coupon->id)->exists())->toBeTrue();
 });
 
 it('confirms delete and removes coupon from list', function (): void {
@@ -138,5 +138,5 @@ it('confirms delete and removes coupon from list', function (): void {
         ->click('@discount-coupon-delete-confirm')
         ->assertPathIs('/core/discount-coupons');
 
-    expect(\App\Models\DiscountCoupon::query()->whereKey($coupon->id)->exists())->toBeFalse();
+    expect(\App\Models\DiscountCoupon::whereKey($coupon->id)->exists())->toBeFalse();
 });

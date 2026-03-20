@@ -86,8 +86,7 @@ class DiscountCoupon extends Model
             return null;
         }
 
-        return self::query()
-            ->whereRaw('UPPER(code) = ?', [$normalized])
+        return self::whereRaw('UPPER(code) = ?', [$normalized])
             ->validForCheckout()
             ->first();
     }

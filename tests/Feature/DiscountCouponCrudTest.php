@@ -30,7 +30,7 @@ it('creates a coupon and redirects to index', function (): void {
         ])
         ->assertRedirect('/core/discount-coupons');
 
-    $coupon = DiscountCoupon::query()->where('code', 'SAVE20')->first();
+    $coupon = DiscountCoupon::where('code', 'SAVE20')->first();
     expect($coupon)->not->toBeNull()
         ->and($coupon->value)->toBe(20)
         ->and($coupon->expires_at)->toBeNull()
@@ -58,7 +58,7 @@ it('soft deletes coupon on destroy', function (): void {
         ->delete("/core/discount-coupons/{$coupon->id}")
         ->assertRedirect('/core/discount-coupons');
 
-    expect(DiscountCoupon::query()->whereKey($coupon->id)->exists())->toBeFalse();
+    expect(DiscountCoupon::whereKey($coupon->id)->exists())->toBeFalse();
     expect(DiscountCoupon::withTrashed()->whereKey($coupon->id)->exists())->toBeTrue();
 });
 
@@ -128,7 +128,7 @@ it('creates coupon with days expiration using store request rules', function ():
         ])
         ->assertRedirect('/core/discount-coupons');
 
-    $coupon = DiscountCoupon::query()->where('code', 'FLOWDAYS')->firstOrFail();
+    $coupon = DiscountCoupon::where('code', 'FLOWDAYS')->firstOrFail();
 
     expect($coupon->value)->toBe(5)
         ->and($coupon->expires_at)->not->toBeNull()
@@ -148,7 +148,7 @@ it('creates coupon with uses expiration using store request rules', function ():
         ])
         ->assertRedirect('/core/discount-coupons');
 
-    $coupon = DiscountCoupon::query()->where('code', 'FLOWUSES')->firstOrFail();
+    $coupon = DiscountCoupon::where('code', 'FLOWUSES')->firstOrFail();
 
     expect($coupon->value)->toBe(10)
         ->and($coupon->expires_at)->toBeNull()

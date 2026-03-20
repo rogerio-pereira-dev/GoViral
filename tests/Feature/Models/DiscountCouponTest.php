@@ -56,8 +56,8 @@ it('treats expires_at as date-only and keeps coupons valid through expiration da
         'times_used' => 0,
     ]);
 
-    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponToday->id)->exists())->toBeTrue();
-    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponTomorrow->id)->exists())->toBeTrue();
-    expect(DiscountCoupon::query()->validForCheckout()->whereKey($couponYesterday->id)->exists())->toBeFalse();
+    expect(DiscountCoupon::validForCheckout()->whereKey($couponToday->id)->exists())->toBeTrue();
+    expect(DiscountCoupon::validForCheckout()->whereKey($couponTomorrow->id)->exists())->toBeTrue();
+    expect(DiscountCoupon::validForCheckout()->whereKey($couponYesterday->id)->exists())->toBeFalse();
 }
 );

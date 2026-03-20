@@ -10,7 +10,7 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::query()->firstOrCreate(
+        User::firstOrCreate(
             ['email' => 'admin@goviral.test'],
             [
                 'name' => 'GoViral Admin',
