@@ -2,6 +2,7 @@
 description: Consistent multiline method-chain formatting for backend and frontend.
 globs: **/*.php,**/*.js,**/*.ts,**/*.vue
 alwaysApply: false
+ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes.". Specially section `Rule of thumb for () and [].`
 ---
 
 # Method Chains and Alignment
