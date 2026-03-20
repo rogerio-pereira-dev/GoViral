@@ -1,0 +1,34 @@
+---
+description: Global execution protocol for applying the project styleguide without semantic drift
+alwaysApply: true
+---
+
+# Styleguide Global Application
+
+Use this rule whenever editing code in this repository.
+
+## Core principle
+
+Style conformance must never break or weaken code behavior.
+
+## Mandatory execution protocol
+
+1. Apply owner style rules as source of truth, including intentional owner-approved antipatterns.
+2. Do not rely only on formatter output (`pint`, editor formatters, language defaults) to declare success.
+3. Preserve semantics while refactoring style:
+   - keep identifiers and contract keys exact;
+   - keep route/method names exact;
+   - keep assertion intent exact;
+   - keep control-flow meaning exact.
+4. Do not introduce speculative code changes outside the explicit style objective.
+5. After edits, run a semantic verification pass in each changed file:
+   - detect typo-level mutations (`$this` vs `this`, `->` vs `>`, wrong variable/key reference);
+   - detect weakened checks (fallbacks that hide missing required data).
+6. Validate both:
+   - structural compliance (style/rule checks);
+   - behavioral confidence (targeted tests/checks when applicable).
+7. Completion is valid only when structural compliance is met and semantic drift is zero.
+
+## Completion guardrail
+
+If there is any doubt between "looks well formatted" and "matches owner style and behavior", choose owner style and behavior, then re-audit.

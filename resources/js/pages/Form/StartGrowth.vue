@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import PublicLayout from '@/layouts/PublicLayout.vue';
 import { nextTick, onMounted, ref } from 'vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 const props = defineProps<{
     locale: string;
@@ -83,16 +83,16 @@ const appliedDiscountPercent = ref<number | null>(null);
 
 function csrfToken(): string {
     const tokenFromMeta = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content') ?? '';
+                              .querySelector('meta[name="csrf-token"]')
+                              ?.getAttribute('content') ?? '';
 
     if (tokenFromMeta) {
         return tokenFromMeta;
     }
 
     const xsrfCookie = document.cookie
-        .split('; ')
-        .find((item) => item.startsWith('XSRF-TOKEN='));
+                              .split('; ')
+                              .find((item) => item.startsWith('XSRF-TOKEN='));
 
     if (! xsrfCookie) {
         return '';
@@ -107,14 +107,14 @@ async function loadTurnstileScript(): Promise<void> {
     }
 
     await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Turnstile load error'));
-        document.head.appendChild(script);
-    });
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.defer = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Turnstile load error'));
+            document.head.appendChild(script);
+        });
 }
 
 function onTurnstileSuccess(token: string): void {
@@ -136,13 +136,13 @@ async function loadStripeLibrary(): Promise<void> {
     }
 
     await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://js.stripe.com/v3/';
-        script.async = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Stripe load error'));
-        document.head.appendChild(script);
-    });
+            const script = document.createElement('script');
+            script.src = 'https://js.stripe.com/v3/';
+            script.async = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Stripe load error'));
+            document.head.appendChild(script);
+        });
 }
 
 function formatAmount(cents: number, currency: string): string {
@@ -195,7 +195,8 @@ async function initializePayment(
     });
 
     if (! response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json()
+            .catch(() => ({}));
         const msg = data.message ?? props.translations.payment_init_error;
         if (response.status === 422) {
             couponError.value = msg;
@@ -281,7 +282,8 @@ async function persistAnalysisRequest(finalPaymentIntentId: string): Promise<voi
     }
 
     if (! response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json()
+            .catch(() => ({}));
         paymentError.value = data.message ?? props.translations.payment_confirm_error;
         paymentLoading.value = false;
 
@@ -297,6 +299,17 @@ async function submit(): Promise<void> {
     await submitPayment();
 }
 
+function hasValidationErrors(): boolean {
+    if (! form.errors) {
+        return false;
+    }
+
+    const errorKeys = Object.keys(form.errors);
+    const errorCount = errorKeys.length;
+
+    return errorCount > 0;
+}
+
 function validateRequiredFields(): boolean {
     const errors: Record<string, string[]> = {};
     const email = String(form.email ?? '').trim();
@@ -307,7 +320,10 @@ function validateRequiredFields(): boolean {
     if (! aspiringNiche) {
         errors.aspiring_niche = [props.translations.validation_failed_message];
     }
-    if (Object.keys(errors).length > 0) {
+    const errorKeys = Object.keys(errors);
+    const errorCount = errorKeys.length;
+
+    if (errorCount > 0) {
         form.setError(errors);
         showValidationFailedMessage.value = true;
         return false;
@@ -591,7 +607,7 @@ onMounted(async () => {
                                     </v-btn>
 
                                     <v-alert
-                                        v-if="showValidationFailedMessage || (form.errors && Object.keys(form.errors).length > 0)"
+                                        v-if="showValidationFailedMessage || hasValidationErrors()"
                                         type="warning"
                                         variant="tonal"
                                         class="mt-4"

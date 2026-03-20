@@ -44,9 +44,9 @@ class DiscountCouponController extends Controller
 
         $expirationType = 'never';
         $expirationDate = null;
-        $maxUsesInput = 100;
+        $maxUsesInput   = 100;
 
-        $expiresByDateOnly = $c->expires_at !== null && $c->max_uses === null;
+        $expiresByDateOnly   = $c->expires_at !== null && $c->max_uses === null;
         $expiresByUsageLimit = $c->max_uses !== null;
 
         if ($expiresByDateOnly) {
@@ -56,7 +56,7 @@ class DiscountCouponController extends Controller
 
         if ($expiresByUsageLimit) {
             $expirationType = 'uses';
-            $maxUsesInput = $c->max_uses;
+            $maxUsesInput   = $c->max_uses;
         }
 
         return Inertia::render('Core/DiscountCoupons/Edit', [

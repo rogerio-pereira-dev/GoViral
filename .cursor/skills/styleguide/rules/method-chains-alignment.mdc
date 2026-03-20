@@ -1,0 +1,342 @@
+---
+description: Consistent multiline method-chain formatting for backend and frontend.
+globs: **/*.php,**/*.js,**/*.ts,**/*.vue
+alwaysApply: false
+ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes.", especially section `Rule of thumb for () and [].`
+required_pre_read_rules:
+  - ./method-chains-alignment.mdc
+  - ./method-chains-no-nested-calls.mdc
+---
+
+# Method Chains and Alignment
+
+Use these rules for readable and deterministic multiline chains in any language.
+
+## Authority and precedence
+
+- This project styleguide has priority over language defaults, PSR conventions, and formatter behavior.
+- If `pint` (or any formatter) rewrites code into a shape that conflicts with this rule, manually restore this rule-compliant format and add a rule on `pint.json`.
+- Owner-approved antipatterns are intentional readability choices and remain valid even when formatters disagree.
+- Completion is valid only when the final file matches this rule file, not when formatter output is "clean".
+
+## Canonical indentation model (deterministic)
+
+- Use **4 spaces per indentation level**.
+- In multiline chains, keep **one method call per line**.
+- If a chain is multiline, split after the receiver/caller and keep every `->method()` in its own line.
+- Treat each call/action as one readable unit per line in chain flows.
+- Continuation indentation must follow **visual hierarchy** and be deterministic: one indentation step per nesting level (**4 spaces per level**).
+- For assigned and standalone chains, enforce hierarchy consistency in the local block.
+- In multiline function/method calls, closing `)` must always be one indentation level inside the caller block.
+- In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
+- For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
+- In assigned multiline calls, keep visual hierarchy: arguments one level deeper and closing `)` one level inside the caller block (not flattened to caller column).
+- Do not keep multiple calls on the same line (`->foo()->bar()` is always forbidden).
+- For Pest post-closure chains (`})->with(...)`, `})->throws(...)`), always break after `}` and continue as standalone chain.
+- In `expect(...)` chains, keep one matcher per line.
+
+### Examples
+
+```php
+// Bad: inconsistent assigned continuation and closing parenthesis
+$response = $this->post(
+    $route,
+    [
+        'email' => $email,
+    ]
+);
+
+// Good: continuation follows visual hierarchy, deterministic closing, and consistent nesting
+$response = $this->post(
+                    $route,
+                    [
+                        'email' => $email,
+                    ]
+                );
+```
+
+```ts
+// Bad: mixed indentation and compressed calls
+const result = api.client()
+  .users().filter(activeFilter)
+    .sortBy('name');
+
+// Good: one call per line and consistent chain alignment
+const result = api.client()
+                  .users()
+                  .filter(activeFilter)
+                  .sortBy('name');
+```
+
+```php
+// Bad: multiline chain with multiple calls in one line
+$user = User::factory()->unverified()->create();
+
+// Good: one call per line with assigned continuation
+$user = User::factory()
+            ->unverified()
+            ->create();
+```
+
+```php
+// Bad: standalone chain with deep assigned indentation
+$this->actingAs($user)
+            ->post($logoutRoute);
+
+// Good: standalone chain continuation keeps one indentation level in its local block
+$this->actingAs($user)
+    ->post($logoutRoute);
+```
+
+```php
+// Bad: payload array kept inline inside multiline call
+$this->post(
+    $passwordEmailRoute,
+    ['email' => $user->email]
+);
+
+// Good: payload array in its own multiline block
+$this->post(
+                $passwordEmailRoute,
+                [
+                    'email' => $user->email,
+                ]
+            );
+```
+
+```php
+// Bad: assigned multiline call with under-indented payload and closing
+$response = $this->post(
+                $loginStoreRoute,
+                [
+                    'email' => $user->email,
+                    'password' => 'password',
+                ]
+            );
+
+// Good: one extra hierarchy level for readability
+$response = $this->post(
+                    $loginStoreRoute,
+                    [
+                        'email' => $user->email,
+                        'password' => 'password',
+                    ]
+                );
+```
+
+```php
+// Bad: closing ] and ) misaligned
+$payload = ['email' => $email];
+
+$payload = $this->buildHtml($payload, $name, $email, $address, $shoppingCart);
+
+// Good: closing ] and ) aligned one level inside caller block
+$payload = [
+                'email' => $email,
+            ];
+
+$payload = $this->buildHtml(
+                    $payload,
+                    $name,
+                    $email,
+                    $address,
+                    $shoppingCart
+                );
+```
+
+```php
+// Bad: post-closure chain kept inline
+})->with([
+    ['en', 'English'],
+]);
+
+// Good: post-closure chain with standalone continuation indentation
+})
+->with([
+    ['en', 'English'],
+]);
+```
+
+```php
+// Bad: compressed expect chain steps
+expect($html)->toContain('Title')->and($html)->toContain('Content');
+
+// Good: one chain call per line
+expect($html)
+    ->toContain('Title')
+    ->and($html)
+    ->toContain('Content');
+```
+
+
+```php
+// Bad: missing indentation
+$payload = [
+    'email' => 'mass@example.com',
+    'aspiring_niche' => 'Lifestyle',
+    'payment_status' => 'pending',
+    'processing_status' => 'waiting_payment_confirmation',
+    'forbidden_attr' => 'must_not_appear',
+];
+
+// Good: consistent indentation
+$payload = [
+        'email' => 'mass@example.com',
+        'aspiring_niche' => 'Lifestyle',
+        'payment_status' => 'pending',
+        'processing_status' => 'waiting_payment_confirmation',
+        'forbidden_attr' => 'must_not_appear',
+    ];
+
+// Even better
+// Although the closing brackets could have 4 spaces, because of assignment it's easier to visualize the chain if
+// closing bracket is aligned to opening bracket
+$payload = [
+                'email' => 'mass@example.com',
+                'aspiring_niche' => 'Lifestyle',
+                'payment_status' => 'pending',
+                'processing_status' => 'waiting_payment_confirmation',
+                'forbidden_attr' => 'must_not_appear',
+            ];
+```
+
+```php
+// Bad: Chaining properties in line
+$prompt = $this->builder->build($payload, 'en');
+
+// Good: apply indentation to properties too
+$prompt = $this->builder
+            ->build($payload, 'en');
+```
+
+```php
+// Bad: flattened assignments in a large block (hard to scan)
+$user = User::factory()->create();
+$twoFactorSecret = encrypt('test-secret');
+$twoFactorRecoveryCodes = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt = now();
+$loginRoute = route('login');
+$twoFactorLoginRoute = route('two-factor.login');
+
+// Good (mandatory for dense blocks with 3+ assignment lines): aligned assignments for scanning
+$user                            = User::factory()
+                                        ->create();
+$twoFactorSecret                 = encrypt('test-secret');
+$twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt            = now();
+$loginRoute                      = route('login');
+$twoFactorLoginRoute             = route('two-factor.login');
+```
+
+#### Allowed antipatterns
+Those owner-approved patterns are mandatory for dense setup blocks (3+ assignment lines) to improve scan readability.
+
+**Visual hierarchy indentation has precedence over all other rules**
+
+```php
+// Bad: Difficult to read
+$validator = Validator::make($payload, $rules, $messages, $attributes);
+$errors = $validator->errors();
+$emailError = $errors->first('email');
+$tiktokUsernameError = $errors->first('tiktok_username');
+$bioError = $errors->first('bio');
+$aspiringNicheError = $errors->first('aspiring_niche');
+$videoUrl1Error = $errors->first('video_url_1');
+$videoUrl2Error = $errors->first('video_url_2');
+$videoUrl3Error = $errors->first('video_url_3');
+$hasNotesError = $errors->has('notes');
+$fails = $validator->fails();
+
+$payload = [
+        'email' => 'invalid-email',
+        'tiktok_username' => $tiktokUsername,
+        'bio' => $bio,
+        'aspiring_niche' => $aspiringNiche,
+        'video_url_1' => 'not-a-url',
+        'video_url_2' => 'also-not-a-url',
+        'video_url_3' => 'still-not-a-url',
+        'notes' => null,
+        'payment_intent_id' => null,
+    ];
+
+
+
+// Good: aligned equals are mandatory in dense setup blocks (3+ assignment lines)
+$validator              = Validator::make($payload, $rules, $messages, $attributes);
+$errors                 = $validator->errors();
+$emailError             = $errors->first('email');
+$tiktokUsernameError    = $errors->first('tiktok_username');
+$bioError               = $errors->first('bio');
+$aspiringNicheError     = $errors->first('aspiring_niche');
+$videoUrl1Error         = $errors->first('video_url_1');
+$videoUrl2Error         = $errors->first('video_url_2');
+$videoUrl3Error         = $errors->first('video_url_3');
+$hasNotesError          = $errors->has('notes');
+$fails                  = $validator->fails();
+
+$payload = [
+                'email'             => 'invalid-email',
+                'tiktok_username'   => $tiktokUsername,
+                'bio'               => $bio,
+                'aspiring_niche'    => $aspiringNiche,
+                'video_url_1'       => 'not-a-url',
+                'video_url_2'       => 'also-not-a-url',
+                'video_url_3'       => 'still-not-a-url',
+                'notes'             => null,
+                'payment_intent_id' => null,
+            ];
+```
+
+```php
+// Bad: nested arrays
+expect($rules)
+    ->toBe([
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
+            'tiktok_username' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:5000'],
+            'aspiring_niche' => ['required', 'string', 'max:255'],
+            'video_url_1' => ['nullable', 'url', 'max:2048'],
+            'video_url_2' => ['nullable', 'url', 'max:2048'],
+            'video_url_3' => ['nullable', 'url', 'max:2048'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'payment_intent_id' => ['required', 'string', 'max:255'],
+            'cf-turnstile-response' => ['nullable', 'string'],
+        ]);
+
+// Good: internal keys aligned
+expect($rules)
+    ->toBe([
+            'email'                 => ['required',     'string',   'email:rfc,dns', 'max:255'  ],
+            'tiktok_username'       => ['nullable',     'string',   'max:255'                   ],
+            'bio'                   => ['nullable',     'string',   'max:5000'                  ],
+            'aspiring_niche'        => ['required',     'string',   'max:255'                   ],
+            'video_url_1'           => ['nullable',     'url',      'max:2048'                  ],
+            'video_url_2'           => ['nullable',     'url',      'max:2048'                  ],
+            'video_url_3'           => ['nullable',     'url',      'max:2048'                  ],
+            'notes'                 => ['nullable',     'string',   'max:5000'                  ],
+            'payment_intent_id'     => ['required',     'string',   'max:255'                   ],
+            'cf-turnstile-response' => ['nullable',     'string'                                ],
+        ]);
+```
+
+
+## Hard validation checklist (must pass all)
+
+1. Every multiline chain uses one call per line.
+2. Chain continuation lines follow visual hierarchy with 4-space indentation steps.
+3. Closing `]` aligns with `[` line.
+4. Closing `)` is always one indentation level inside the caller block.
+5. No nested formatting style variants inside the same file.
+
+# Rule of thumb for () and [].
+[!NOTE for AIs: **DO NOT** change this section, this is OWNERS specific, and must be followed always]
+
+If developers do not need to track opening and closing brackets and parentheses explicitly, and can instead see that hierarchy is well indented.
+
+Remember Clean code principle:
+> Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Robert C. Martin
+
+That quote can be extended to:
+> Excellent programmers write code that other developers understand by reading, without extra cognitive effort. It is easier when they can look at the code and instinctively understand what is happening.

@@ -61,7 +61,9 @@ const prefersDark = (): boolean => {
         return false;
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    return darkMediaQuery.matches;
 };
 
 const handleSystemThemeChange = () => {

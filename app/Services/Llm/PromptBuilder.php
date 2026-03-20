@@ -21,7 +21,7 @@ class PromptBuilder
 
     public function build(array $payload, string $locale): string
     {
-        $template = $this->loadTemplate();
+        $template     = $this->loadTemplate();
         $replacements = $this->replacements($payload, $locale);
 
         return str_replace(
@@ -49,12 +49,12 @@ class PromptBuilder
     private function replacements(array $payload, string $locale): array
     {
         $username = $this->escape($payload['tiktok_username'] ?? $payload['username'] ?? '');
-        $bio = $this->escape($payload['bio'] ?? '');
-        $niche = $this->escape($payload['aspiring_niche'] ?? $payload['niche'] ?? '');
-        $v1 = $this->escape($payload['video_url_1'] ?? $payload['video_1'] ?? '');
-        $v2 = $this->escape($payload['video_url_2'] ?? $payload['video_2'] ?? '');
-        $v3 = $this->escape($payload['video_url_3'] ?? $payload['video_3'] ?? '');
-        $notes = $this->escape($payload['notes'] ?? '');
+        $bio      = $this->escape($payload['bio'] ?? '');
+        $niche    = $this->escape($payload['aspiring_niche'] ?? $payload['niche'] ?? '');
+        $v1       = $this->escape($payload['video_url_1'] ?? $payload['video_1'] ?? '');
+        $v2       = $this->escape($payload['video_url_2'] ?? $payload['video_2'] ?? '');
+        $v3       = $this->escape($payload['video_url_3'] ?? $payload['video_3'] ?? '');
+        $notes    = $this->escape($payload['notes'] ?? '');
 
         $language = match (strtolower($locale)) {
             'es' => 'Spanish',

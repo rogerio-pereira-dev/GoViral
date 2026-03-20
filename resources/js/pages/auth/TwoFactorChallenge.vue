@@ -3,8 +3,8 @@ import { Form, Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import type { TwoFactorConfigContent } from '@/types';
 import { store } from '@/routes/two-factor/login';
+import type { TwoFactorConfigContent } from '@/types';
 
 const authConfigContent = computed<TwoFactorConfigContent>(() => {
     if (showRecoveryInput.value) {

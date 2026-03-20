@@ -58,7 +58,7 @@ class SyncPaymentIntentSucceeded implements ShouldQueue
             // If it is already paid, we only enqueue again when processing is still queued.
             // We then rely on the cache key to avoid double dispatch.
             $cacheHasProcessDispatchKey = Cache::has($processDispatchKey);
-            $isQueued = $analysisRequest->processing_status === 'queued';
+            $isQueued                   = $analysisRequest->processing_status === 'queued';
 
             if ($isQueued && ! $cacheHasProcessDispatchKey) {
                 // If the record is still queued and the dedupe key is missing,

@@ -19,7 +19,11 @@ export type UseCurrentUrlReturn = {
 
 const page = usePage();
 const currentUrlReactive = computed(
-    () => new URL(page.url, window?.location.origin).pathname,
+    () => {
+        const pageUrl = new URL(page.url, window?.location.origin);
+
+        return pageUrl.pathname;
+    },
 );
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
@@ -48,7 +52,11 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
         ifTrue: any,
         ifFalse: any = null,
     ) {
-        return isCurrentUrl(urlToCheck) ? ifTrue : ifFalse;
+        if (isCurrentUrl(urlToCheck)) {
+            return ifTrue;
+        }
+
+        return ifFalse;
     }
 
     return {

@@ -41,7 +41,9 @@ const horizonUrl = computed(() => String(page.props.horizonUrl ?? '/horizon'));
 
 const flushAndLogout = (): void => {
     router.flushAll();
-    router.post(logout().url);
+    const logoutRoute = logout();
+
+    router.post(logoutRoute.url);
 };
 </script>
 

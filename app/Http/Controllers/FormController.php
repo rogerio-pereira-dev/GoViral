@@ -71,10 +71,10 @@ class FormController extends Controller
 
     public function paymentIntent(Request $request): JsonResponse
     {
-        $baseCents = (int) config('services.stripe.price_in_cents');
-        $currency = config('services.stripe.currency');
+        $baseCents      = (int) config('services.stripe.price_in_cents');
+        $currency       = config('services.stripe.currency');
         $publishableKey = config('cashier.key');
-        $secretKey = config('cashier.secret');
+        $secretKey      = config('cashier.secret');
 
         if (! is_string($publishableKey) || blank($publishableKey) || ! is_string($secretKey) || blank($secretKey)) {
             return response()->json([
@@ -83,7 +83,7 @@ class FormController extends Controller
         }
 
         $couponCode = $request->query('coupon_code');
-        $coupon = null;
+        $coupon     = null;
 
         if (is_string($couponCode) && trim($couponCode) !== '') {
             $coupon = DiscountCoupon::findValidByCode($couponCode);
@@ -113,12 +113,14 @@ class FormController extends Controller
         ];
 
         try {
-            $paymentIntent = Cashier::stripe()->paymentIntents->create([
-                'amount' => $amountCents,
-                'currency' => $currency,
-                'automatic_payment_methods' => ['enabled' => true],
-                'metadata' => $metadata,
-            ]);
+            $stripe        = Cashier::stripe();
+            $paymentIntent = $stripe->paymentIntents
+                                      ->create([
+                                          'amount' => $amountCents,
+                                          'currency' => $currency,
+                                          'automatic_payment_methods' => ['enabled' => true],
+                                          'metadata' => $metadata,
+                                      ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -145,12 +147,14 @@ class FormController extends Controller
 
     public function store(StoreAnalysisRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
+        $validatedData   = $request->validated();
         $paymentIntentId = $validatedData['payment_intent_id'];
-        $baseCents = (int) config('services.stripe.price_in_cents');
+        $baseCents       = (int) config('services.stripe.price_in_cents');
 
         try {
-            $paymentIntent = Cashier::stripe()->paymentIntents->retrieve($paymentIntentId);
+            $stripe        = Cashier::stripe();
+            $paymentIntent = $stripe->paymentIntents
+                                      ->retrieve($paymentIntentId);
         } catch (\Throwable $e) {
             report($e);
 

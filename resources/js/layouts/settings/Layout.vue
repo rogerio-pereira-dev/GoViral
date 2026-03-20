@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { type NavItem } from '@/types';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
+import { type NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -26,6 +26,13 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 const { isCurrentUrl } = useCurrentUrl();
+
+function navTestId(title: string): string {
+    const normalizedTitle = title.toLowerCase();
+    const dashedTitle = normalizedTitle.replace(/\s+/g, '-');
+
+    return `settings-nav-${dashedTitle}`;
+}
 </script>
 
 <template>
@@ -47,7 +54,7 @@ const { isCurrentUrl } = useCurrentUrl();
                         <Link
                             :href="item.href"
                             class="goviral-settings-nav-link"
-                            :data-test="`settings-nav-${item.title.toLowerCase().replace(/\\s+/g, '-')}`"
+                            :data-test="navTestId(item.title)"
                         >
                             <v-icon
                                 v-if="item.icon"
