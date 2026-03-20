@@ -107,14 +107,14 @@ async function loadTurnstileScript(): Promise<void> {
     }
 
     await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Turnstile load error'));
-        document.head.appendChild(script);
-    });
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.defer = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Turnstile load error'));
+            document.head.appendChild(script);
+        });
 }
 
 function onTurnstileSuccess(token: string): void {
@@ -136,13 +136,13 @@ async function loadStripeLibrary(): Promise<void> {
     }
 
     await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://js.stripe.com/v3/';
-        script.async = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Stripe load error'));
-        document.head.appendChild(script);
-    });
+            const script = document.createElement('script');
+            script.src = 'https://js.stripe.com/v3/';
+            script.async = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Stripe load error'));
+            document.head.appendChild(script);
+        });
 }
 
 function formatAmount(cents: number, currency: string): string {

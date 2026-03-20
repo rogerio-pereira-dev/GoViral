@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Password;
 
 it('allows requesting a password reset link via the browser', function () {
     $user = User::factory()->create([
-        'email' => 'browser-forgot@example.com',
-    ]);
+                    'email' => 'browser-forgot@example.com',
+                ]);
 
     $page = visit('/forgot-password');
 
@@ -19,9 +19,9 @@ it('allows requesting a password reset link via the browser', function () {
 
 it('allows resetting the password via the browser with a valid token', function () {
     $user = User::factory()->create([
-        'email' => 'browser-reset@example.com',
-        'password' => bcrypt('old-password'),
-    ]);
+                    'email' => 'browser-reset@example.com',
+                    'password' => bcrypt('old-password'),
+                ]);
 
     $token = Password::broker()->createToken($user);
 

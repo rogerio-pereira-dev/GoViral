@@ -4,9 +4,9 @@ use App\Models\User;
 
 it('shows discount coupons index when authenticated', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-admin@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-admin@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $page = visit('/login');
     $page->fill('email', $user->email)
@@ -23,9 +23,9 @@ it('shows discount coupons index when authenticated', function (): void {
 
 it('reaches discount coupons via sidebar link', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-nav@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-nav@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $page = visit('/login');
     $page->fill('email', $user->email)
@@ -41,9 +41,9 @@ it('reaches discount coupons via sidebar link', function (): void {
 
 it('creates coupon and redirects to index', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-create@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-create@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $page = visit('/login');
     $page->fill('email', $user->email)
@@ -64,14 +64,14 @@ it('creates coupon and redirects to index', function (): void {
 
 it('edits coupon and returns to index', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-edit@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-edit@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $coupon = \App\Models\DiscountCoupon::factory()->create([
-        'code' => 'EDITME',
-        'value' => 5,
-    ]);
+                        'code' => 'EDITME',
+                        'value' => 5,
+                    ]);
 
     $page = visit('/login');
     $page->fill('email', $user->email)
@@ -90,9 +90,9 @@ it('edits coupon and returns to index', function (): void {
 
 it('opens delete dialog and cancels without removing row', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-del@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-del@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $coupon = \App\Models\DiscountCoupon::factory()->create(['code' => 'KEEPME']);
 
@@ -111,9 +111,9 @@ it('opens delete dialog and cancels without removing row', function (): void {
 
 it('confirms delete and removes coupon from list', function (): void {
     $user = User::factory()->create([
-        'email' => 'coupon-del2@example.com',
-        'password' => bcrypt('password'),
-    ]);
+                    'email' => 'coupon-del2@example.com',
+                    'password' => bcrypt('password'),
+                ]);
 
     $coupon = \App\Models\DiscountCoupon::factory()->create(['code' => 'REMOVEME']);
 

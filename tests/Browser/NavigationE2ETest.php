@@ -5,10 +5,10 @@ use App\Models\User;
 it('navigates sidebar and settings navigation', function () {
     /** @var \App\Models\User $user */
     $user = User::factory()->create([
-        'email' => 'nav-user@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+                    'email' => 'nav-user@example.com',
+                    'password' => bcrypt('password'),
+                    'email_verified_at' => now(),
+                ]);
 
     $this->actingAs($user);
 

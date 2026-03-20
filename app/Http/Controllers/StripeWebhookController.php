@@ -69,7 +69,7 @@ class StripeWebhookController extends Controller
         $paymentIntentId = $object['id'];
 
         $analysisRequest = AnalysisRequest::where('stripe_payment_intent_id', $paymentIntentId)
-            ->first();
+                                ->first();
 
         if (! $analysisRequest) {
             Log::info('Stripe webhook: analysis request not found for payment_intent', [
@@ -136,7 +136,7 @@ class StripeWebhookController extends Controller
         $paymentIntentId = $object['id'];
 
         $analysisRequest = AnalysisRequest::where('stripe_payment_intent_id', $paymentIntentId)
-            ->first();
+                                ->first();
 
         if (! $analysisRequest) {
             Log::info('Stripe webhook: analysis request not found for payment_intent (failed)', [

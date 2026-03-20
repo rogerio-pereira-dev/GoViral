@@ -4,9 +4,9 @@ use App\Models\User;
 
 it('allows updating profile information via the settings page', function () {
     $user = User::factory()->create([
-        'name' => 'Original Name',
-        'email' => 'settings-profile@example.com',
-    ]);
+                    'name' => 'Original Name',
+                    'email' => 'settings-profile@example.com',
+                ]);
 
     $this->actingAs($user);
 
@@ -22,9 +22,9 @@ it('allows updating profile information via the settings page', function () {
 
 it('allows updating the password via the settings page', function () {
     $user = User::factory()->create([
-        'email' => 'settings-password@example.com',
-        'password' => bcrypt('current-password'),
-    ]);
+                    'email' => 'settings-password@example.com',
+                    'password' => bcrypt('current-password'),
+                ]);
 
     $this->actingAs($user);
 
@@ -41,7 +41,8 @@ it('allows updating the password via the settings page', function () {
 });
 
 it('shows the two-factor authentication settings page', function () {
-    $user = User::factory()->create();
+    $user = User::factory()
+                ->create();
 
     $this->actingAs($user);
 
@@ -51,7 +52,8 @@ it('shows the two-factor authentication settings page', function () {
 });
 
 it('shows the appearance settings page', function () {
-    $user = User::factory()->create();
+    $user = User::factory()
+                ->create();
 
     $this->actingAs($user);
 
