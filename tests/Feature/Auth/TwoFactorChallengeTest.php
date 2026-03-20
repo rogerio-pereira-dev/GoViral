@@ -9,9 +9,11 @@ test('two factor challenge redirects to login when not authenticated', function 
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
-    $response = $this->get(route('two-factor.login'));
+    $twoFactorLoginRoute = route('two-factor.login');
+    $loginRoute = route('login');
+    $response = $this->get($twoFactorLoginRoute);
 
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect($loginRoute);
 });
 
 test('two factor challenge can be rendered', function () {
@@ -20,24 +22,35 @@ test('two factor challenge can be rendered', function () {
     }
 
     Features::twoFactorAuthentication([
-        'confirm' => true,
-        'confirmPassword' => true,
-    ]);
+            'confirm' => true,
+            'confirmPassword' => true,
+        ]);
 
-    $user = User::factory()->create();
+    $user                            = User::factory()
+                                            ->create();
+    $twoFactorSecret                 = encrypt('test-secret');
+    $twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
+    $encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+    $twoFactorConfirmedAt            = now();
+    $loginRoute                      = route('login');
+    $twoFactorLoginRoute             = route('two-factor.login');
 
     $user->forceFill([
-        'two_factor_secret' => encrypt('test-secret'),
-        'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
-        'two_factor_confirmed_at' => now(),
-    ])->save();
+                'two_factor_secret' => $twoFactorSecret,
+                'two_factor_recovery_codes' => $encryptedTwoFactorRecoveryCodes,
+                'two_factor_confirmed_at' => $twoFactorConfirmedAt,
+            ])
+            ->save();
 
-    $this->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    $this->post(
+            $loginRoute,
+            [
+                'email' => $user->email,
+                'password' => 'password',
+            ]
+        );
 
-    $this->get(route('two-factor.login'))
+    $this->get($twoFactorLoginRoute)
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page->component('auth/TwoFactorChallenge'));
 });
