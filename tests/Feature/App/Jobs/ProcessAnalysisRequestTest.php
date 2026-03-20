@@ -11,88 +11,126 @@ it('runs without error when analysis request exists and is paid', function (): v
     Queue::fake();
     GrowthReportAgent::fake(['Fake report content']);
 
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'paid',
-        'processing_status' => 'queued',
-        'attempt_count' => 0,
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                'payment_status' => 'paid',
+                                'processing_status' => 'queued',
+                                'attempt_count' => 0,
+                            ]);
 
-    $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->handle(app(GrowthReportService::class));
+    $job                 = new ProcessAnalysisRequest($analysisRequest->id);
+    $growthReportService = app(GrowthReportService::class);
+    $job->handle($growthReportService);
 
     $analysisRequest->refresh();
-    expect($analysisRequest->processing_status)->toBe('sent')
-        ->and($analysisRequest->report_html)->toContain('Fake report content')
-        ->and($analysisRequest->sent_at)->not()->toBeNull();
+    $processingStatus = $analysisRequest->processing_status;
+    $reportHtml       = $analysisRequest->report_html;
+    $sentAt           = $analysisRequest->sent_at;
+
+    expect($processingStatus)
+        ->toBe('sent')
+        ->and($reportHtml)
+        ->toContain('Fake report content')
+        ->and($sentAt)
+        ->not()
+        ->toBeNull();
 
     Queue::assertPushedOn('emails', SendQueuedMailable::class);
 });
 
 it('returns early when analysis request is not found', function (): void {
-    $job = new ProcessAnalysisRequest('00000000-0000-0000-0000-000000000000');
-    $job->handle(app(GrowthReportService::class));
+    $job                 = new ProcessAnalysisRequest('00000000-0000-0000-0000-000000000000');
+    $growthReportService = app(GrowthReportService::class);
+    $job->handle($growthReportService);
 
-    expect(AnalysisRequest::count())->toBe(0);
+    $analysisRequestsCount = AnalysisRequest::count();
+    expect($analysisRequestsCount)
+        ->toBe(0);
 });
 
 it('returns early when analysis request id is not a valid UUID', function (): void {
-    $job = new ProcessAnalysisRequest('not-a-valid-uuid');
-    $job->handle(app(GrowthReportService::class));
+    $job                 = new ProcessAnalysisRequest('not-a-valid-uuid');
+    $growthReportService = app(GrowthReportService::class);
+    $job->handle($growthReportService);
 
-    expect(AnalysisRequest::count())->toBe(0);
+    $analysisRequestsCount = AnalysisRequest::count();
+    expect($analysisRequestsCount)
+        ->toBe(0);
 });
 
 it('returns early when analysis request is not paid', function (): void {
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'pending',
-        'processing_status' => 'waiting_payment_confirmation',
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                'payment_status' => 'pending',
+                                'processing_status' => 'waiting_payment_confirmation',
+                            ]);
 
-    $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->handle(app(GrowthReportService::class));
+    $job                 = new ProcessAnalysisRequest($analysisRequest->id);
+    $growthReportService = app(GrowthReportService::class);
+    $job->handle($growthReportService);
 
     $analysisRequest->refresh();
-    expect($analysisRequest->payment_status)->toBe('pending');
+    $paymentStatus = $analysisRequest->payment_status;
+    expect($paymentStatus)
+        ->toBe('pending');
 });
 
 it('records last_error and rethrows when LLM returns empty report', function (): void {
     GrowthReportAgent::fake(['']);
 
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'paid',
-        'processing_status' => 'queued',
-        'attempt_count' => 0,
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                'payment_status' => 'paid',
+                                'processing_status' => 'queued',
+                                'attempt_count' => 0,
+                            ]);
 
-    $job = new ProcessAnalysisRequest($analysisRequest->id);
+    $job                 = new ProcessAnalysisRequest($analysisRequest->id);
+    $growthReportService = app(GrowthReportService::class);
+    $executeJob          = fn () => $job->handle($growthReportService);
 
-    expect(fn () => $job->handle(app(GrowthReportService::class)))
-        ->toThrow(InvalidArgumentException::class, 'LLM returned empty report');
+    expect($executeJob)
+        ->toThrow(
+            InvalidArgumentException::class,
+            'LLM returned empty report'
+        );
 
     $analysisRequest->refresh();
-    expect($analysisRequest->last_error)->toContain('empty report');
+    $lastError = $analysisRequest->last_error;
+    expect($lastError)
+        ->toContain('empty report');
 });
 
 it('reuses existing report_html on retry without calling LLM again', function (): void {
     Queue::fake();
     GrowthReportAgent::fake(['New content that should not be used']);
 
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'paid',
-        'processing_status' => 'queued',
-        'attempt_count' => 0,
-        'report_html' => 'Persisted report content',
-        'sent_at' => null,
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                    'payment_status' => 'paid',
+                                    'processing_status' => 'queued',
+                                    'attempt_count' => 0,
+                                    'report_html' => 'Persisted report content',
+                                    'sent_at' => null,
+                                ]);
 
-    $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->handle(app(GrowthReportService::class));
+    $job                 = new ProcessAnalysisRequest($analysisRequest->id);
+    $growthReportService = app(GrowthReportService::class);
+    $job->handle($growthReportService);
 
     $analysisRequest->refresh();
 
-    expect($analysisRequest->report_html)->toBe('Persisted report content')
-        ->and($analysisRequest->processing_status)->toBe('sent')
-        ->and($analysisRequest->sent_at)->not()->toBeNull();
+    $reportHtml       = $analysisRequest->report_html;
+    $processingStatus = $analysisRequest->processing_status;
+    $sentAt           = $analysisRequest->sent_at;
+
+    expect($reportHtml)
+        ->toBe('Persisted report content')
+        ->and($processingStatus)
+        ->toBe('sent')
+        ->and($sentAt)
+        ->not()
+        ->toBeNull();
 
     Queue::assertPushedOn('emails', SendQueuedMailable::class);
 });
@@ -102,30 +140,41 @@ it('records last_error and rethrows when report generator throws', function (): 
         throw new RuntimeException('API rate limit');
     });
 
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'paid',
-        'processing_status' => 'queued',
-        'attempt_count' => 0,
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                    'payment_status' => 'paid',
+                                    'processing_status' => 'queued',
+                                    'attempt_count' => 0,
+                                ]);
 
-    $job = new ProcessAnalysisRequest($analysisRequest->id);
+    $job                 = new ProcessAnalysisRequest($analysisRequest->id);
+    $growthReportService = app(GrowthReportService::class);
+    $executeJob          = fn () => $job->handle($growthReportService);
 
-    expect(fn () => $job->handle(app(GrowthReportService::class)))
-        ->toThrow(RuntimeException::class, 'API rate limit');
+    expect($executeJob)
+        ->toThrow(
+            RuntimeException::class,
+            'API rate limit'
+        );
 
     $analysisRequest->refresh();
-    expect($analysisRequest->last_error)->toBe('API rate limit');
+    $lastError = $analysisRequest->last_error;
+    expect($lastError)
+        ->toBe('API rate limit');
 });
 
 it('marks record as failed and deletes it when job fails after max attempts', function (): void {
-    $analysisRequest = AnalysisRequest::factory()->create([
-        'payment_status' => 'paid',
-        'processing_status' => 'processing',
-    ]);
+    $analysisRequest = AnalysisRequest::factory()
+                            ->create([
+                                'payment_status' => 'paid',
+                                'processing_status' => 'processing',
+                            ]);
 
-    $job       = new ProcessAnalysisRequest($analysisRequest->id);
+    $job = new ProcessAnalysisRequest($analysisRequest->id);
     $exception = new RuntimeException('Final failure');
     $job->failed($exception);
 
-    expect(AnalysisRequest::find($analysisRequest->id))->toBeNull();
+    $missingAnalysisRequest = AnalysisRequest::find($analysisRequest->id);
+    expect($missingAnalysisRequest)
+        ->toBeNull();
 });
