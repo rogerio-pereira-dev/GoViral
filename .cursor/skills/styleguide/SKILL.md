@@ -44,8 +44,9 @@ For regular feature development (non-refactor), the scope is the files being cre
 ### Development Mode (default)
 
 1. Read these rule files first, before any analysis or edit:
-   - `./rules/method-chains-alignment.mdc`
-   - `./rules/method-chains-no-nested-calls.mdc`
+   - `./rules/method-chains-alignment.mdc` (relative to this skill file path)
+   - `./rules/method-chains-no-nested-calls.mdc` (relative to this skill file path)
+   - `./rules/styleguide-global-application.mdc` (relative to this skill file path)
 2. Apply rules to every file touched during implementation.
 3. Before finishing, manually re-open changed files and audit indentation, chain depth, multiline call closings, and array structure.
 4. Run relevant tests/lint checks when applicable.
@@ -55,8 +56,9 @@ For regular feature development (non-refactor), the scope is the files being cre
 ### Refactor Mode (strict full-coverage)
 
 1. Read these rule files first, before any other analysis or edit:
-   - `./rules/method-chains-alignment.mdc`
-   - `./rules/method-chains-no-nested-calls.mdc`
+   - `./rules/method-chains-alignment.mdc` (relative to this skill file path)
+   - `./rules/method-chains-no-nested-calls.mdc` (relative to this skill file path)
+   - `./rules/styleguide-global-application.mdc` (relative to this skill file path)
 2. Read all additional rule files explicitly requested by the user.
 3. Build the file list for the selected scope (recursive).
 4. Report file count before refactoring.
@@ -352,7 +354,7 @@ $array = [
 
 Why it is wrong:
 - Dense blocks can become hard to scan when variable declarations are visually flat.
-- In long blocks (3+ consecutive assignment lines), owner-approved readability alignment from `./rules/method-chains-alignment.mdc` is mandatory.
+- In long blocks (3+ consecutive assignment lines), owner-approved readability alignment from `./rules/method-chains-alignment.mdc` (relative to this skill file path) is mandatory.
 
 Bad:
 ```php
