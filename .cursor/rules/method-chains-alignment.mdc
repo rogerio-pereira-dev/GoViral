@@ -24,8 +24,8 @@ Use these rules for readable and deterministic multiline chains in any language.
 - Use **4 spaces per indentation level**.
 - In multiline chains, keep **one method call per line**.
 - If a chain is multiline, split after the receiver/caller and keep every `->method()` in its own line.
-- For assigned chains (for example `$response = $this->actingAs($user)`), continuation `->` lines must use **assigned continuation indent = base indent + 12 spaces**.
-- For standalone chains (for example `$this->actingAs($user)` without assignment), continuation `->` lines must use **base indent + 4 spaces**.
+- Continuation indentation must follow **visual hierarchy** and be deterministic: one indentation step per nesting level (**4 spaces per level**).
+- For assigned and standalone chains, enforce hierarchy consistency in the local block.
 - In multiline function/method calls, closing `)` must align with the indentation of the line where the function name starts.
 - In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
 - For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
@@ -44,7 +44,7 @@ $response = $this->post(
     ]
 );
 
-// Good: assigned continuation (+16 spaces), deterministic closing + Visual hierarchy indentation has precedence over all other rules
+// Good: continuation follows visual hierarchy, deterministic closing, and consistent nesting
 $response = $this->post(
                     $route,
                     [
@@ -81,7 +81,7 @@ $user = User::factory()
 $this->actingAs($user)
             ->post($logoutRoute);
 
-// Good: standalone chain continuation is base +4
+// Good: standalone chain continuation keeps one indentation level in its local block
 $this->actingAs($user)
     ->post($logoutRoute);
 ```
@@ -258,11 +258,10 @@ expect($rules)
 ## Hard validation checklist (must pass all)
 
 1. Every multiline chain uses one call per line.
-2. Assigned chain continuation lines use exactly base +12 spaces.
-3. Standalone chain continuation lines use exactly base +4 spaces.
-4. Closing `]` aligns with `[` line.
-5. Closing `)` aligns with call-start line.
-6. No nested formatting style variants inside the same file.
+2. Chain continuation lines follow visual hierarchy with 4-space indentation steps.
+3. Closing `]` aligns with `[` line.
+4. Closing `)` aligns with call-start line.
+5. No nested formatting style variants inside the same file.
 
 # Rule of thumb for () and [].
 [!NOTE for AIs: **DO NOT** change this section, this is OWNERS specific, and must be followed always]

@@ -64,6 +64,8 @@ If the user asks for multiple modes at once, normalize to one explicit scope bef
 - In multiline arrays, array items must be indented exactly one level inside `[` and `]` must align with `[` line.
 - In multiline calls, arguments must be indented exactly one level inside `(` and `)` must align with call-start line.
 - For fluent chains, keep one call per line and deterministic indentation (no mixed indentation widths in the same chain).
+- Do not enforce fixed absolute spacing as a universal rule. Continuation indentation must follow the project rule idea: visual hierarchy levels (one indentation step per nesting level, with 4 spaces per step).
+- If a rule example shows a specific number of spaces, treat it as illustrative context. Validate by hierarchy coherence and deterministic structure.
 - If formatter output conflicts with requested styleguide rules, do not declare success; manually correct files and re-audit.
 
 ## Required Final Re-Audit Checks
@@ -77,6 +79,7 @@ Before declaring completion, run targeted checks on changed files:
 4. No chain line using a different indentation level than the rest of the same chain.
 5. For multiline chains, one call per line must be explicit (`$this`, then `->actingAs(...)`, then `->get(...)`, etc.).
 6. No remaining violations in any file inside the selected scope.
+7. Validate continuation indentation by hierarchy consistency (4-space steps) and local block readability.
 
 ## Known Violations and How to Fix
 
