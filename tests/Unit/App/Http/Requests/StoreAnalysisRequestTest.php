@@ -92,9 +92,10 @@ it('validates required fields and expected error messages', function () {
     foreach ($requiredFields as $field) {
         $firstError = $errors->first($field);
         $attribute  = $attributes[$field];
+        $expected   = trans('form.validation.required', ['attribute' => $attribute]);
 
         expect($firstError)
-            ->toBe(trans('form.validation.required', ['attribute' => $attribute]));
+            ->toBe($expected);
     }
 });
 
@@ -135,12 +136,12 @@ it('validates format, max length and nullable notes with expected messages', fun
 
     $fails             = $validator->fails();
     $emailExpected     = trans('form.validation.email', ['attribute' => $attributes['email']                                ]);
-    $tiktokExpected    = trans('form.validation.max', ['attribute' => $attributes['tiktok_username'],     'max' => 255    ]);
-    $bioExpected       = trans('form.validation.max', ['attribute' => $attributes['bio'],                 'max' => 5000   ]);
-    $nicheExpected     = trans('form.validation.max', ['attribute' => $attributes['aspiring_niche'],      'max' => 255    ]);
-    $videoUrl1Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_1']                          ]);
-    $videoUrl2Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_2']                          ]);
-    $videoUrl3Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_3']                          ]);
+    $tiktokExpected    = trans('form.validation.max',   ['attribute' => $attributes['tiktok_username'],     'max' => 255    ]);
+    $bioExpected       = trans('form.validation.max',   ['attribute' => $attributes['bio'],                 'max' => 5000   ]);
+    $nicheExpected     = trans('form.validation.max',   ['attribute' => $attributes['aspiring_niche'],      'max' => 255    ]);
+    $videoUrl1Expected = trans('form.validation.url',   ['attribute' => $attributes['video_url_1']                          ]);
+    $videoUrl2Expected = trans('form.validation.url',   ['attribute' => $attributes['video_url_2']                          ]);
+    $videoUrl3Expected = trans('form.validation.url',   ['attribute' => $attributes['video_url_3']                          ]);
 
     expect($fails)
         ->toBeTrue()
@@ -163,12 +164,13 @@ it('validates format, max length and nullable notes with expected messages', fun
 });
 
 it('accepts nullable profile fields when omitted', function () {
-    app()->setLocale('en');
+    app()
+        ->setLocale('en');
 
     $payload = [
-            'email' => 'jane@gmail.com',
-            'aspiring_niche' => 'Fitness',
-            'notes' => null,
+            'email'             => 'jane@gmail.com',
+            'aspiring_niche'    => 'Fitness',
+            'notes'             => null,
             'payment_intent_id' => 'pi_test_init',
         ];
 
@@ -196,11 +198,12 @@ it('validates max length for video_url_2 with expected error message', function 
     $errors         = $validator->errors();
     $videoUrl2Error = $errors->first('video_url_2');
     $fails          = $validator->fails();
+    $expected       = trans('form.validation.max', ['attribute' => $attributes['video_url_2'], 'max' => 2048]);
 
     expect($fails)
         ->toBeTrue()
         ->and($videoUrl2Error)
-        ->toBe(trans('form.validation.max', ['attribute' => $attributes['video_url_2'], 'max' => 2048]));
+        ->toBe($expected);
 });
 
 it('validates string rule and expected error messages', function () {
