@@ -6,15 +6,18 @@ use Illuminate\Support\Str;
 test('analysis request uses uuid as primary key', function () {
     $analysisRequest = AnalysisRequest::factory()
                             ->create();
+    $isUuid = Str::isUuid($analysisRequest->id);
 
-    expect(Str::isUuid($analysisRequest->id))->toBeTrue();
+    expect($isUuid)->toBeTrue();
 });
 
 test('analysis request model uses string key type and non-incrementing ids', function () {
     $analysisRequest = new AnalysisRequest;
+    $keyType = $analysisRequest->getKeyType();
+    $isIncrementing = $analysisRequest->getIncrementing();
 
-    expect($analysisRequest->getKeyType())->toBe('string');
-    expect($analysisRequest->getIncrementing())->toBeFalse();
+    expect($keyType)->toBe('string');
+    expect($isIncrementing)->toBeFalse();
 });
 
 test('analysis request casts attempt_count to integer', function () {
@@ -66,7 +69,8 @@ test('analysis request paid scope returns only paid records', function () {
             'payment_status' => 'pending',
         ]);
 
-    $paidRecords       = AnalysisRequest::paid()->pluck('id');
+    $paidRecords       = AnalysisRequest::paid()
+                            ->pluck('id');
     $paidRecordCount   = $paidRecords->count();
     $firstPaidRecordId = $paidRecords->first();
 
@@ -87,7 +91,8 @@ test('analysis request pending payment scope returns only pending records', func
             'payment_status' => 'paid',
         ]);
 
-    $pendingRecords       = AnalysisRequest::pendingPayment()->pluck('id');
+    $pendingRecords       = AnalysisRequest::pendingPayment()
+                                ->pluck('id');
     $pendingRecordCount   = $pendingRecords->count();
     $firstPendingRecordId = $pendingRecords->first();
 
@@ -108,7 +113,8 @@ test('analysis request processing status scope filters by status', function () {
             'processing_status' => 'queued',
         ]);
 
-    $processingRecords       = AnalysisRequest::processingStatus('processing')->pluck('id');
+    $processingRecords       = AnalysisRequest::processingStatus('processing')
+                                    ->pluck('id');
     $processingRecordCount   = $processingRecords->count();
     $firstProcessingRecordId = $processingRecords->first();
 
@@ -123,6 +129,10 @@ test('analysis request relates to discount coupon when discount_coupon_id is set
         'discount_coupon_id' => $coupon->id,
     ]);
 
-    expect($analysisRequest->discountCoupon)->not->toBeNull()
-        ->and($analysisRequest->discountCoupon->id)->toBe($coupon->id);
+    $analysisRequestDiscountCoupon = $analysisRequest->discountCoupon;
+    $analysisRequestDiscountCouponId = $analysisRequestDiscountCoupon->id;
+
+    expect($analysisRequestDiscountCoupon)->not->toBeNull()
+        ->and($analysisRequestDiscountCouponId)
+        ->toBe($coupon->id);
 });

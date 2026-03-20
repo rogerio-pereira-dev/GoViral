@@ -14,25 +14,35 @@ it('relates analysis requests to discount coupon', function (): void {
     ]);
 
     $related = $coupon->analysisRequests;
+    $relatedFirst = $related->first();
+    $relatedFirstId = $relatedFirst->id;
 
     expect($related)->toHaveCount(1)
-        ->and($related->first()->id)->toBe($request->id);
+        ->and($relatedFirstId)
+        ->toBe($request->id);
 });
 
 it('computes discountedAmountCents with percentage and minimum amount', function (): void {
+    $amountWithoutDiscount = DiscountCoupon::discountedAmountCents(10000, 0);
+
     // No discount
-    expect(DiscountCoupon::discountedAmountCents(10000, 0))->toBe(10000);
+    expect($amountWithoutDiscount)->toBe(10000);
 
+    $amountWithTwentyPercentDiscount = DiscountCoupon::discountedAmountCents(10000, 20);
     // 20% discount
-    expect(DiscountCoupon::discountedAmountCents(10000, 20))->toBe(8000);
+    expect($amountWithTwentyPercentDiscount)->toBe(8000);
 
+    $amountWithOneHundredPercentDiscount = DiscountCoupon::discountedAmountCents(4000, 100);
     // 100% discount should still respect the 50-cent minimum
-    expect(DiscountCoupon::discountedAmountCents(4000, 100))->toBe(50);
+    expect($amountWithOneHundredPercentDiscount)->toBe(50);
 });
 
 it('findValidByCode returns null for blank code', function (): void {
-    expect(DiscountCoupon::findValidByCode(''))->toBeNull();
-    expect(DiscountCoupon::findValidByCode('   '))->toBeNull();
+    $couponWithEmptyCode = DiscountCoupon::findValidByCode('');
+    $couponWithBlankCode = DiscountCoupon::findValidByCode('   ');
+
+    expect($couponWithEmptyCode)->toBeNull();
+    expect($couponWithBlankCode)->toBeNull();
 });
 
 it('treats expires_at as date-only and keeps coupons valid through expiration date', function (): void {
@@ -44,14 +54,20 @@ it('treats expires_at as date-only and keeps coupons valid through expiration da
         'times_used' => 0,
     ]);
 
+    $tomorrow = now()
+                    ->addDay()
+                    ->toDateString();
     $couponTomorrow = DiscountCoupon::factory()->create([
-        'expires_at' => now()->addDay()->toDateString(),
+        'expires_at' => $tomorrow,
         'max_uses' => null,
         'times_used' => 0,
     ]);
 
+    $yesterday = now()
+                    ->subDay()
+                    ->toDateString();
     $couponYesterday = DiscountCoupon::factory()->create([
-        'expires_at' => now()->subDay()->toDateString(),
+        'expires_at' => $yesterday,
         'max_uses' => null,
         'times_used' => 0,
     ]);

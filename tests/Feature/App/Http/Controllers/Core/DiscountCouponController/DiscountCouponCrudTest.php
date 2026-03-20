@@ -82,8 +82,14 @@ it('soft deletes coupon on destroy', function (): void {
         ->delete("/core/discount-coupons/{$coupon->id}")
         ->assertRedirect('/core/discount-coupons');
 
-    expect(DiscountCoupon::whereKey($coupon->id)->exists())->toBeFalse();
-    expect(DiscountCoupon::withTrashed()->whereKey($coupon->id)->exists())->toBeTrue();
+    $couponExists = DiscountCoupon::whereKey($coupon->id)
+                        ->exists();
+    $couponExistsWithTrashed = DiscountCoupon::withTrashed()
+                                ->whereKey($coupon->id)
+                                ->exists();
+
+    expect($couponExists)->toBeFalse();
+    expect($couponExistsWithTrashed)->toBeTrue();
 });
 
 it('updates coupon', function (): void {
@@ -281,7 +287,8 @@ it('excludes expired coupons from checkout lookup', function (): void {
                 'code' => 'EXP',
             ]);
 
-    expect(DiscountCoupon::findValidByCode('EXP'))
+    $expiredCoupon = DiscountCoupon::findValidByCode('EXP');
+    expect($expiredCoupon)
         ->toBeNull();
 });
 
@@ -292,7 +299,8 @@ it('excludes exhausted coupons from checkout lookup', function (): void {
                 'code' => 'FULL',
             ]);
 
-    expect(DiscountCoupon::findValidByCode('FULL'))
+    $exhaustedCoupon = DiscountCoupon::findValidByCode('FULL');
+    expect($exhaustedCoupon)
         ->toBeNull();
 });
 

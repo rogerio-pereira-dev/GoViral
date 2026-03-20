@@ -1,7 +1,8 @@
 <?php
 
 test('returns a successful response', function () {
-    $response = $this->get(route('home'));
+    $homeRoute = route('home');
+    $response = $this->get($homeRoute);
 
     $response->assertOk();
 });
