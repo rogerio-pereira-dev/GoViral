@@ -3,6 +3,9 @@ description: Avoid nested call expressions inside method-chain arguments.
 globs: **/*.php,**/*.js,**/*.ts,**/*.vue
 alwaysApply: false
 ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes."
+required_pre_read_rules:
+  - .cursor/rules/method-chains-alignment.mdc
+  - .cursor/rules/method-chains-no-nested-calls.mdc
 ---
 
 # No Nested Calls in Arguments

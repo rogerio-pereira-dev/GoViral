@@ -31,6 +31,9 @@ Primary value proposition:
 
 ## Standards
 
+- Before starting any styleguide/refactor task, read these files first:
+  - `.cursor/rules/method-chains-alignment.mdc`
+  - `.cursor/rules/method-chains-no-nested-calls.mdc`
 - All code must be in English.
 - Follow PSR standards (one statement per line).
 - Do **not** use ternary operators (`condition ? a : b`) in PHP; use explicit `if` / `else` or early returns.
