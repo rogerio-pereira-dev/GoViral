@@ -8,7 +8,7 @@ test('analysis request uses uuid as primary key', function () {
                             ->create();
     $isUuid = Str::isUuid($analysisRequest->id);
 
-    expect($isUuid
+    expect($isUuid)
         ->toBeTrue();
 });
 
