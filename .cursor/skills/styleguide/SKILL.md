@@ -19,6 +19,7 @@ Partial refactoring is unacceptable.
 - If `pint`, PSR, language defaults, or editor auto-formatters conflict with this styleguide, the styleguide must win.
 - Allowed antipatterns defined by owner rules are intentional and must be preserved.
 - Never declare success based only on formatter output.
+- When examples and deterministic rules seem to conflict, deterministic owner rules and local established pattern win.
 
 ## Accepted Input Scope (Refactor Mode)
 
@@ -49,6 +50,7 @@ For regular feature development (non-refactor), the scope is the files being cre
 3. Before finishing, manually re-open changed files and audit indentation, chain depth, multiline call closings, and array structure.
 4. Run relevant tests/lint checks when applicable.
 5. Report validation status and remaining violations (must be zero in changed files).
+6. Apply `Global Structural Style Protocol` before declaring completion.
 
 ### Refactor Mode (strict full-coverage)
 
@@ -72,6 +74,24 @@ For regular feature development (non-refactor), the scope is the files being cre
 - total files changed
 - confirmation: zero remaining violations
 - confirmation that styleguide precedence was enforced over formatter output
+
+## Global Structural Style Protocol
+
+Apply this protocol in any scope (`app`, `tests`, `resources`, or full project).
+
+1. Objective is style-only refactoring: indentation, method chaining, whitespaces, and closing alignment for `]` and `)`.
+2. Apply owner style rules as source of truth, even when formatter output differs.
+3. Enforce one action per line in fluent chains and multiline structures.
+4. Enforce deterministic indentation hierarchy (4-space steps) in chains, multiline calls, and arrays.
+5. Enforce exact closing alignment in multiline structures:
+   - `]` aligns with its `[` context;
+   - `)` closes one level inside caller hierarchy, never at caller baseline when rule requires inner-level close;
+   - `]);` follows the local hierarchy consistently.
+6. Whitespace normalization is structural, not cosmetic:
+   - no random alignment drift across similar blocks;
+   - no mixed indentation widths in the same chain;
+   - no inline array payload when multiline hierarchy is required by owner style.
+7. Completion is valid only when structural audit reports zero style violations in changed scope.
 
 ## Base Indentation Guardrails (Mandatory)
 
@@ -390,6 +410,7 @@ Features::twoFactorAuthentication([
 - Never skip files in selected scope.
 - Never claim success without final full re-audit.
 - Never auto-commit.
+- Never leave structural style violations unresolved.
 - After successful validation, always ask:
   - `Refatoracao concluida e validada. Deseja que eu faca o commit agora?`
 
