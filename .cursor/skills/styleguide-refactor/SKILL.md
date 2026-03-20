@@ -205,6 +205,144 @@ $user->forceFill([
     ->save();
 ```
 
+### Closing `)` must be one indentation level inside call start
+
+Why it is wrong:
+- In multiline calls, the closing `)` cannot be aligned at the same column as the caller line because visual hierarchy requires one inner level.
+
+Bad:
+```php
+$response = $this->post(
+                $loginStoreRoute,
+                [
+                    'email' => $user->email,
+                    'password' => 'password',
+                ]
+            );
+
+$user->forceFill([
+    'two_factor_secret' => $twoFactorSecret,
+    'two_factor_recovery_codes' => $encryptedTwoFactorRecoveryCodes,
+    'two_factor_confirmed_at' => $twoFactorConfirmedAt,
+]);
+```
+
+Good:
+```php
+$response = $this->post(
+                        $loginStoreRoute,
+                        [
+                            'email' => $user->email,
+                            'password' => 'password',
+                        ]
+                    );
+
+$user->forceFill([
+        'two_factor_secret' => $twoFactorSecret,
+        'two_factor_recovery_codes' => $encryptedTwoFactorRecoveryCodes,
+        'two_factor_confirmed_at' => $twoFactorConfirmedAt,
+    ]);
+```
+
+### Chain continuation depth must be consistent
+
+Why it is wrong:
+- When a chain starts the next call must keep a consistent continuation depth.
+- Use deep jumps (for example 3 levels below) to maintain visual hierarchy 
+
+Bad:
+```php
+$response = $this->actingAs($user)
+    ->post($logoutRoute);
+```
+
+Good:
+```php
+$response = $this->actingAs($user)
+                ->post($logoutRoute);
+```
+
+### Array payload must not stay inline inside multiline-call hierarchy
+
+Why it is wrong:
+- `array in line` reduce hierarchy readability and make closings hard to track.
+- In multiline calls, payload arrays must open in their own line and keep inner keys one level deeper.
+
+Bad:
+```php
+$this->post(
+    $passwordEmailRoute,
+    ['email' => $user->email]
+);
+
+$array = ['foo', 'bar'];
+```
+
+Good:
+```php
+$this->post(
+                $passwordEmailRoute,
+                [
+                    'email' => $user->email,
+                ]
+            );
+
+$array = [
+            'foo', 
+            'bar'
+         ];
+```
+
+### Standalone long setup blocks may use owner-approved readability alignment
+
+Why it is wrong:
+- Dense blocks can become hard to scan when variable declarations are visually flat.
+- In long blocks, owner-approved readability alignment from `.cursor/rules/method-chains-alignment.mdc` (allowed antipatterns) may be applied intentionally.
+
+Bad:
+```php
+$user = User::factory()->create();
+$twoFactorSecret = encrypt('test-secret');
+$twoFactorRecoveryCodes = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt = now();
+$loginRoute = route('login');
+$twoFactorLoginRoute = route('two-factor.login');
+```
+
+Good:
+```php
+$user                            = User::factory()->create();
+$twoFactorSecret                 = encrypt('test-secret');
+$twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt            = now();
+$loginRoute                      = route('login');
+$twoFactorLoginRoute             = route('two-factor.login');
+```
+
+### Indentation consistency
+
+Why it is wrong:
+- Config arrays must preserve deterministic hierarchy: items one level inside `[`, closing `]` and `)` coherent with call shape.
+- A common violation is mixing item depth and closing depth (`]);` one level below expected).
+
+Bad:
+```php
+Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
+]);
+```
+
+Good:
+```php
+Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+```
+
 ### Final rule for all examples above
 
 - If any one of these patterns appears in any changed file, the task is **not complete**.

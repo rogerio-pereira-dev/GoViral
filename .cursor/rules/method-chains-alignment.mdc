@@ -29,6 +29,7 @@ Use these rules for readable and deterministic multiline chains in any language.
 - In multiline function/method calls, closing `)` must align with the indentation of the line where the function name starts.
 - In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
 - For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
+- In assigned multiline calls, keep visual hierarchy: arguments one level deeper and closing `)` one level inside the caller block (not flattened to caller column).
 - Do not keep multiple calls on the same line (`->foo()->bar()` is forbidden in multiline contexts).
 - For Pest post-closure chains (`})->with(...)`, `})->throws(...)`), always break after `}` and continue as standalone chain.
 - In `expect(...)` chains, keep one matcher per line.
@@ -84,6 +85,42 @@ $this->actingAs($user)
 // Good: standalone chain continuation keeps one indentation level in its local block
 $this->actingAs($user)
     ->post($logoutRoute);
+```
+
+```php
+// Bad: payload array kept inline inside multiline call
+$this->post(
+    $passwordEmailRoute,
+    ['email' => $user->email]
+);
+
+// Good: payload array in its own multiline block
+$this->post(
+                $passwordEmailRoute,
+                [
+                    'email' => $user->email,
+                ]
+            );
+```
+
+```php
+// Bad: assigned multiline call with under-indented payload and closing
+$response = $this->post(
+                $loginStoreRoute,
+                [
+                    'email' => $user->email,
+                    'password' => 'password',
+                ]
+            );
+
+// Good: one extra hierarchy level for readability
+$response = $this->post(
+                    $loginStoreRoute,
+                    [
+                        'email' => $user->email,
+                        'password' => 'password',
+                    ]
+                );
 ```
 
 ```php
@@ -161,6 +198,26 @@ $prompt = $this->builder->build($payload, 'en');
 // Good: apply indentation to properties too
 $prompt = $this->builder
             ->build($payload, 'en');
+```
+
+```php
+//Bad flatned asigned on large blocks (hard scanning)
+$user = User::factory()->create();
+$twoFactorSecret = encrypt('test-secret');
+$twoFactorRecoveryCodes = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt = now();
+$loginRoute = route('login');
+$twoFactorLoginRoute = route('two-factor.login');
+
+// Good (allowed readability block for dense blocks): aligned assignments for scanning
+$user                            = User::factory()->create();
+$twoFactorSecret                 = encrypt('test-secret');
+$twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
+$encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
+$twoFactorConfirmedAt            = now();
+$loginRoute                      = route('login');
+$twoFactorLoginRoute             = route('two-factor.login');
 ```
 
 #### Allowed antipatterns
@@ -260,7 +317,7 @@ expect($rules)
 1. Every multiline chain uses one call per line.
 2. Chain continuation lines follow visual hierarchy with 4-space indentation steps.
 3. Closing `]` aligns with `[` line.
-4. Closing `)` aligns with call-start line.
+4. Closing `)` follows local hierarchy consistently (one level inside).
 5. No nested formatting style variants inside the same file.
 
 # Rule of thumb for () and [].

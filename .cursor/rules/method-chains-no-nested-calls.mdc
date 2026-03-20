@@ -25,6 +25,7 @@ Prefer extracting nested call expressions to named variables before passing them
 - In validation setup, avoid passing nested request method calls inline (for example in `Validator::make` arguments); extract `rules`, `messages`, and `attributes` first.
 - In tests, do not pass `route(...)` inline when used as argument of a chain/call; extract route variables first.
 - In tests, do not pass `now()->...`, `sha1(...)`, `encrypt(...)`, `json_encode(...)`, or any call stack inline inside call arguments when assigned variables improve traceability.
+- After extracting route/payload variables, keep multiline call hierarchy readable: avoid inline array payloads in multiline `post/get/...` calls.
 
 ## Deterministic enforcement
 
@@ -53,12 +54,21 @@ expect($isAuthorized)
 ```
 
 ```php
-// Bad
+// Bad (calling methods in parameters)
 $response = $this->post(route('login.store'), ['email' => $user->email]);
 
-// Good
+// Good (extracted to a variable)
 $loginStoreRoute = route('login.store');
 $response = $this->post($loginStoreRoute, ['email' => $user->email]);
+
+// Better (visual hierarchy)
+$loginStoreRoute = route('login.store');
+$response = $this->post(
+                    $loginStoreRoute,
+                    [
+                        'email' => $user->email,
+                    ]
+                );
 ```
 
 ```php
