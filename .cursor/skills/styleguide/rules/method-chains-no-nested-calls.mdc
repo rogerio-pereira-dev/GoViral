@@ -17,6 +17,7 @@ Prefer extracting nested call expressions to named variables before passing them
 - This rule is project-authoritative and has precedence over formatter/language defaults.
 - If formatter output conflicts with this rule, keep this rule and manually re-apply the expected structure.
 - Do not trade readability for formatter compliance.
+- Visual hierarchy and scan readability have precedence over PSR/linter output when there is conflict.
 
 - Do not pass `new Foo(...)->bar()` directly as a method argument.
 - Do not pass deep call stacks directly in argument lists when they reduce readability.
@@ -26,12 +27,14 @@ Prefer extracting nested call expressions to named variables before passing them
 - In tests, do not pass `route(...)` inline when used as argument of a chain/call; extract route variables first.
 - In tests, do not pass `now()->...`, `sha1(...)`, `encrypt(...)`, `json_encode(...)`, or any call stack inline inside call arguments when assigned variables improve traceability.
 - After extracting route/payload variables, keep multiline call hierarchy readable: avoid inline array payloads in multiline `post/get/...` calls.
+- Never keep chained calls in the same line; use one method/function call per line in chain flows.
 
 ## Deterministic enforcement
 
 - If an argument contains `(` and also contains `)->` or nested function calls, extract to variable before call.
 - `expect(...)` must receive a variable when the expression contains any method/function call.
 - For builders/factories in multiline form, chain calls must be split and intermediate values extracted when used as arguments elsewhere.
+- Method chains (e.g. `User::factory()->create()`) must be split into one call per line.
 
 ```php
 // Bad
@@ -80,13 +83,17 @@ $verificationUrl = URL::temporarySignedRoute(
 );
 
 // Good
-$verificationExpiresAt = now()->addMinutes(60);
-$verificationHash = sha1($user->email);
-$verificationUrl = URL::temporarySignedRoute(
-    'verification.verify',
-    $verificationExpiresAt,
-    ['id' => $user->id, 'hash' => $verificationHash]
-);
+$verificationExpiresAt  = now()
+                            ->addMinutes(60);
+$verificationHash       = sha1($user->email);
+$verificationUrl        = URL::temporarySignedRoute(
+                                'verification.verify',
+                                $verificationExpiresAt,
+                                [
+                                    'id' => $user->id, 
+                                    'hash' => $verificationHash
+                                ]
+                            );
 ```
 
 ```php
@@ -101,9 +108,9 @@ $validator = Validator::make($payload, $rules, $messages, $attributes);
 
 // Even better
 $validator = Validator::make(
-                                $payload, 
-                                $rules, 
-                                $messages, 
+                                $payload,
+                                $rules,
+                                $messages,
                                 $attributes
                             );
 ```

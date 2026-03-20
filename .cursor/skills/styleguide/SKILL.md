@@ -75,10 +75,11 @@ For regular feature development (non-refactor), the scope is the files being cre
 
 ## Base Indentation Guardrails (Mandatory)
 
-- Enforce **one statement per line** and avoid visual-column alignment padding between variable names and `=`, except in owner-approved visual-hierarchy antipattern blocks.
+- Enforce **one action per line** and avoid visual-column alignment padding between variable names and `=`, except in owner-approved visual-hierarchy antipattern blocks.
 - In multiline arrays, array items must be indented exactly one level inside `[` and `]` must align with `[` line.
-- In multiline calls, arguments must be indented exactly one level inside `(` and `)` must align with call-start line.
+- In multiline calls, arguments must be indented exactly one level inside `(` and closing `)` must be indented exactly one level inside the caller block (never at caller baseline).
 - For fluent chains, keep one call per line and deterministic indentation (no mixed indentation widths in the same chain).
+- Never keep chained calls in the same line (e.g. `foo()->bar()` is always a violation).
 - Do not enforce fixed absolute spacing as a universal rule. Continuation indentation must follow the project rule idea: visual hierarchy levels (one indentation step per nesting level, with 4 spaces per step).
 - If a rule example shows a specific number of spaces, treat it as illustrative context. Validate by hierarchy coherence and deterministic structure.
 - If formatter output conflicts with requested styleguide rules, do not declare success; manually correct files and re-audit.
@@ -89,8 +90,8 @@ Before declaring completion, run targeted checks on changed files:
 
 1. No assignment alignment padding outside owner-approved visual-hierarchy antipattern blocks (regex example: `\$[A-Za-z0-9_]+\s{2,}=` must return zero outside those blocks).
 2. No over-indented array items inside `[...]` for multiline calls.
-3. No misaligned closing `]` / `)` / `]);`. 
-    Closing parenthesis and brackets must be aligned 1 level inside, not at callers level, check: [](### 5) Visual hierarchy indentation in multiline payloads)
+3. No misaligned closing `]` / `)` / `]);`.
+   Closing parenthesis and brackets must be aligned 1 level inside, not at caller level. Check section `Visual hierarchy indentation in multiline payloads`.
 4. No chain line using a different indentation level than the rest of the same chain.
 5. For multiline chains, one call per line must be explicit (`$this`, then `->actingAs(...)`, then `->get(...)`, etc.).
 6. No remaining violations in any file inside the selected scope.
@@ -100,13 +101,13 @@ Before declaring completion, run targeted checks on changed files:
 
 Use these concrete cases as mandatory references during refactor and final audit.
 
-### Visual hierarchy indentation in multiline payloads 
+### Visual hierarchy indentation in multiline payloads
 **This one has precedence over all other rules**
 
 Why this style is preferred:
 - Indentation is not only style; it helps developers read scope and hierarchy.
 - In multiline calls with array payloads, visual nesting should make ownership clear:
-  - Call start and call end aligned
+  - Call end must stay one indentation level inside the caller block
   - Argument lines as the first hierarchy level inside the call
   - Array items as the second hierarchy level inside the array
 
@@ -129,11 +130,11 @@ $response = $this->post(
                     );
 ```
 
-### Assignment padding (breaks PSR readability and "one statement per line" discipline)
+### Assignment padding (scan-first readability for dense blocks)
 
 Why it is wrong:
-- Visual alignment padding (`$user            =`) is unstable, noisy in diffs, and not deterministic.
-- Keep a single space around `=`.
+- Visual alignment padding (`$user            =`) is unstable in short blocks and noisy in diffs.
+- In dense setup blocks with 3+ consecutive assignment lines, alignment improves scan speed and must be applied.
 
 Bad:
 ```php
@@ -142,19 +143,38 @@ $user            = User::factory()->create();
 
 Good:
 ```php
-$user = User::factory()->create();
+$user = User::factory()
+            ->create();
 ```
 
-**Note (only allowed exception):**
-- The only allowed exception to assignment padding is when applying **Visual hierarchy indentation in multiline payloads**.
-- This exception must follow the owner-approved antipattern section in `.cursor/rules/method-chains-alignment.mdc` (allowed examples block around lines 164-248, including aligned assignments and aligned keys in dense readability blocks).
-- Outside that specific exception, keep single-space assignment formatting (`$var = ...`) with no visual alignment padding.
+**Deterministic rule:**
+- In dense setup blocks with 3+ consecutive assignment lines, aligned `=` is mandatory.
+- Outside dense setup blocks, keep single-space assignment formatting (`$var = ...`) with no visual alignment padding.
+
+
+### "One action per line" discipline
+
+Why it is wrong:
+- Treat each action as a readability unit, not only language statements.
+- Each method call (`->...`) and each array key assignment (`=>`), each parameters in functions with 5+ parameters, etc... Is an action and must stay on its own line.
+- Closing hierarchy lines (`]`, `)`) must stay on dedicated lines.
+
+Bad:
+```
+$a = $foo->bar()->baz();
+```
+
+Good: one method action per line
+```
+$a = $foo->bar()
+        ->baz();
+```
 
 ### Multiline call array body indented one extra level
 
 Why it is wrong:
 - Array items inside multiline calls must be exactly one level deeper than the `[` line.
-- Closing `]);` must align with the call-start indentation.
+- Closing `]);` must stay one indentation level inside the caller block.
 - Post parameter not aligned
 
 Bad:
@@ -168,7 +188,7 @@ $response = $this->post($loginStoreRoute, [
 Good:
 ```php
 $response = $this->post(
-                    $loginStoreRoute, 
+                    $loginStoreRoute,
                     [
                         'email' => $user->email,
                         'password' => 'password',
@@ -303,16 +323,16 @@ $this->post(
             );
 
 $array = [
-            'foo', 
+            'foo',
             'bar'
          ];
 ```
 
-### Standalone long setup blocks may use owner-approved readability alignment
+### Standalone long blocks must use owner-approved readability alignment
 
 Why it is wrong:
 - Dense blocks can become hard to scan when variable declarations are visually flat.
-- In long blocks, owner-approved readability alignment from `.cursor/rules/method-chains-alignment.mdc` (allowed antipatterns) may be applied intentionally.
+- In long blocks (3+ consecutive assignment lines), owner-approved readability alignment from `./rules/method-chains-alignment.mdc` is mandatory.
 
 Bad:
 ```php
@@ -327,7 +347,8 @@ $twoFactorLoginRoute = route('two-factor.login');
 
 Good:
 ```php
-$user                            = User::factory()->create();
+$user                            = User::factory()
+                                    ->create();
 $twoFactorSecret                 = encrypt('test-secret');
 $twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
 $encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);

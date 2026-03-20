@@ -24,15 +24,14 @@ Use these rules for readable and deterministic multiline chains in any language.
 - Use **4 spaces per indentation level**.
 - In multiline chains, keep **one method call per line**.
 - If a chain is multiline, split after the receiver/caller and keep every `->method()` in its own line.
+- Treat each call/action as one readable unit per line in chain flows.
 - Continuation indentation must follow **visual hierarchy** and be deterministic: one indentation step per nesting level (**4 spaces per level**).
 - For assigned and standalone chains, enforce hierarchy consistency in the local block.
-- In multiline function/method calls, closing `)` must follow local visual hierarchy consistently:
-  - default: align with call-start line;
-  - owner-approved readability hierarchy: one indentation level inside the caller block.
+- In multiline function/method calls, closing `)` must always be one indentation level inside the caller block.
 - In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
 - For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
 - In assigned multiline calls, keep visual hierarchy: arguments one level deeper and closing `)` one level inside the caller block (not flattened to caller column).
-- Do not keep multiple calls on the same line (`->foo()->bar()` is forbidden in multiline contexts).
+- Do not keep multiple calls on the same line (`->foo()->bar()` is always forbidden).
 - For Pest post-closure chains (`})->with(...)`, `})->throws(...)`), always break after `}` and continue as standalone chain.
 - In `expect(...)` chains, keep one matcher per line.
 
@@ -127,14 +126,22 @@ $response = $this->post(
 
 ```php
 // Bad: closing ] and ) misaligned
-$payload = [
-                'email' => $email,
-            );
+$payload = ['email' => $email];
 
-// Good: closing ] with [, closing ) with call start
+$payload = $this->buildHtml($payload, $name, $email, $address, $shoppingCart);
+
+// Good: closing ] and ) aligned one level inside caller block
 $payload = [
                 'email' => $email,
             ];
+
+$payload = $this->buildHtml(
+                    $payload,
+                    $name,
+                    $email,
+                    $address,
+                    $shoppingCart
+                );
 ```
 
 ```php
@@ -182,7 +189,7 @@ $payload = [
     ];
 
 // Even better
-// Although the closing brackets could have 4 spaces, because of assignment it's easier to visualize the chain if 
+// Although the closing brackets could have 4 spaces, because of assignment it's easier to visualize the chain if
 // closing bracket is aligned to opening bracket
 $payload = [
                 'email' => 'mass@example.com',
@@ -212,8 +219,9 @@ $twoFactorConfirmedAt = now();
 $loginRoute = route('login');
 $twoFactorLoginRoute = route('two-factor.login');
 
-// Good (allowed readability block for dense blocks): aligned assignments for scanning
-$user                            = User::factory()->create();
+// Good (mandatory for dense blocks with 3+ assignment lines): aligned assignments for scanning
+$user                            = User::factory()
+                                        ->create();
 $twoFactorSecret                 = encrypt('test-secret');
 $twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
 $encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
@@ -223,7 +231,7 @@ $twoFactorLoginRoute             = route('two-factor.login');
 ```
 
 #### Allowed antipatterns
-Those antipatterns are allowed to improve readability.
+Those owner-approved patterns are mandatory for dense setup blocks (3+ assignment lines) to improve scan readability.
 
 **Visual hierarchy indentation has precedence over all other rules**
 
@@ -255,7 +263,7 @@ $payload = [
 
 
 
-// Good: aligning equals makes readability easier (Use only with large volumes of text)
+// Good: aligned equals are mandatory in dense setup blocks (3+ assignment lines)
 $validator              = Validator::make($payload, $rules, $messages, $attributes);
 $errors                 = $validator->errors();
 $emailError             = $errors->first('email');
@@ -319,7 +327,7 @@ expect($rules)
 1. Every multiline chain uses one call per line.
 2. Chain continuation lines follow visual hierarchy with 4-space indentation steps.
 3. Closing `]` aligns with `[` line.
-4. Closing `)` follows local hierarchy consistently (call-start baseline or one level inside, but never mixed arbitrarily in the same local block).
+4. Closing `)` is always one indentation level inside the caller block.
 5. No nested formatting style variants inside the same file.
 
 # Rule of thumb for () and [].
