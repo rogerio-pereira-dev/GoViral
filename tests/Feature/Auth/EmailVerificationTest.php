@@ -102,7 +102,7 @@ test('email is not verified with invalid user id', function () {
         ->get($verificationUrl);
 
     Event::assertNotDispatched(Verified::class);
-    
+
     $freshUser = $user->fresh();
     $hasVerifiedEmail = $freshUser->hasVerifiedEmail();
 
