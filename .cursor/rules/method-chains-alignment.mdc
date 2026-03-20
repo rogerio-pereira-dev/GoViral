@@ -6,29 +6,38 @@ alwaysApply: false
 
 # Method Chains and Alignment
 
-Use these rules for readable multiline chains in any language.
+Use these rules for readable and deterministic multiline chains in any language.
 
-- Keep one method call per line in multiline chains.
-- Keep indentation consistent across the same chain.
-- Allow the first call on the same line as the receiver.
-- For assigned chains, align continuation lines to the caller context (deeper visual indent).
-- For standalone chains, use one continuation indent level.
-- If a chain receiver is on its own line (for example `$landing`), keep the first method call on the same line as the receiver (for example `$landing->assertSee(...)`).
-- For multiline helper/control calls with a single long argument (for example `$this->markTestSkipped(...)`):
-  - indent the closing `);` one extra level deeper than the receiver line
-  - indent the argument one extra level deeper than the closing `);`
-- For multiline array literals used as a function argument in an assignment expression (for example `$pages = visit([...])`), apply the "assigned continuation indent" to the array items and to the closing `]` (do not align `]` with the left side of the assignment).
-- For Pest chains after closure endings (for example `})->with(...)` or `})->throws(...)`), break before `->` and treat them as standalone chains with one continuation indent level.
-- In `expect(...)` chains, keep one assertion call per line (including `->and(...)` and the next matcher call).
+## Canonical indentation model (deterministic)
+
+- Use **4 spaces per indentation level**.
+- In multiline chains, keep **one method call per line**.
+- If a chain is multiline, split after the receiver/caller and keep every `->method()` in its own line.
+- For assigned chains (for example `$response = $this->actingAs($user)`), continuation `->` lines must use **assigned continuation indent = base indent + 12 spaces**.
+- For standalone chains (for example `$this->actingAs($user)` without assignment), continuation `->` lines must use **base indent + 4 spaces**.
+- In multiline function/method calls, closing `)` must align with the indentation of the line where the function name starts.
+- In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
+- For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
+- Do not keep multiple calls on the same line (`->foo()->bar()` is forbidden in multiline contexts).
+- For Pest post-closure chains (`})->with(...)`, `})->throws(...)`), always break after `}` and continue as standalone chain.
+- In `expect(...)` chains, keep one matcher per line.
 
 ```php
-// Bad: continuation looks detached from caller context
-$response = $this->withSession(['locale' => 'pt'])
-    ->post(route('form.store'), $payload);
+// Bad: inconsistent assigned continuation and closing parenthesis
+$response = $this->post(
+    $route,
+    [
+        'email' => $email,
+    ]
+);
 
-// Good: continuation aligned to caller context
-$response = $this->withSession(['locale' => 'pt'])
-                ->post(route('form.store'), $payload);
+// Good: assigned continuation (+12), deterministic closing
+$response = $this->post(
+                $route,
+                [
+                    'email' => $email,
+                ]
+            );
 ```
 
 ```ts
@@ -45,41 +54,35 @@ const result = api.client()
 ```
 
 ```php
-// Bad: receiver isolated and the first method call is on the next line
-$landing
-    ->assertSee('GoViral')
-    ->assertNoSmoke();
+// Bad: multiline chain with multiple calls in one line
+$user = User::factory()->unverified()->create();
 
-// Good: keep the first call on the receiver line
-$landing->assertSee('GoViral')
-        ->assertNoSmoke();
+// Good: one call per line with assigned continuation
+$user = User::factory()
+            ->unverified()
+            ->create();
 ```
 
 ```php
-// Bad: closing `);` aligned with `$this` (argument too shallow)
-$this->markTestSkipped(
-    'Long explanation...'
-);
+// Bad: standalone chain with deep assigned indentation
+$this->actingAs($user)
+            ->post($logoutRoute);
 
-// Good: closing `);` and argument use the correct helper-call indentation
-$this->markTestSkipped(
-        'Long explanation...'
-    );
+// Good: standalone chain continuation is base +4
+$this->actingAs($user)
+    ->post($logoutRoute);
 ```
 
 ```php
-// Bad: array items and closing `]` not using assigned continuation indent
-$pages = visit([
-    '/',
-    '/start-growth',
-]);
+// Bad: closing ] and ) misaligned
+$payload = [
+                'email' => $email,
+            );
 
-// Good: array items and closing `]` use assigned continuation indent
-$pages = visit([
-                '/',
-                '/start-growth',
-                '/thank-you',
-            ]);
+// Good: closing ] with [, closing ) with call start
+$payload = [
+                'email' => $email,
+            ];
 ```
 
 ```php
@@ -234,19 +237,14 @@ $prompt = $this->builder
 ```
 
 
-# Alignment Rules (**ALWAYS FOLLOWS THOSE RULES**)
-Imagine that everything uses a monospace font.
-Context-based alignment works as follows:
-1. Determine the starting position of the context (the element calling the function).
-2. Insert the exact number of spaces required to align the current line with the start of the function call (Line 1).
-3. Add spaces until the next tab stop (using a fixed tab width of 4 spaces).
-4. If arrays are present (even an array containing only one item), each array item must be indented by one tab stop (+4 spaces).
-4.2. Closing brackets ']' must be aligned with the same indentation level as the line containing the opening bracket.
-4.3. It is not necessary to align the '=>' symbols within key-value arrays.
-5. Regarding function arguments (excluding language constructs such as `if`, `for`, `foreach`, etc.): if there are more than two parameters, the rules outlined for arrays apply.
+## Hard validation checklist (must pass all)
 
-# Rule of thumb for () and []
-If developer doesn´t need to track opening and close of brackets and parenthesis, and instead the developer can see it is well identend.  
+1. Every multiline chain uses one call per line.
+2. Assigned chain continuation lines use exactly base +12 spaces.
+3. Standalone chain continuation lines use exactly base +4 spaces.
+4. Closing `]` aligns with `[` line.
+5. Closing `)` aligns with call-start line.
+6. No nested formatting style variants inside the same file.
 
 Remember Clean code principle:
 > Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Robert C. Martin
