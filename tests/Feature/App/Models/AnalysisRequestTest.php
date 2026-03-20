@@ -8,7 +8,8 @@ test('analysis request uses uuid as primary key', function () {
                             ->create();
     $isUuid = Str::isUuid($analysisRequest->id);
 
-    expect($isUuid)->toBeTrue();
+    expect($isUuid
+        ->toBeTrue();
 });
 
 test('analysis request model uses string key type and non-incrementing ids', function () {
@@ -16,8 +17,10 @@ test('analysis request model uses string key type and non-incrementing ids', fun
     $keyType = $analysisRequest->getKeyType();
     $isIncrementing = $analysisRequest->getIncrementing();
 
-    expect($keyType)->toBe('string');
-    expect($isIncrementing)->toBeFalse();
+    expect($keyType)
+        ->toBe('string');
+    expect($isIncrementing)
+        ->toBeFalse();
 });
 
 test('analysis request casts attempt_count to integer', function () {
@@ -26,34 +29,40 @@ test('analysis request casts attempt_count to integer', function () {
                                 'attempt_count' => '7',
                             ]);
 
-    expect($analysisRequest->attempt_count)->toBeInt();
-    expect($analysisRequest->attempt_count)->toBe(7);
+    expect($analysisRequest->attempt_count)
+        ->toBeInt();
+    expect($analysisRequest->attempt_count)
+        ->toBe(7);
 });
 
 test('analysis request allows mass assignment for expected fields', function () {
     $analysisRequest = AnalysisRequest::factory()
                             ->create([
-                                'email' => 'fillable@example.com',
-                                'tiktok_username' => 'fillable_user',
-                                'bio' => 'Bio with details.',
-                                'aspiring_niche' => 'Lifestyle',
-                                'video_url_1' => 'https://example.com/video-1',
-                                'video_url_2' => 'https://example.com/video-2',
-                                'video_url_3' => 'https://example.com/video-3',
-                                'notes' => 'Some notes',
-                                'locale' => 'pt',
-                                'stripe_checkout_session_id' => 'cs_test_123',
-                                'stripe_payment_intent_id' => 'pi_test_123',
-                                'payment_status' => 'pending',
-                                'processing_status' => 'queued',
-                                'attempt_count' => 2,
-                                'last_error' => 'none',
+                                'email'                         => 'fillable@example.com',
+                                'tiktok_username'               => 'fillable_user',
+                                'bio'                           => 'Bio with details.',
+                                'aspiring_niche'                => 'Lifestyle',
+                                'video_url_1'                   => 'https://example.com/video-1',
+                                'video_url_2'                   => 'https://example.com/video-2',
+                                'video_url_3'                   => 'https://example.com/video-3',
+                                'notes'                         => 'Some notes',
+                                'locale'                        => 'pt',
+                                'stripe_checkout_session_id'    => 'cs_test_123',
+                                'stripe_payment_intent_id'      => 'pi_test_123',
+                                'payment_status'                => 'pending',
+                                'processing_status'             => 'queued',
+                                'attempt_count'                 => 2,
+                                'last_error'                    => 'none',
                             ]);
 
-    expect($analysisRequest->email)->toBe('fillable@example.com');
-    expect($analysisRequest->stripe_checkout_session_id)->toBe('cs_test_123');
-    expect($analysisRequest->stripe_payment_intent_id)->toBe('pi_test_123');
-    expect($analysisRequest->attempt_count)->toBe(2);
+    expect($analysisRequest->email)
+        ->toBe('fillable@example.com');
+    expect($analysisRequest->stripe_checkout_session_id)
+        ->toBe('cs_test_123');
+    expect($analysisRequest->stripe_payment_intent_id)
+        ->toBe('pi_test_123');
+    expect($analysisRequest->attempt_count)
+        ->toBe(2);
 });
 
 test('analysis request paid scope returns only paid records', function () {
@@ -74,8 +83,10 @@ test('analysis request paid scope returns only paid records', function () {
     $paidRecordCount   = $paidRecords->count();
     $firstPaidRecordId = $paidRecords->first();
 
-    expect($paidRecordCount)->toBe(1);
-    expect($firstPaidRecordId)->toBe($paid->id);
+    expect($paidRecordCount)
+        ->toBe(1);
+    expect($firstPaidRecordId)
+        ->toBe($paid->id);
 });
 
 test('analysis request pending payment scope returns only pending records', function () {
@@ -96,8 +107,10 @@ test('analysis request pending payment scope returns only pending records', func
     $pendingRecordCount   = $pendingRecords->count();
     $firstPendingRecordId = $pendingRecords->first();
 
-    expect($pendingRecordCount)->toBe(1);
-    expect($firstPendingRecordId)->toBe($pending->id);
+    expect($pendingRecordCount)
+        ->toBe(1);
+    expect($firstPendingRecordId)
+        ->toBe($pending->id);
 });
 
 test('analysis request processing status scope filters by status', function () {
@@ -118,8 +131,10 @@ test('analysis request processing status scope filters by status', function () {
     $processingRecordCount   = $processingRecords->count();
     $firstProcessingRecordId = $processingRecords->first();
 
-    expect($processingRecordCount)->toBe(1);
-    expect($firstProcessingRecordId)->toBe($processing->id);
+    expect($processingRecordCount)
+        ->toBe(1);
+    expect($firstProcessingRecordId)
+        ->toBe($processing->id);
 });
 
 test('analysis request relates to discount coupon when discount_coupon_id is set', function () {
@@ -132,7 +147,9 @@ test('analysis request relates to discount coupon when discount_coupon_id is set
     $analysisRequestDiscountCoupon = $analysisRequest->discountCoupon;
     $analysisRequestDiscountCouponId = $analysisRequestDiscountCoupon->id;
 
-    expect($analysisRequestDiscountCoupon)->not->toBeNull()
+    expect($analysisRequestDiscountCoupon)
+        ->not
+        ->toBeNull()
         ->and($analysisRequestDiscountCouponId)
         ->toBe($coupon->id);
 });

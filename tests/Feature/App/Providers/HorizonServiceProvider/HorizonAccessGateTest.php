@@ -10,7 +10,8 @@ it('allows viewHorizon when user email is in horizon.allowed_emails', function (
     $canViewHorizon = Gate::forUser($user)
                             ->allows('viewHorizon');
 
-    expect($canViewHorizon)->toBeTrue();
+    expect($canViewHorizon)
+        ->toBeTrue();
 });
 
 it('denies viewHorizon when user email is not in horizon.allowed_emails', function (): void {
@@ -20,7 +21,8 @@ it('denies viewHorizon when user email is not in horizon.allowed_emails', functi
     $canViewHorizon = Gate::forUser($user)
                             ->allows('viewHorizon');
 
-    expect($canViewHorizon)->toBeFalse();
+    expect($canViewHorizon)
+        ->toBeFalse();
 });
 
 it('denies viewHorizon when allowed list is empty', function (): void {
@@ -30,12 +32,14 @@ it('denies viewHorizon when allowed list is empty', function (): void {
     $canViewHorizon = Gate::forUser($user)
                             ->allows('viewHorizon');
 
-    expect($canViewHorizon)->toBeFalse();
+    expect($canViewHorizon)
+        ->toBeFalse();
 });
 
 it('denies viewHorizon for unauthenticated user', function (): void {
     config(['horizon.allowed_emails' => ['ops@goviral.test']]);
     $canViewHorizon = Gate::allows('viewHorizon');
 
-    expect($canViewHorizon)->toBeFalse();
+    expect($canViewHorizon)
+        ->toBeFalse();
 });
