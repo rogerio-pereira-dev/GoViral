@@ -18,11 +18,11 @@ class DiscountCouponFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => strtoupper(fake()->unique()->bothify('SAVE##??')),
-            'value' => fake()->numberBetween(5, 30),
-            'expires_at' => null,
-            'max_uses' => null,
-            'times_used' => 0,
+            'code'          => strtoupper(fake()->unique()->bothify('SAVE##??')),
+            'value'         => fake()->numberBetween(5, 30),
+            'expires_at'    => null,
+            'max_uses'      => null,
+            'times_used'    => 0,
         ];
     }
 
