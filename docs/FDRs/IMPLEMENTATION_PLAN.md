@@ -23,6 +23,7 @@ Use one branch per feature. Create the branch when starting the first task of th
 - `Conversion tracking + shared layout (FDR-012) -> feat/conversion-tracking-shared-layout`
 - `Auth and dashboard Vuetify branding (FDR-013) -> feat/auth-dashboard-vuetify-branding`
 - `Core discount coupons (FDR-014) -> feat/core-discount-coupons`
+- `Refactor coding style (FDR-016–018) -> refactor/coding-style-php`
 
 ---
 
@@ -159,6 +160,25 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Extend/update backend tests to cover the new date-based expiration behavior and to ensure no regressions for existing coupon types (never and usage-based).
 - [x] Extend/update Browser tests for the core coupon screens and checkout flow to cover creating, editing and using date-based coupons end to end.
 
+### Remove redundant Eloquent `::query()` (FDR-016)
+
+- [ ] Grep first-party PHP (`app/`, `routes/`, `tests/`, `database/`) for `::query()->`, `self::query()->`, `static::query()->`; replace with direct model entry (`Model::where`, `firstOrCreate`, scopes, etc.) where equivalent.
+- [ ] Refactor `DiscountCoupon::findValidByCode` (and any model helpers) to drop redundant `query()` while keeping one method per line.
+- [ ] Update seeders (`UserSeeder`, `DiscountCouponSeeder`) and tests (`DiscountCouponTest`, `DiscountCouponCrudTest`, `DiscountCouponsE2ETest`, any other hits) the same way.
+- [ ] Run Pint and full test suite; confirm no behavior change.
+
+### Fluent chains — one call per line; no nested calls in arguments (FDR-017)
+
+- [ ] Audit jobs, controllers, mail, HTTP clients, and tests for (1) chains that should be split one method per line, (2) `new Foo(...)->bar()` or other calls nested inside argument lists — extract to variables (see FDR-017 examples).
+- [ ] Do not introduce ternary operators in PHP.
+- [ ] Run Pint and full test suite.
+
+### Logical alignment for multiline fluent calls (FDR-018)
+
+- [ ] Normalize multiline indentation for fluent chains and large array arguments (especially `$this->withSession([...])->post(...)` style tests); align with `DiscountCouponController` baseline for similar constructs in `app/`.
+- [ ] Prefer applying after FDR-017 on overlapping files to avoid double churn.
+- [ ] Run Pint and full test suite.
+
 ### Scheduler cleanup (FDR-010) — closed
 
 - **N/A.** FDR-010 is closed (see docs/FDRs/Closed/). ADR-020: retain reports for case studies; no scheduled cleanup. Do not implement analysis:cleanup or scheduler for deletion.
@@ -168,7 +188,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** FDR-014 done. FDRs in ToDo: none. FDR-011, FDR-013 done.
+- **Current codebase:** FDR-015 done. FDRs in ToDo: FDR-016, FDR-017, FDR-018 (code style refactors). FDR-011, FDR-013 done.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-014:** See `docs/FDRs/Done/FDR_014_core_discount_coupons.md`; plan steps above kept for reference.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.
