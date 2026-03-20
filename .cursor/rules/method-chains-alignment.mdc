@@ -13,6 +13,11 @@ Use these rules for readable multiline chains in any language.
 - Allow the first call on the same line as the receiver.
 - For assigned chains, align continuation lines to the caller context (deeper visual indent).
 - For standalone chains, use one continuation indent level.
+- If a chain receiver is on its own line (for example `$landing`), keep the first method call on the same line as the receiver (for example `$landing->assertSee(...)`).
+- For multiline helper/control calls with a single long argument (for example `$this->markTestSkipped(...)`):
+  - indent the closing `);` one extra level deeper than the receiver line
+  - indent the argument one extra level deeper than the closing `);`
+- For multiline array literals used as a function argument in an assignment expression (for example `$pages = visit([...])`), apply the "assigned continuation indent" to the array items and to the closing `]` (do not align `]` with the left side of the assignment).
 
 ```php
 // Bad: continuation looks detached from caller context
@@ -35,6 +40,44 @@ const result = api.client()
                   .users()
                   .filter(activeFilter)
                   .sortBy('name');
+```
+
+```php
+// Bad: receiver isolated and the first method call is on the next line
+$landing
+    ->assertSee('GoViral')
+    ->assertNoSmoke();
+
+// Good: keep the first call on the receiver line
+$landing->assertSee('GoViral')
+        ->assertNoSmoke();
+```
+
+```php
+// Bad: closing `);` aligned with `$this` (argument too shallow)
+$this->markTestSkipped(
+    'Long explanation...'
+);
+
+// Good: closing `);` and argument use the correct helper-call indentation
+$this->markTestSkipped(
+        'Long explanation...'
+    );
+```
+
+```php
+// Bad: array items and closing `]` not using assigned continuation indent
+$pages = visit([
+    '/',
+    '/start-growth',
+]);
+
+// Good: array items and closing `]` use assigned continuation indent
+$pages = visit([
+                '/',
+                '/start-growth',
+                '/thank-you',
+            ]);
 ```
 
 
