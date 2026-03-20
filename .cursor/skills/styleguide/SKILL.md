@@ -156,7 +156,7 @@ $user = User::factory()
 
 Why it is wrong:
 - Treat each action as a readability unit, not only language statements.
-- Each method call (`->...`) and each array key assignment (`=>`), each parameters in functions with 5+ parameters, etc... Is an action and must stay on its own line.
+- Each method call (`->...`), each array key assignment (`=>`), and each parameter in functions with 5+ parameters is an action and must stay on its own line.
 - Closing hierarchy lines (`]`, `)`) must stay on dedicated lines.
 
 Bad:
@@ -175,7 +175,7 @@ $a = $foo->bar()
 Why it is wrong:
 - Array items inside multiline calls must be exactly one level deeper than the `[` line.
 - Closing `]);` must stay one indentation level inside the caller block.
-- Post parameter not aligned
+- `post` parameters are not aligned.
 
 Bad:
 ```php
@@ -222,7 +222,7 @@ Features::twoFactorAuthentication([
 Why it is wrong:
 - The chain continuation (`->save()`) must keep consistent chain indentation.
 - Keep the same visual hierarchy depth used by multiline chain continuations in the local block.
-- Array with wrong identation
+- Array with wrong indentation.
 
 Bad:
 ```php
@@ -300,7 +300,7 @@ $response = $this->actingAs($user)
 ### Array payload must not stay inline inside multiline-call hierarchy
 
 Why it is wrong:
-- `array in line` reduce hierarchy readability and make closings hard to track.
+- An inline array reduces hierarchy readability and makes closings hard to track.
 - In multiline calls, payload arrays must open in their own line and keep inner keys one level deeper.
 
 Bad:

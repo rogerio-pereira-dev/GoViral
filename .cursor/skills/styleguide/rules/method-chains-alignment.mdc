@@ -2,7 +2,7 @@
 description: Consistent multiline method-chain formatting for backend and frontend.
 globs: **/*.php,**/*.js,**/*.ts,**/*.vue
 alwaysApply: false
-ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes.". Specially section `Rule of thumb for () and [].`
+ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes.", especially section `Rule of thumb for () and [].`
 required_pre_read_rules:
   - ./method-chains-alignment.mdc
   - ./method-chains-no-nested-calls.mdc
@@ -210,7 +210,7 @@ $prompt = $this->builder
 ```
 
 ```php
-//Bad flatned asigned on large blocks (hard scanning)
+// Bad: flattened assignments in a large block (hard to scan)
 $user = User::factory()->create();
 $twoFactorSecret = encrypt('test-secret');
 $twoFactorRecoveryCodes = json_encode(['code1', 'code2']);
@@ -305,7 +305,7 @@ expect($rules)
             'cf-turnstile-response' => ['nullable', 'string'],
         ]);
 
-// Good: iternal keys aligned
+// Good: internal keys aligned
 expect($rules)
     ->toBe([
             'email'                 => ['required',     'string',   'email:rfc,dns', 'max:255'  ],
@@ -333,10 +333,10 @@ expect($rules)
 # Rule of thumb for () and [].
 [!NOTE for AIs: **DO NOT** change this section, this is OWNERS specific, and must be followed always]
 
-If developer doesn´t need to track opening and close of brackets and parenthesis, and instead the developer can see it is well identend.  
+If developers do not need to track opening and closing brackets and parentheses explicitly, and can instead see that hierarchy is well indented.
 
 Remember Clean code principle:
 > Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Robert C. Martin
 
 That quote can be extended to:
-> Excelent programmers write code, that other developers don´t need to think, they understand only by reading it. And it's easier if he can look to the code and instinctivelly understand what's going on.
+> Excellent programmers write code that other developers understand by reading, without extra cognitive effort. It is easier when they can look at the code and instinctively understand what is happening.

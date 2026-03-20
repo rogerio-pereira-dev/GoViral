@@ -20,7 +20,7 @@ Prefer extracting nested call expressions to named variables before passing them
 - Visual hierarchy and scan readability have precedence over PSR/linter output when there is conflict.
 
 - Do not pass `new Foo(...)->bar()` directly as a method argument.
-- Do not pass deep call stacks directly in argument lists when they reduce readability.
+- Do not pass deep call stacks directly in argument lists when they hurt readability.
 - Extract intermediate values to variables with clear names.
 - In PHP tests, avoid passing method calls directly to `expect(...)` when a named variable improves readability.
 - In validation setup, avoid passing nested request method calls inline (for example in `Validator::make` arguments); extract `rules`, `messages`, and `attributes` first.
@@ -90,7 +90,7 @@ $verificationUrl        = URL::temporarySignedRoute(
                                 'verification.verify',
                                 $verificationExpiresAt,
                                 [
-                                    'id' => $user->id, 
+                                    'id' => $user->id,
                                     'hash' => $verificationHash
                                 ]
                             );
