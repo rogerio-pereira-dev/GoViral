@@ -1,26 +1,29 @@
 <?php
 
 it('redirects to home for unsupported locales', function () {
-    $response = $this->from(route('home'))->get('/locale/it');
-
-    $response
-        ->assertRedirect(route('home'));
+    $homeRoute = route('home');
+    $localeRoute = '/locale/it';
+    $this->from($homeRoute)
+        ->get($localeRoute)
+        ->assertRedirect($homeRoute);
 });
 
 it('stores the locale in session and redirects back for supported locales', function () {
     $fromUrl = route('form.index');
 
-    $response = $this->from($fromUrl)->get('/locale/en');
-
-    $response
+    $this->from($fromUrl)
+        ->get('/locale/en')
         ->assertRedirect($fromUrl);
 
     $this->assertSame('en', session('locale'));
 });
 
 it('redirects to home when previous url is external to prevent open redirect', function () {
-    $response = $this->from('https://external.example.com/phishing')->get('/locale/en');
+    $homeRoute = route('home');
+    $localeRoute = '/locale/en';
+    $this->from('https://external.example.com/phishing')
+        ->get($localeRoute)
+        ->assertRedirect($homeRoute);
 
-    $response->assertRedirect(route('home'));
     $this->assertSame('en', session('locale'));
 });

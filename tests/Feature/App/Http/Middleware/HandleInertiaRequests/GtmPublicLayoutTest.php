@@ -2,10 +2,9 @@
 
 it('injects GTM snippet in HTML when services.gtm.id is configured', function () {
     config(['services.gtm.id' => 'GTM-UNITTEST']);
+    $homeRoute = '/';
 
-    $response = $this->get('/');
-
-    $response
+    $this->get($homeRoute)
         ->assertOk()
         ->assertSee('GTM-UNITTEST')
         ->assertSee('https://www.googletagmanager.com/ns.html?id=GTM-UNITTEST')
@@ -14,11 +13,12 @@ it('injects GTM snippet in HTML when services.gtm.id is configured', function ()
 });
 
 it('does not inject GTM snippet when services.gtm.id is empty', function () {
-    config(['services.gtm.id' => '']);
+    config([
+            'services.gtm.id' => '',
+        ]);
+    $homeRoute = '/';
 
-    $response = $this->get('/');
-
-    $response
+    $this->get($homeRoute)
         ->assertOk()
         ->assertDontSee('googletagmanager.com/gtm.js?id=')
         ->assertDontSee('googletagmanager.com/ns.html?id=');
