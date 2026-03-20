@@ -1,0 +1,33 @@
+---
+description: Avoid nested call expressions inside method-chain arguments.
+globs: **/*.php,**/*.js,**/*.ts,**/*.vue
+alwaysApply: false
+---
+
+# No Nested Calls in Arguments
+
+Prefer extracting nested call expressions to named variables before passing them into chained calls.
+
+- Do not pass `new Foo(...)->bar()` directly as a method argument.
+- Do not pass deep call stacks directly in argument lists when they reduce readability.
+- Extract intermediate values to variables with clear names.
+
+```php
+// Bad
+$service->send(new ReportBuilder($input)->buildHtml());
+
+// Good
+$reportBuilder = new ReportBuilder($input);
+$reportHtml = $reportBuilder->buildHtml();
+$service->send($reportHtml);
+```
+
+```ts
+// Bad
+store.dispatch(actions.save(formatter.normalize(payload).toDTO()));
+
+// Good
+const normalizedPayload = formatter.normalize(payload);
+const dto = normalizedPayload.toDTO();
+store.dispatch(actions.save(dto));
+```

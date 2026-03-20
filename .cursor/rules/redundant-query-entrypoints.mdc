@@ -1,0 +1,29 @@
+---
+description: Remove redundant query/builder entry calls when equivalent direct APIs exist.
+globs: **/*.php,**/*.js,**/*.ts
+alwaysApply: false
+---
+
+# Redundant Query Entrypoints
+
+When a framework or library offers equivalent direct entrypoints, avoid redundant builder bootstrapping calls.
+
+- Prefer the shortest equivalent query entrypoint.
+- Keep explicit builder entry calls only when they are required for behavior.
+- Preserve behavior; refactor style only when semantics stay the same.
+
+```php
+// Bad (redundant bootstrap)
+$user = User::query()->where('email', $email)->first();
+
+// Good (equivalent and clearer)
+$user = User::where('email', $email)->first();
+```
+
+```ts
+// Bad (redundant wrapper before filter)
+const activeItems = data.getItems().query().where((item) => item.active);
+
+// Good (equivalent direct pipeline)
+const activeItems = data.getItems().where((item) => item.active);
+```

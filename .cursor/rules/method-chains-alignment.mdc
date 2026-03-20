@@ -1,0 +1,38 @@
+---
+description: Consistent multiline method-chain formatting for backend and frontend.
+globs: **/*.php,**/*.js,**/*.ts,**/*.vue
+alwaysApply: false
+---
+
+# Method Chains and Alignment
+
+Use these rules for readable multiline chains in any language.
+
+- Keep one method call per line in multiline chains.
+- Keep indentation consistent across the same chain.
+- Allow the first call on the same line as the receiver.
+- For assigned chains, align continuation lines to the caller context (deeper visual indent).
+- For standalone chains, use one continuation indent level.
+
+```php
+// Bad: continuation looks detached from caller context
+$response = $this->withSession(['locale' => 'pt'])
+    ->post(route('form.store'), $payload);
+
+// Good: continuation aligned to caller context
+$response = $this->withSession(['locale' => 'pt'])
+                ->post(route('form.store'), $payload);
+```
+
+```ts
+// Bad: mixed indentation and compressed calls
+const result = api.client()
+  .users().filter(activeFilter)
+    .sortBy('name');
+
+// Good: one call per line and consistent chain alignment
+const result = api.client()
+                  .users()
+                  .filter(activeFilter)
+                  .sortBy('name');
+```
