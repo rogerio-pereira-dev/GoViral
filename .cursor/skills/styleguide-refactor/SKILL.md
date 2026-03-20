@@ -11,6 +11,13 @@ Refactor code style for a chosen scope and guarantee that **all requested rules*
 
 Partial refactoring is unacceptable.
 
+## Authority and Precedence (Mandatory)
+
+- Project styleguide rules are the source of truth.
+- If `pint`, PSR, language defaults, or editor auto-formatters conflict with this styleguide, the styleguide must win.
+- Allowed antipatterns defined by owner rules are intentional and must be preserved.
+- Never declare success based only on formatter output.
+
 ## Accepted Input Scope
 
 The skill must accept exactly one scope mode per run:
@@ -39,19 +46,21 @@ If the user asks for multiple modes at once, normalize to one explicit scope bef
 5. Audit all files in scope against all requested rules.
 6. Refactor all non-compliant files directly (no generated scripts).
 7. Re-audit all files in scope.
-8. Run formatter/linter if applicable (for PHP use Sail + Pint).
+8. Run formatter/linter if applicable (for PHP use Sail + Pint), only as an auxiliary check.
 9. Re-open every changed file and perform a manual structural audit focused on indentation and closings.
-10. If any file still fails, continue fixing until zero remaining violations.
-11. Run relevant tests/lint checks when applicable.
-12. Provide a completion report with:
-   - scope used
-   - total files scanned
-   - total files changed
-   - confirmation: zero remaining violations
+10. If formatter/linter rewrites against this styleguide, restore styleguide-compliant formatting manually.
+11. If any file still fails, continue fixing until zero remaining violations.
+12. Run relevant tests/lint checks when applicable.
+13. Provide a completion report with:
+- scope used
+- total files scanned
+- total files changed
+- confirmation: zero remaining violations
+- confirmation that styleguide precedence was enforced over formatter output
 
-## PSR/Indentation Guardrails (Mandatory)
+## Base Indentation Guardrails (Mandatory)
 
-- Enforce **one statement per line** and avoid visual-column alignment padding between variable names and `=`.
+- Enforce **one statement per line** and avoid visual-column alignment padding between variable names and `=`, except in owner-approved visual-hierarchy antipattern blocks.
 - In multiline arrays, array items must be indented exactly one level inside `[` and `]` must align with `[` line.
 - In multiline calls, arguments must be indented exactly one level inside `(` and `)` must align with call-start line.
 - For fluent chains, keep one call per line and deterministic indentation (no mixed indentation widths in the same chain).
@@ -61,12 +70,13 @@ If the user asks for multiple modes at once, normalize to one explicit scope bef
 
 Before declaring completion, run targeted checks on changed files:
 
-1. No assignment alignment padding (regex example: `\$[A-Za-z0-9_]+\s{2,}=` must return zero).
+1. No assignment alignment padding outside owner-approved visual-hierarchy antipattern blocks (regex example: `\$[A-Za-z0-9_]+\s{2,}=` must return zero outside those blocks).
 2. No over-indented array items inside `[...]` for multiline calls.
 3. No misaligned closing `]` / `)` / `]);`. 
     Closing parenthesis and brackets must be aligned 1 level inside, not at callers level, check: [](### 5) Visual hierarchy indentation in multiline payloads)
 4. No chain line using a different indentation level than the rest of the same chain.
-5. No remaining violations in any file inside the selected scope.
+5. For multiline chains, one call per line must be explicit (`$this`, then `->actingAs(...)`, then `->get(...)`, etc.).
+6. No remaining violations in any file inside the selected scope.
 
 ## Known Violations and How to Fix
 

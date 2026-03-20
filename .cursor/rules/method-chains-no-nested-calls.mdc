@@ -12,6 +12,12 @@ required_pre_read_rules:
 
 Prefer extracting nested call expressions to named variables before passing them into chained calls.
 
+## Authority and precedence
+
+- This rule is project-authoritative and has precedence over formatter/language defaults.
+- If formatter output conflicts with this rule, keep this rule and manually re-apply the expected structure.
+- Do not trade readability for formatter compliance.
+
 - Do not pass `new Foo(...)->bar()` directly as a method argument.
 - Do not pass deep call stacks directly in argument lists when they reduce readability.
 - Extract intermediate values to variables with clear names.

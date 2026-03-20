@@ -12,6 +12,13 @@ required_pre_read_rules:
 
 Use these rules for readable and deterministic multiline chains in any language.
 
+## Authority and precedence
+
+- This project styleguide has priority over language defaults, PSR conventions, and formatter behavior.
+- If `pint` (or any formatter) rewrites code into a shape that conflicts with this rule, manually restore this rule-compliant format and add a rule on `pint.json`.
+- Owner-approved antipatterns are intentional readability choices and remain valid even when formatters disagree.
+- Completion is valid only when the final file matches this rule file, not when formatter output is "clean".
+
 ## Canonical indentation model (deterministic)
 
 - Use **4 spaces per indentation level**.
