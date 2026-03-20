@@ -174,6 +174,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Run Pint and full test suite.
 
 ### Logical alignment for multiline fluent calls (FDR-018)
+**IMPORTANT:**. Before starting, read and understand the examples on FDR-018
 
 - [ ] Normalize multiline indentation for fluent chains and large array arguments (especially `$this->withSession([...])->post(...)` style tests); align with `DiscountCouponController` baseline for similar constructs in `app/`.
 - [ ] Prefer applying after FDR-017 on overlapping files to avoid double churn.
