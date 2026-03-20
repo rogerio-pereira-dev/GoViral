@@ -42,8 +42,7 @@ it('runs smoke checks for authenticated web routes without JavaScript errors', f
 it('redirects guest to login when visiting dashboard', function () {
     $page = visit('/core/dashboard');
 
-    $page
-        ->assertPathIs('/login')
+    $page->assertPathIs('/login')
         ->assertSee('Log in to your account')
         ->assertNoSmoke();
 });

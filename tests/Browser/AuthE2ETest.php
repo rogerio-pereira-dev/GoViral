@@ -16,8 +16,7 @@ it('allows an existing user to log in via the browser', function () {
 
     $page = visit('/login');
 
-    $page
-        ->assertSee('Log in to your account')
+    $page->assertSee('Log in to your account')
         ->assertNoSmoke()
         ->fill('email', $user->email)
         ->fill('password', 'password')

@@ -10,8 +10,7 @@ it('allows requesting a password reset link via the browser', function () {
 
     $page = visit('/forgot-password');
 
-    $page
-        ->assertSee('Forgot password')
+    $page->assertSee('Forgot password')
         ->assertNoSmoke()
         ->fill('email', $user->email)
         ->click('@email-password-reset-link-button')
@@ -30,8 +29,7 @@ it('allows resetting the password via the browser with a valid token', function 
 
     $page = visit($resetUrl);
 
-    $page
-        ->assertSee('Reset password')
+    $page->assertSee('Reset password')
         ->assertNoSmoke()
         ->fill('password', 'new-password-123')
         ->fill('password_confirmation', 'new-password-123')

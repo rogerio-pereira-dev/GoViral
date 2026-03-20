@@ -12,8 +12,7 @@ it('allows updating profile information via the settings page', function () {
 
     $page = visit('/core/settings/profile');
 
-    $page
-        ->assertSee('Profile information')
+    $page->assertSee('Profile information')
         ->assertNoSmoke()
         ->fill('name', 'Updated Name')
         ->click('@update-profile-button')
@@ -31,8 +30,7 @@ it('allows updating the password via the settings page', function () {
 
     $page = visit('/core/settings/password');
 
-    $page
-        ->assertSee('Update password')
+    $page->assertSee('Update password')
         ->assertNoSmoke()
         ->fill('current_password', 'current-password')
         ->fill('password', 'new-password-456')
@@ -59,7 +57,6 @@ it('shows the appearance settings page', function () {
 
     $page = visit('/core/settings/appearance');
 
-    $page
-        ->assertSee('Appearance settings')
+    $page->assertSee('Appearance settings')
         ->assertNoSmoke();
 });

@@ -9,15 +9,13 @@ it('shows discount coupons index when authenticated', function (): void {
     ]);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button')
         ->assertSee('Dashboard');
 
     $page = visit('/core/discount-coupons');
-    $page
-        ->assertSee('Discount coupons')
+    $page->assertSee('Discount coupons')
         ->assertPresent('[data-test="discount-coupons-table"]')
         ->assertPresent('[data-test="discount-coupons-create-link"]')
         ->assertNoSmoke();
@@ -30,8 +28,7 @@ it('reaches discount coupons via sidebar link', function (): void {
     ]);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button');
 
@@ -49,14 +46,12 @@ it('creates coupon and redirects to index', function (): void {
     ]);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button');
 
     $page = visit('/core/discount-coupons/create');
-    $page
-        ->assertPresent('[data-test="discount-coupon-create-form"]')
+    $page->assertPresent('[data-test="discount-coupon-create-form"]')
         ->fill('#discount-coupon-code', 'E2E10')
         ->fill('#discount-coupon-value', '10')
         ->click('@discount-coupon-expiration-type')
@@ -79,14 +74,12 @@ it('edits coupon and returns to index', function (): void {
     ]);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button');
 
     $page = visit("/core/discount-coupons/{$coupon->id}/edit");
-    $page
-        ->assertPresent('[data-test="discount-coupon-edit-form"]')
+    $page->assertPresent('[data-test="discount-coupon-edit-form"]')
         ->fill('#discount-coupon-value', '25')
         ->click('@discount-coupon-submit')
         ->assertPathIs('/core/discount-coupons')
@@ -104,15 +97,13 @@ it('opens delete dialog and cancels without removing row', function (): void {
     $coupon = \App\Models\DiscountCoupon::factory()->create(['code' => 'KEEPME']);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button');
 
     $page = visit('/core/discount-coupons');
     $page->click("@discount-coupon-delete-{$coupon->id}");
-    $page
-        ->assertPresent('[data-test="discount-coupon-delete-dialog"]')
+    $page->assertPresent('[data-test="discount-coupon-delete-dialog"]')
         ->click('@discount-coupon-delete-cancel');
 
     expect(\App\Models\DiscountCoupon::whereKey($coupon->id)->exists())->toBeTrue();
@@ -127,15 +118,13 @@ it('confirms delete and removes coupon from list', function (): void {
     $coupon = \App\Models\DiscountCoupon::factory()->create(['code' => 'REMOVEME']);
 
     $page = visit('/login');
-    $page
-        ->fill('email', $user->email)
+    $page->fill('email', $user->email)
         ->fill('password', 'password')
         ->click('@login-button');
 
     $page = visit('/core/discount-coupons');
     $page->click("@discount-coupon-delete-{$coupon->id}");
-    $page
-        ->click('@discount-coupon-delete-confirm')
+    $page->click('@discount-coupon-delete-confirm')
         ->assertPathIs('/core/discount-coupons');
 
     expect(\App\Models\DiscountCoupon::whereKey($coupon->id)->exists())->toBeFalse();

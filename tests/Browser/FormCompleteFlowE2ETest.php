@@ -11,8 +11,7 @@ it('runs complete flow from landing to form, then payment form loads', function 
     $page = visit('/start-growth');
     $page->waitForEvent('networkidle');
 
-    $page
-        ->assertSee('What you get in your report')
+    $page->assertSee('What you get in your report')
         ->fill('email', 'flow-e2e@gmail.com')
         ->fill('tiktok_username', '@flowe2e')
         ->fill('aspiring_niche', 'Lifestyle')

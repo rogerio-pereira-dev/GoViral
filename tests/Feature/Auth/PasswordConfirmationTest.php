@@ -10,9 +10,7 @@ test('confirm password screen can be rendered', function () {
 
     $response->assertOk();
 
-    $response->assertInertia(fn (Assert $page) => $page
-        ->component('auth/ConfirmPassword')
-    );
+    $response->assertInertia(fn (Assert $page) => $page->component('auth/ConfirmPassword'));
 });
 
 test('password confirmation requires authentication', function () {

@@ -88,8 +88,7 @@ it('builds edit payload with days expiration from controller helper', function (
     $this->actingAs($user)
         ->get("/core/discount-coupons/{$coupon->id}/edit")
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Core/DiscountCoupons/Edit')
+        ->assertInertia(fn ($page) => $page->component('Core/DiscountCoupons/Edit')
             ->where('coupon.id', $coupon->id)
             ->where('coupon.value', 15)
             ->where('coupon.expiration_type', 'date')
@@ -107,8 +106,7 @@ it('builds edit payload with uses expiration from controller helper', function (
     $this->actingAs($user)
         ->get("/core/discount-coupons/{$coupon->id}/edit")
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Core/DiscountCoupons/Edit')
+        ->assertInertia(fn ($page) => $page->component('Core/DiscountCoupons/Edit')
             ->where('coupon.id', $coupon->id)
             ->where('coupon.value', 25)
             ->where('coupon.expiration_type', 'uses')

@@ -3,8 +3,7 @@
 it('shows the start growth page with no javascript errors', function () {
     $page = visit('/start-growth');
 
-    $page
-        ->assertSee('What you get in your report')
+    $page->assertSee('What you get in your report')
         ->assertSee('Start My Growth')
         ->assertNoSmoke();
 });
@@ -19,8 +18,7 @@ it('shows form first then copy on mobile viewport', function () {
     $page = visit('/start-growth');
     $page->waitForEvent('networkidle');
 
-    $page
-        ->assertSee('What you get in your report')
+    $page->assertSee('What you get in your report')
         ->resize(375, 667);
 
     $page->assertScript(

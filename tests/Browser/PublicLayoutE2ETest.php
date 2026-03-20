@@ -35,8 +35,7 @@ it('shows shared header/footer + language selector on public funnel pages', func
 it('persists locale across funnel pages when switching to pt', function () {
     $page = visit('/');
 
-    $page
-        ->assertSee('Engineered for Viral Growth.')
+    $page->assertSee('Engineered for Viral Growth.')
         ->click('PT')
         ->assertSee('Feito para crescimento viral.');
 

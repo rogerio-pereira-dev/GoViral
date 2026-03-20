@@ -19,14 +19,12 @@ it('renders landing page translations for supported locales', function () {
     ];
 
     foreach ($cases as $locale => $expected) {
-        $response = $this
-            ->withSession(['locale' => $locale])
+        $response = $this->withSession(['locale' => $locale])
             ->get(route('home'));
 
         $response
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Landing')
+            ->assertInertia(fn (Assert $page) => $page->component('Landing')
                 ->where('locale', $locale)
                 ->where('translations.tagline', $expected['tagline'])
                 ->where('translations.cta_primary', $expected['cta_primary'])
@@ -60,14 +58,12 @@ it('renders form page translations for supported locales', function () {
     ];
 
     foreach ($cases as $locale => $expected) {
-        $response = $this
-            ->withSession(['locale' => $locale])
+        $response = $this->withSession(['locale' => $locale])
             ->get(route('form.index'));
 
         $response
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Form/StartGrowth')
+            ->assertInertia(fn (Assert $page) => $page->component('Form/StartGrowth')
                 ->where('locale', $locale)
                 ->where('translations.title', $expected['title'])
                 ->where('translations.what_you_get_title', $expected['what_you_get_title'])
@@ -95,14 +91,12 @@ it('renders thank you page translations for supported locales', function () {
     ];
 
     foreach ($cases as $locale => $expected) {
-        $response = $this
-            ->withSession(['locale' => $locale, 'thank_you_allowed' => true])
+        $response = $this->withSession(['locale' => $locale, 'thank_you_allowed' => true])
             ->get(route('form.thank-you'));
 
         $response
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Form/ThankYou')
+            ->assertInertia(fn (Assert $page) => $page->component('Form/ThankYou')
                 ->where('translations.title', $expected['title'])
                 ->where('translations.cta', $expected['cta'])
             );

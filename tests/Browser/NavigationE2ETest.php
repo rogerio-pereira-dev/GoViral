@@ -15,22 +15,19 @@ it('navigates sidebar and settings navigation', function () {
     // Start at dashboard
     $page = visit('/core/dashboard');
 
-    $page
-        ->assertSee('Dashboard')
+    $page->assertSee('Dashboard')
         ->assertSee('Horizon')
         ->assertSee('Log out')
         ->assertNoSmoke();
 
     // Sidebar -> Profile (core settings profile)
-    $page
-        ->click('@sidebar-profile-link')
+    $page->click('@sidebar-profile-link')
         ->assertPathIs('/core/settings/profile')
         ->assertSee('Profile information')
         ->assertNoSmoke();
 
     // Settings nav -> Password
-    $page
-        ->click('@settings-nav-password')
+    $page->click('@settings-nav-password')
         ->assertPathIs('/core/settings/password')
         ->assertSee('Update password')
         ->assertNoSmoke();
@@ -38,13 +35,11 @@ it('navigates sidebar and settings navigation', function () {
     // Two-Factor page reachable
     $page = visit('/core/settings/two-factor');
 
-    $page
-        ->assertNoSmoke();
+    $page->assertNoSmoke();
 
     $page = visit('/core/dashboard');
 
-    $page
-        ->click('@sidebar-logout-button')
+    $page->click('@sidebar-logout-button')
         ->assertPathIs('/')
         ->assertNoSmoke();
 });

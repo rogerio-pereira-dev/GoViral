@@ -7,8 +7,7 @@ it('renders the landing page with expected shared data', function () {
 
     $response
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('Landing')
+        ->assertInertia(fn (Assert $page) => $page->component('Landing')
             ->where('locale', app()->getLocale())
             ->where('supportedLocales', ['en', 'es', 'pt'])
             ->has('translations')

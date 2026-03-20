@@ -12,8 +12,7 @@ it('loads payment form with card element when Stripe is configured', function ()
     $page = visit('/start-growth');
     $page->waitForEvent('networkidle');
 
-    $page
-        ->assertSee('What you get in your report')
+    $page->assertSee('What you get in your report')
         ->fill('email', 'e2e@example.com')
         ->fill('tiktok_username', '@e2e')
         ->fill('aspiring_niche', 'Lifestyle')
@@ -35,13 +34,11 @@ it('keeps stripe card element visible after applying an invalid coupon', functio
 
     $page->assertPresent('#stripe-card-element');
 
-    $page
-        ->fill('input[name="coupon_code"]', 'INVALID_COUPON_XYZ')
+    $page->fill('input[name="coupon_code"]', 'INVALID_COUPON_XYZ')
         ->click('@start-growth-coupon-apply')
         ->waitForEvent('networkidle');
 
-    $page
-        ->assertPresent('@start-growth-coupon-error')
+    $page->assertPresent('@start-growth-coupon-error')
         ->assertSee('This coupon is not valid')
         ->assertPresent('#stripe-card-element')
         ->assertNoSmoke();

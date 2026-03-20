@@ -9,14 +9,12 @@ use Stripe\StripeClient;
 uses(RefreshDatabase::class);
 
 it('renders the start growth form page with current locale', function () {
-    $response = $this
-        ->withSession(['locale' => 'pt'])
+    $response = $this->withSession(['locale' => 'pt'])
         ->get(route('form.index'));
 
     $response
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('Form/StartGrowth')
+        ->assertInertia(fn (Assert $page) => $page->component('Form/StartGrowth')
             ->where('locale', 'pt')
         );
 });
@@ -35,8 +33,7 @@ it('stores a new analysis request and returns checkout payload', function () {
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'es'])
+    $response = $this->withSession(['locale' => 'es'])
         ->post(route('form.store'), $payload);
 
     $response
@@ -85,8 +82,7 @@ it('stores not informed placeholders for optional empty profile fields', functio
         'cf-turnstile-response' => Turnstile::dummy(),
     ]);
 
-    $response = $this
-        ->withSession(['locale' => 'pt'])
+    $response = $this->withSession(['locale' => 'pt'])
         ->post(route('form.store'), $payload);
 
     $response
@@ -134,8 +130,7 @@ it('does not store analysis request when payload is invalid', function () {
         'video_url_1' => 'invalid-url',
     ]);
 
-    $response = $this
-        ->withSession(['locale' => 'pt'])
+    $response = $this->withSession(['locale' => 'pt'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -154,8 +149,7 @@ it('returns 422 when aspiring_niche is missing so payment is never confirmed twi
         'aspiring_niche' => '',
     ]);
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -169,8 +163,7 @@ it('returns 422 when turnstile token is missing or invalid and turnstile is conf
     config(['services.turnstile.secret' => 'test-secret']);
     Turnstile::fake()->fail();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), array_merge(validFormPayload(), [
             'cf-turnstile-response' => Turnstile::dummy(),
         ]));
@@ -213,8 +206,7 @@ it('returns 422 when payment intent retrieval fails in store', function () {
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -244,8 +236,7 @@ it('returns 422 when base cents in metadata does not match configured price', fu
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -275,8 +266,7 @@ it('returns 422 when coupon id in payment intent metadata does not resolve to co
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -308,8 +298,7 @@ it('returns 422 when discounted amount does not match metadata coupon', function
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -339,8 +328,7 @@ it('returns 422 when amount does not match base cents and there is no coupon', f
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -374,8 +362,7 @@ it('stores analysis request with discount_coupon_id when payment intent metadata
     $payload = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), $payload);
 
     $response
@@ -394,8 +381,7 @@ it('stores analysis request with discount_coupon_id when payment intent metadata
 it('returns 422 when turnstile token is missing and turnstile is configured', function () {
     config(['services.turnstile.secret' => 'test-secret']);
 
-    $response = $this
-        ->withSession(['locale' => 'en'])
+    $response = $this->withSession(['locale' => 'en'])
         ->postJson(route('form.store'), validFormPayload());
 
     $response
@@ -406,14 +392,12 @@ it('returns 422 when turnstile token is missing and turnstile is configured', fu
 });
 
 it('renders thank you page with translated content when accessed with flow', function () {
-    $response = $this
-        ->withSession(['locale' => 'es', 'thank_you_allowed' => true])
+    $response = $this->withSession(['locale' => 'es', 'thank_you_allowed' => true])
         ->get(route('form.thank-you'));
 
     $response
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('Form/ThankYou')
+        ->assertInertia(fn (Assert $page) => $page->component('Form/ThankYou')
             ->where('translations.title', '¡Gracias! Tu solicitud está confirmada.')
             ->where('translations.message', 'Tu informe de crecimiento será enviado a tu correo en un plazo de 30 minutos.')
             ->where('translations.cta', 'Volver al inicio')
