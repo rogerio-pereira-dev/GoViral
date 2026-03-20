@@ -103,8 +103,8 @@ test('users are rate limited', function () {
                 ->create();
 
     $userIpArray        = [
-                            $user->email, 
-                            '127.0.0.1'
+                            $user->email,
+                            '127.0.0.1',
                         ];
     $userIpString       = implode('|', $userIpArray);
     $userIpString       = 'login'.$userIpString;
