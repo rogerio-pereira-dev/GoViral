@@ -1,6 +1,16 @@
 {
     "preset": "laravel",
     "rules": {
-        "method_chaining_indentation": false
+        "array_indentation": false,
+        "method_chaining_indentation": false,
+        "no_multiline_whitespace_around_double_arrow": false,
+        "trim_array_spaces": false,
+        "binary_operator_spaces": {
+            "default": "single_space",
+            "operators": {
+                "=": "align_single_space_minimal",
+                "=>": null
+            }
+        }
     }
 }
