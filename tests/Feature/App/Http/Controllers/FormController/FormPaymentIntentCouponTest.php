@@ -28,28 +28,10 @@ it('allows full-price payment intent immediately after invalid coupon (recovery 
     $this->getJson('/start-growth/payment-intent?coupon_code=NOTREAL')
         ->assertStatus(422);
 
-    app()->bind(StripeClient::class, function () {
-        return new class
-        {
-            public object $paymentIntents;
-
-            public function __construct()
-            {
-                $this->paymentIntents = new class
-                {
-                    public function create(array $payload): object
-                    {
-                        expect($payload['metadata']['discount_coupon_id'] ?? '')->toBe('');
-
-                        return (object) [
-                            'id' => 'pi_recovery_after_invalid',
-                            'client_secret' => 'cs_recovery',
-                        ];
-                    }
-                };
-            }
-        };
-    });
+    bindStripeClientForCouponPaymentIntentCreate([
+            'paymentIntentId' => 'pi_recovery_after_invalid',
+            'clientSecret' => 'cs_recovery',
+        ]);
 
     $this->getJson('/start-growth/payment-intent')
         ->assertOk()
@@ -60,3 +42,38 @@ it('allows full-price payment intent immediately after invalid coupon (recovery 
                 'discountPercent' => null,
             ]);
 });
+
+/**
+ * Binds a mocked Stripe client for payment intent creation.
+ *
+ * @param array{
+ *     paymentIntentId:string,
+ *     clientSecret:string
+ * } $expectations
+ */
+function bindStripeClientForCouponPaymentIntentCreate(array $expectations): void
+{
+    app()
+        ->bind(StripeClient::class, function () use ($expectations) {
+            $paymentIntents = \Mockery::mock();
+            $paymentIntents
+                ->shouldReceive('create')
+                ->once()
+                ->andReturnUsing(function (array $payload) use ($expectations): object {
+                    expect($payload['metadata'])
+                        ->toHaveKey('discount_coupon_id');
+                    expect($payload['metadata']['discount_coupon_id'])
+                        ->toBe('');
+
+                    return (object) [
+                        'id' => $expectations['paymentIntentId'],
+                        'client_secret' => $expectations['clientSecret'],
+                    ];
+                });
+
+            $stripe = \Mockery::mock(StripeClient::class);
+            $stripe->paymentIntents = $paymentIntents;
+
+            return $stripe;
+        });
+}
