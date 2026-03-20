@@ -20,7 +20,7 @@ it('renders landing page translations for supported locales', function () {
 
     foreach ($cases as $locale => $expected) {
         $response = $this->withSession(['locale' => $locale])
-            ->get(route('home'));
+                        ->get(route('home'));
 
         $response
             ->assertOk()
@@ -59,7 +59,7 @@ it('renders form page translations for supported locales', function () {
 
     foreach ($cases as $locale => $expected) {
         $response = $this->withSession(['locale' => $locale])
-            ->get(route('form.index'));
+                        ->get(route('form.index'));
 
         $response
             ->assertOk()
@@ -92,7 +92,7 @@ it('renders thank you page translations for supported locales', function () {
 
     foreach ($cases as $locale => $expected) {
         $response = $this->withSession(['locale' => $locale, 'thank_you_allowed' => true])
-            ->get(route('form.thank-you'));
+                        ->get(route('form.thank-you'));
 
         $response
             ->assertOk()

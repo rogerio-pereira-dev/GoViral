@@ -14,7 +14,7 @@ it('shares PublicLayout props on landing page', function () {
 
 it('shares PublicLayout props on start-growth page', function () {
     $response = $this->withSession(['locale' => 'es'])
-        ->get('/start-growth');
+                    ->get('/start-growth');
 
     $response
         ->assertOk()
@@ -26,7 +26,7 @@ it('shares PublicLayout props on start-growth page', function () {
 
 it('renders thank-you page with PublicLayout props when session allows it', function () {
     $response = $this->withSession(['locale' => 'pt', 'thank_you_allowed' => true])
-        ->get(route('form.thank-you'));
+                    ->get(route('form.thank-you'));
 
     $response
         ->assertOk()

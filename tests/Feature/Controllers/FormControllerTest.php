@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 it('renders the start growth form page with current locale', function () {
     $response = $this->withSession(['locale' => 'pt'])
-        ->get(route('form.index'));
+                    ->get(route('form.index'));
 
     $response
         ->assertOk()
@@ -34,7 +34,7 @@ it('stores a new analysis request and returns checkout payload', function () {
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'es'])
-        ->post(route('form.store'), $payload);
+                    ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -83,7 +83,7 @@ it('stores not informed placeholders for optional empty profile fields', functio
     ]);
 
     $response = $this->withSession(['locale' => 'pt'])
-        ->post(route('form.store'), $payload);
+                    ->post(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -131,7 +131,7 @@ it('does not store analysis request when payload is invalid', function () {
     ]);
 
     $response = $this->withSession(['locale' => 'pt'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -150,7 +150,7 @@ it('returns 422 when aspiring_niche is missing so payment is never confirmed twi
     ]);
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -164,9 +164,9 @@ it('returns 422 when turnstile token is missing or invalid and turnstile is conf
     Turnstile::fake()->fail();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), array_merge(validFormPayload(), [
-            'cf-turnstile-response' => Turnstile::dummy(),
-        ]));
+                    ->postJson(route('form.store'), array_merge(validFormPayload(), [
+                        'cf-turnstile-response' => Turnstile::dummy(),
+                    ]));
 
     $response
         ->assertStatus(422)
@@ -207,7 +207,7 @@ it('returns 422 when payment intent retrieval fails in store', function () {
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -237,7 +237,7 @@ it('returns 422 when base cents in metadata does not match configured price', fu
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -267,7 +267,7 @@ it('returns 422 when coupon id in payment intent metadata does not resolve to co
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -299,7 +299,7 @@ it('returns 422 when discounted amount does not match metadata coupon', function
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -329,7 +329,7 @@ it('returns 422 when amount does not match base cents and there is no coupon', f
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertStatus(422)
@@ -363,7 +363,7 @@ it('stores analysis request with discount_coupon_id when payment intent metadata
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), $payload);
+                    ->postJson(route('form.store'), $payload);
 
     $response
         ->assertOk()
@@ -382,7 +382,7 @@ it('returns 422 when turnstile token is missing and turnstile is configured', fu
     config(['services.turnstile.secret' => 'test-secret']);
 
     $response = $this->withSession(['locale' => 'en'])
-        ->postJson(route('form.store'), validFormPayload());
+                    ->postJson(route('form.store'), validFormPayload());
 
     $response
         ->assertStatus(422)
@@ -393,7 +393,7 @@ it('returns 422 when turnstile token is missing and turnstile is configured', fu
 
 it('renders thank you page with translated content when accessed with flow', function () {
     $response = $this->withSession(['locale' => 'es', 'thank_you_allowed' => true])
-        ->get(route('form.thank-you'));
+                    ->get(route('form.thank-you'));
 
     $response
         ->assertOk()
