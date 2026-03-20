@@ -44,13 +44,13 @@ $response = $this->post(
     ]
 );
 
-// Good: assigned continuation (+12), deterministic closing
+// Good: assigned continuation (+16 spaces), deterministic closing + Visual hierarchy indentation has precedence over all other rules
 $response = $this->post(
-                $route,
-                [
-                    'email' => $email,
-                ]
-            );
+                    $route,
+                    [
+                        'email' => $email,
+                    ]
+                );
 ```
 
 ```ts
