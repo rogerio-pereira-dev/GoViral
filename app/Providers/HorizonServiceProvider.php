@@ -30,7 +30,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         Gate::define('viewHorizon', function (?User $user = null): bool {
             $allowedEmails = config('horizon.allowed_emails', []);
-            $email = $user?->email;
+            $email         = $user?->email;
 
             if ($email === null || $email === '') {
                 return false;

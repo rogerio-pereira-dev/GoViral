@@ -5,7 +5,7 @@
  * (e.g. 4242 4242 4242 4242 success, 4000 0000 0000 0002 declined, 4000 0000 0000 9995 insufficient funds).
  */
 it('loads payment form with card element when Stripe is configured', function () {
-    $cashierKey = config('cashier.key');
+    $cashierKey    = config('cashier.key');
     $cashierSecret = config('cashier.secret');
 
     if (blank($cashierKey) || blank($cashierSecret)) {
@@ -28,7 +28,7 @@ it('loads payment form with card element when Stripe is configured', function ()
 });
 
 it('keeps stripe card element visible after applying an invalid coupon', function () {
-    $cashierKey = config('cashier.key');
+    $cashierKey    = config('cashier.key');
     $cashierSecret = config('cashier.secret');
 
     if (blank($cashierKey) || blank($cashierSecret)) {
@@ -51,7 +51,7 @@ it('keeps stripe card element visible after applying an invalid coupon', functio
 });
 
 it('shows payment declined error when card is declined', function () {
-    $cashierKey = config('cashier.key');
+    $cashierKey    = config('cashier.key');
     $cashierSecret = config('cashier.secret');
 
     if (blank($cashierKey) || blank($cashierSecret)) {

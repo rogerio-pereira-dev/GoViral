@@ -28,7 +28,7 @@ it('allows resetting the password via the browser with a valid token', function 
                 ]);
 
     $broker = Password::broker();
-    $token = $broker->createToken($user);
+    $token  = $broker->createToken($user);
 
     $resetUrl = route('password.reset', ['token' => $token, 'email' => $user->email], absolute: false);
 

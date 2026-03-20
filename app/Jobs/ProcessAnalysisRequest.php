@@ -49,7 +49,7 @@ class ProcessAnalysisRequest implements ShouldQueue
         ]);
 
         try {
-            $locale = $analysisRequest->locale ?? 'en';
+            $locale     = $analysisRequest->locale ?? 'en';
             $reportHtml = $analysisRequest->report_html;
 
             if ($reportHtml === null) {

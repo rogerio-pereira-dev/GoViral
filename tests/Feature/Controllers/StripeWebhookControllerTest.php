@@ -30,8 +30,8 @@ it('rejects request without valid signature with 403', function (): void {
 
 it('rejects request with wrong signature with 403', function (): void {
     $payload = ['type' => 'payment_intent.succeeded', 'data' => ['object' => ['id' => 'pi_xxx']]];
-    $body = json_encode($payload);
-    $header = stripeWebhookSignature($body, 'wrong_secret');
+    $body    = json_encode($payload);
+    $header  = stripeWebhookSignature($body, 'wrong_secret');
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
     //      $this->call will respect raw body
@@ -67,7 +67,7 @@ it('returns 403 when Stripe-Signature header is missing', function (): void {
 });
 
 it('returns 400 when body is not valid JSON', function (): void {
-    $body = 'not valid json';
+    $body   = 'not valid json';
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -87,8 +87,8 @@ it('returns 400 when body is not valid JSON', function (): void {
 
 it('returns 200 when payload has type but data is not an array', function (): void {
     $payload = ['type' => 'payment_intent.succeeded', 'data' => 'invalid'];
-    $body = json_encode($payload);
-    $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
+    $body    = json_encode($payload);
+    $header  = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
     //      $this->call will respect raw body
@@ -114,7 +114,7 @@ it('returns 500 when webhook secret is not configured', function (): void {
 });
 
 it('returns 400 when payload has no type', function (): void {
-    $body = '{}';
+    $body   = '{}';
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -139,7 +139,7 @@ it('returns 200 and skips update when payment_intent.succeeded has no object id'
         'type' => 'payment_intent.succeeded',
         'data' => ['object' => []],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -170,9 +170,9 @@ it('dispatches a sync job when payment_intent.succeeded has no matching analysis
             ],
         ],
     ];
-    $body = json_encode($payload);
+    $body         = json_encode($payload);
     $stripeConfig = config('cashier.webhook.secret');
-    $header = stripeWebhookSignature($body, $stripeConfig);
+    $header       = stripeWebhookSignature($body, $stripeConfig);
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
     //      $this->call will respect raw body
@@ -203,7 +203,7 @@ it('returns 200 and skips update when payment_intent.payment_failed has no objec
         'type' => 'payment_intent.payment_failed',
         'data' => [],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -238,7 +238,7 @@ it('updates record and dispatches job on payment_intent.succeeded', function ():
             ],
         ],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -278,7 +278,7 @@ it('increments coupon times_used when analysis request has discount_coupon_id', 
         'type' => 'payment_intent.succeeded',
         'data' => ['object' => ['id' => 'pi_coupon_1']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -309,7 +309,7 @@ it('handles retry idempotently when record already paid', function (): void {
         'type' => 'payment_intent.succeeded',
         'data' => ['object' => ['id' => 'pi_live_456']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -336,7 +336,7 @@ it('returns 200 when payment_intent_id not found and does not update', function 
         'type' => 'payment_intent.succeeded',
         'data' => ['object' => ['id' => 'pi_nonexistent']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -359,8 +359,8 @@ it('returns 200 when payment_intent_id not found and does not update', function 
 
 it('returns 200 for unknown event type without processing', function (): void {
     $payload = ['type' => 'customer.subscription.deleted', 'data' => ['object' => []]];
-    $body = json_encode($payload);
-    $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
+    $body    = json_encode($payload);
+    $header  = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
     //      $this->call will respect raw body
@@ -390,7 +390,7 @@ it('sets payment failed and canceled on payment_intent.payment_failed', function
         'type' => 'payment_intent.payment_failed',
         'data' => ['object' => ['id' => 'pi_live_fail_123']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -425,7 +425,7 @@ it('handles payment_failed idempotently when record already failed', function ()
         'type' => 'payment_intent.payment_failed',
         'data' => ['object' => ['id' => 'pi_live_fail_456']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -448,7 +448,7 @@ it('returns 200 when payment_intent_id not found on payment_failed', function ()
         'type' => 'payment_intent.payment_failed',
         'data' => ['object' => ['id' => 'pi_nonexistent_fail']],
     ];
-    $body = json_encode($payload);
+    $body   = json_encode($payload);
     $header = stripeWebhookSignature($body, config('cashier.webhook.secret'));
 
     // Using $this->call because postJson will reserialize the json, so it can break stripe signature
@@ -469,7 +469,7 @@ it('returns 200 when payment_intent_id not found on payment_failed', function ()
 function stripeWebhookSignature(string $payload, string $secret): string
 {
     $timestamp = time();
-    $signed = $timestamp.'.'.$payload;
+    $signed    = $timestamp.'.'.$payload;
 
     return 't='.$timestamp.',v1='.hash_hmac('sha256', $signed, $secret);
 }

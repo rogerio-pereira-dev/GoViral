@@ -41,11 +41,11 @@ class StoreDiscountCouponRequest extends FormRequest
         $type = $this->validated('expiration_type');
 
         $expiresAt = null;
-        $maxUses = null;
+        $maxUses   = null;
 
         if ($type === 'date') {
             /** @var string|null $date */
-            $date = $this->validated('expiration_date');
+            $date      = $this->validated('expiration_date');
             $expiresAt = $date;
         }
 

@@ -86,7 +86,7 @@ class StripeWebhookController extends Controller
             // TTL for the dedupe/lock: keeps the queue from being spammed while
             // AnalysisRequest is still missing (Stripe may retry the webhook).
             $reconcileExpiresAt = now()->addMinutes(15);
-            $reconcileDelayAt = now()->addSeconds(15);
+            $reconcileDelayAt   = now()->addSeconds(15);
 
             if (! $cacheHasReconcileKey) {
                 // Mark "reconciliation scheduled" for 15 minutes so we don't spam the queue.

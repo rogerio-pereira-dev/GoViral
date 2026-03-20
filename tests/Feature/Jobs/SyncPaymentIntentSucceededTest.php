@@ -43,7 +43,7 @@ it('increments coupon times_used when discount_coupon_id is set', function (): v
     Queue::fake();
     Cache::flush();
 
-    $coupon = DiscountCoupon::factory()->create(['times_used' => 2]);
+    $coupon  = DiscountCoupon::factory()->create(['times_used' => 2]);
     $request = AnalysisRequest::factory()->create([
         'stripe_payment_intent_id' => 'pi_sync_coupon_1',
         'payment_status' => 'pending',
@@ -112,7 +112,7 @@ it('does not dispatch when paid but processing is not queued', function (): void
 it('logs warning on failed', function (): void {
     Log::spy();
 
-    $job = new SyncPaymentIntentSucceeded('pi_sync_fail_1');
+    $job       = new SyncPaymentIntentSucceeded('pi_sync_fail_1');
     $exception = new \RuntimeException('temporary outage');
     $job->failed($exception);
 

@@ -4,7 +4,7 @@ use App\Models\AnalysisRequest;
 
 it('ignores non-fillable attributes on fill', function (): void {
     $analysisRequest = new AnalysisRequest;
-    $payload = [
+    $payload         = [
                     'email'             => 'mass@example.com',
                     'aspiring_niche'    => 'Lifestyle',
                     'payment_status'    => 'pending',

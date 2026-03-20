@@ -66,7 +66,7 @@ class ReportParser
         }
 
         $sections = [];
-        $keys = [
+        $keys     = [
             'executive_summary',
             'profile_score',
             'inferred_niche',
@@ -79,7 +79,7 @@ class ReportParser
         ];
 
         $pattern = '/\s*'.preg_quote(self::SECTION_HEADERS[0], '/').'\s*/';
-        $parts = preg_split($pattern, $trimmed, 2);
+        $parts   = preg_split($pattern, $trimmed, 2);
 
         if (count($parts) < 2) {
             $sections['full'] = $trimmed;
@@ -89,9 +89,9 @@ class ReportParser
 
         $remaining = $trimmed;
         foreach (self::SECTION_HEADERS as $i => $header) {
-            $esc = preg_quote($header, '/');
+            $esc        = preg_quote($header, '/');
             $nextHeader = self::SECTION_HEADERS[$i + 1] ?? null;
-            $key = $keys[$i] ?? 'section_'.$i;
+            $key        = $keys[$i] ?? 'section_'.$i;
 
             if ($nextHeader !== null) {
                 $pattern = '/\s*'.$esc.'\s*(.*?)\s*'.preg_quote($nextHeader, '/').'/s';

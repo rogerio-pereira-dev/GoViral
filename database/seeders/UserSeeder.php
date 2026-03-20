@@ -11,11 +11,11 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-                ['email' => 'admin@goviral.test'],
-                [
-                    'name' => 'GoViral Admin',
-                    'password' => Hash::make('password'),
-                ],
-            );
+            ['email' => 'admin@goviral.test'],
+            [
+                'name' => 'GoViral Admin',
+                'password' => Hash::make('password'),
+            ],
+        );
     }
 }

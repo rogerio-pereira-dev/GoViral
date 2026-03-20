@@ -21,9 +21,9 @@ test('mailable accepts report HTML and locale', function (): void {
 test('mailable envelope subject is translated per locale', function (string $locale, string $expectedSubject): void {
     App::setLocale($locale);
 
-    $mailable   = new GrowthReportMail($this->sampleHtml, $locale);
-    $envelope   = $mailable->envelope();
-    $subject    = $envelope->subject;
+    $mailable = new GrowthReportMail($this->sampleHtml, $locale);
+    $envelope = $mailable->envelope();
+    $subject  = $envelope->subject;
 
     expect($subject)
         ->toBe($expectedSubject);
@@ -36,7 +36,7 @@ test('mailable envelope subject is translated per locale', function (string $loc
 
 test('mailable HTML view contains report content', function (): void {
     $mailable = new GrowthReportMail($this->sampleHtml, 'en');
-    $html = $mailable->render();
+    $html     = $mailable->render();
 
     expect($html)
         ->toContain('Test Report')
@@ -45,9 +45,9 @@ test('mailable HTML view contains report content', function (): void {
 });
 
 test('mailable has plain text view', function (): void {
-    $mailable   = new GrowthReportMail($this->sampleHtml, 'en');
-    $content    = $mailable->content();
-    $textView   = $content->text;
+    $mailable = new GrowthReportMail($this->sampleHtml, 'en');
+    $content  = $mailable->content();
+    $textView = $content->text;
 
     expect($textView)
         ->toBe('emails.growth-report-text');

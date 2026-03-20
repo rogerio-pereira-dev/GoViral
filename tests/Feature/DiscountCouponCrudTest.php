@@ -51,7 +51,7 @@ it('rejects duplicate active coupon code', function (): void {
 });
 
 it('soft deletes coupon on destroy', function (): void {
-    $user = User::factory()->create();
+    $user   = User::factory()->create();
     $coupon = DiscountCoupon::factory()->create();
 
     $this->actingAs($user)
@@ -63,7 +63,7 @@ it('soft deletes coupon on destroy', function (): void {
 });
 
 it('updates coupon', function (): void {
-    $user = User::factory()->create();
+    $user   = User::factory()->create();
     $coupon = DiscountCoupon::factory()->create(['code' => 'OLD', 'value' => 5]);
 
     $this->actingAs($user)
@@ -82,7 +82,7 @@ it('updates coupon', function (): void {
 });
 
 it('builds edit payload with days expiration from controller helper', function (): void {
-    $user = User::factory()->create();
+    $user   = User::factory()->create();
     $coupon = DiscountCoupon::factory()->expiresInDays(10)->create(['value' => 15]);
 
     $this->actingAs($user)
@@ -96,7 +96,7 @@ it('builds edit payload with days expiration from controller helper', function (
 });
 
 it('builds edit payload with uses expiration from controller helper', function (): void {
-    $user = User::factory()->create();
+    $user   = User::factory()->create();
     $coupon = DiscountCoupon::factory()->create([
         'value' => 25,
         'max_uses' => 42,
@@ -155,7 +155,7 @@ it('creates coupon with uses expiration using store request rules', function ():
 });
 
 it('updates coupon to days expiration using update request rules', function (): void {
-    $user = User::factory()->create();
+    $user   = User::factory()->create();
     $coupon = DiscountCoupon::factory()->create([
         'code' => 'TO-DAYS',
         'value' => 10,

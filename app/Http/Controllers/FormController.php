@@ -71,10 +71,10 @@ class FormController extends Controller
 
     public function paymentIntent(Request $request): JsonResponse
     {
-        $baseCents = (int) config('services.stripe.price_in_cents');
-        $currency = config('services.stripe.currency');
+        $baseCents      = (int) config('services.stripe.price_in_cents');
+        $currency       = config('services.stripe.currency');
         $publishableKey = config('cashier.key');
-        $secretKey = config('cashier.secret');
+        $secretKey      = config('cashier.secret');
 
         if (! is_string($publishableKey) || blank($publishableKey) || ! is_string($secretKey) || blank($secretKey)) {
             return response()->json([
@@ -83,7 +83,7 @@ class FormController extends Controller
         }
 
         $couponCode = $request->query('coupon_code');
-        $coupon = null;
+        $coupon     = null;
 
         if (is_string($couponCode) && trim($couponCode) !== '') {
             $coupon = DiscountCoupon::findValidByCode($couponCode);
@@ -113,7 +113,7 @@ class FormController extends Controller
         ];
 
         try {
-            $stripe = Cashier::stripe();
+            $stripe        = Cashier::stripe();
             $paymentIntent = $stripe->paymentIntents
                                       ->create([
                                           'amount' => $amountCents,
@@ -147,12 +147,12 @@ class FormController extends Controller
 
     public function store(StoreAnalysisRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
+        $validatedData   = $request->validated();
         $paymentIntentId = $validatedData['payment_intent_id'];
-        $baseCents = (int) config('services.stripe.price_in_cents');
+        $baseCents       = (int) config('services.stripe.price_in_cents');
 
         try {
-            $stripe = Cashier::stripe();
+            $stripe        = Cashier::stripe();
             $paymentIntent = $stripe->paymentIntents
                                       ->retrieve($paymentIntentId);
         } catch (\Throwable $e) {

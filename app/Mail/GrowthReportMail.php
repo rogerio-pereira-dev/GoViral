@@ -25,7 +25,7 @@ class GrowthReportMail extends Mailable
         $previousLocale = app()->getLocale();
         app()->setLocale($this->locale);
 
-        $subject = (string) __('report_mail.subject');
+        $subject  = (string) __('report_mail.subject');
         $envelope = new Envelope(
             subject: $subject,
         );

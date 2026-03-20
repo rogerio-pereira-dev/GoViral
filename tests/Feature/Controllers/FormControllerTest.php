@@ -30,7 +30,7 @@ it('stores a new analysis request and returns checkout payload', function () {
         'discount_coupon_id' => '',
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'es'])
@@ -203,7 +203,7 @@ it('returns 422 when payment intent retrieval fails in store', function () {
         };
     });
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -233,7 +233,7 @@ it('returns 422 when base cents in metadata does not match configured price', fu
         'discount_coupon_id' => '',
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -263,7 +263,7 @@ it('returns 422 when coupon id in payment intent metadata does not resolve to co
         'discount_coupon_id' => (string) \Ramsey\Uuid\Uuid::uuid4(),
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -295,7 +295,7 @@ it('returns 422 when discounted amount does not match metadata coupon', function
         'discount_coupon_id' => $coupon->id,
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -325,7 +325,7 @@ it('returns 422 when amount does not match base cents and there is no coupon', f
         'discount_coupon_id' => '',
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -350,8 +350,8 @@ it('stores analysis request with discount_coupon_id when payment intent metadata
     ]);
     Turnstile::fake();
 
-    $coupon = \App\Models\DiscountCoupon::factory()->create(['value' => 10]);
-    $base = 3500;
+    $coupon     = \App\Models\DiscountCoupon::factory()->create(['value' => 10]);
+    $base       = 3500;
     $discounted = \App\Models\DiscountCoupon::discountedAmountCents($base, $coupon->value);
 
     bindStripeClientForFormStore('pi_test_init', $discounted, [
@@ -359,7 +359,7 @@ it('stores analysis request with discount_coupon_id when payment intent metadata
         'discount_coupon_id' => $coupon->id,
     ]);
 
-    $payload = validFormPayload();
+    $payload                          = validFormPayload();
     $payload['cf-turnstile-response'] = Turnstile::dummy();
 
     $response = $this->withSession(['locale' => 'en'])
@@ -568,9 +568,9 @@ function bindStripeClientForFormStore(string $paymentIntentId, int $amountCents,
                 private int $amountCents,
                 private array $metadata,
             ) {
-                $pid = $paymentIntentId;
-                $amt = $amountCents;
-                $meta = $metadata;
+                $pid                  = $paymentIntentId;
+                $amt                  = $amountCents;
+                $meta                 = $metadata;
                 $this->paymentIntents = new class($pid, $amt, $meta)
                 {
                     public function __construct(

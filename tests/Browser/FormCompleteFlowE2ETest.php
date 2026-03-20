@@ -21,7 +21,7 @@ it('runs complete flow from landing to form, then payment form loads', function 
         ->fill('video_url_3', 'https://example.com/video-3')
         ->fill('notes', 'Testing complete browser flow.');
 
-    $cashierKey = config('cashier.key');
+    $cashierKey    = config('cashier.key');
     $cashierSecret = config('cashier.secret');
 
     if (blank($cashierKey) || blank($cashierSecret)) {

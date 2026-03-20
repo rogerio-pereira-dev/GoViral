@@ -133,14 +133,14 @@ it('validates format, max length and nullable notes with expected messages', fun
     $videoUrl3Error      = $errors->first('video_url_3');
     $hasNotesError       = $errors->has('notes');
 
-    $fails               = $validator->fails();
-    $emailExpected       = trans('form.validation.email',   ['attribute' => $attributes['email']                                ]);
-    $tiktokExpected      = trans('form.validation.max',     ['attribute' => $attributes['tiktok_username'],     'max' => 255    ]);
-    $bioExpected         = trans('form.validation.max',     ['attribute' => $attributes['bio'],                 'max' => 5000   ]);
-    $nicheExpected       = trans('form.validation.max',     ['attribute' => $attributes['aspiring_niche'],      'max' => 255    ]);
-    $videoUrl1Expected   = trans('form.validation.url',     ['attribute' => $attributes['video_url_1']                          ]);
-    $videoUrl2Expected   = trans('form.validation.url',     ['attribute' => $attributes['video_url_2']                          ]);
-    $videoUrl3Expected   = trans('form.validation.url',     ['attribute' => $attributes['video_url_3']                          ]);
+    $fails             = $validator->fails();
+    $emailExpected     = trans('form.validation.email', ['attribute' => $attributes['email']                                ]);
+    $tiktokExpected    = trans('form.validation.max', ['attribute' => $attributes['tiktok_username'],     'max' => 255    ]);
+    $bioExpected       = trans('form.validation.max', ['attribute' => $attributes['bio'],                 'max' => 5000   ]);
+    $nicheExpected     = trans('form.validation.max', ['attribute' => $attributes['aspiring_niche'],      'max' => 255    ]);
+    $videoUrl1Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_1']                          ]);
+    $videoUrl2Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_2']                          ]);
+    $videoUrl3Expected = trans('form.validation.url', ['attribute' => $attributes['video_url_3']                          ]);
 
     expect($fails)
         ->toBeTrue()
@@ -226,12 +226,12 @@ it('validates string rule and expected error messages', function () {
     $aspiringNicheError  = $errors->first('aspiring_niche');
     $notesError          = $errors->first('notes');
 
-    $fails               = $validator->fails();
-    $emailExpected       = trans('form.validation.string', ['attribute' => $attributes['email']             ]);
-    $tiktokExpected      = trans('form.validation.string', ['attribute' => $attributes['tiktok_username']   ]);
-    $bioExpected         = trans('form.validation.string', ['attribute' => $attributes['bio']               ]);
-    $nicheExpected       = trans('form.validation.string', ['attribute' => $attributes['aspiring_niche']    ]);
-    $notesExpected       = trans('form.validation.string', ['attribute' => $attributes['notes']             ]);
+    $fails          = $validator->fails();
+    $emailExpected  = trans('form.validation.string', ['attribute' => $attributes['email']             ]);
+    $tiktokExpected = trans('form.validation.string', ['attribute' => $attributes['tiktok_username']   ]);
+    $bioExpected    = trans('form.validation.string', ['attribute' => $attributes['bio']               ]);
+    $nicheExpected  = trans('form.validation.string', ['attribute' => $attributes['aspiring_niche']    ]);
+    $notesExpected  = trans('form.validation.string', ['attribute' => $attributes['notes']             ]);
 
     expect($fails)
         ->toBeTrue()
