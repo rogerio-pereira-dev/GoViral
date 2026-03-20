@@ -117,7 +117,10 @@ Good:
 $user = User::factory()->create();
 ```
 
-**Note:** **IMPORTANT** The only exceptions to this rule is when
+**Note (only allowed exception):**
+- The only allowed exception to assignment padding is when applying **Visual hierarchy indentation in multiline payloads**.
+- This exception must follow the owner-approved antipattern section in `.cursor/rules/method-chains-alignment.mdc` (allowed examples block around lines 164-248, including aligned assignments and aligned keys in dense readability blocks).
+- Outside that specific exception, keep single-space assignment formatting (`$var = ...`) with no visual alignment padding.
 
 ### Multiline call array body indented one extra level
 
