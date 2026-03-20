@@ -108,7 +108,7 @@ test('users are rate limited', function () {
                         ];
     $userIpString       = implode('|', $userIpArray);
     $userIpString       = 'login'.$userIpString;
-    $loginRateKey       = md5($userAndIpString);
+    $loginRateKey       = md5($userIpString);
     $loginStoreRoute    = route('login.store');
 
     RateLimiter::increment($loginRateKey, amount: 5);
