@@ -3,7 +3,8 @@
 use App\Models\User;
 
 it('allows updating profile information via the settings page', function () {
-    $user = User::factory()->create([
+    $user = User::factory()
+                ->create([
                     'name' => 'Original Name',
                     'email' => 'settings-profile@example.com',
                 ]);
@@ -21,9 +22,12 @@ it('allows updating profile information via the settings page', function () {
 });
 
 it('allows updating the password via the settings page', function () {
-    $user = User::factory()->create([
+    $hashedPassword = bcrypt('current-password');
+
+    $user = User::factory()
+                ->create([
                     'email' => 'settings-password@example.com',
-                    'password' => bcrypt('current-password'),
+                    'password' => $hashedPassword,
                 ]);
 
     $this->actingAs($user);

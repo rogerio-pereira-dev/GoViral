@@ -21,7 +21,10 @@ it('runs complete flow from landing to form, then payment form loads', function 
         ->fill('video_url_3', 'https://example.com/video-3')
         ->fill('notes', 'Testing complete browser flow.');
 
-    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+    $cashierKey = config('cashier.key');
+    $cashierSecret = config('cashier.secret');
+
+    if (blank($cashierKey) || blank($cashierSecret)) {
         $this->markTestSkipped('Stripe test keys required for full flow. See docs/Setup/STRIPE_SETUP.md.');
     }
 

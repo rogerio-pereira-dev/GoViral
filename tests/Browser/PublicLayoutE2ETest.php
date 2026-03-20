@@ -3,8 +3,7 @@
 it('shows shared header/footer + language selector on public funnel pages', function () {
     $landing = visit('/');
 
-    $landing
-        ->assertSee('GoViral')
+    $landing->assertSee('GoViral')
         ->assertSee('Engineered for Viral Growth.')
         ->assertSee('EN')
         ->assertSee('ES')
@@ -13,8 +12,7 @@ it('shows shared header/footer + language selector on public funnel pages', func
 
     $form = visit('/start-growth');
 
-    $form
-        ->assertSee('GoViral')
+    $form->assertSee('GoViral')
         ->assertSee('Engineered for Viral Growth.')
         ->assertSee('EN')
         ->assertSee('ES')
@@ -23,8 +21,7 @@ it('shows shared header/footer + language selector on public funnel pages', func
 
     $thankYou = visit('/thank-you');
 
-    $thankYou
-        ->assertSee('GoViral')
+    $thankYou->assertSee('GoViral')
         ->assertSee('Engineered for Viral Growth.')
         ->assertSee('EN')
         ->assertSee('ES')
@@ -41,7 +38,6 @@ it('persists locale across funnel pages when switching to pt', function () {
 
     $form = visit('/start-growth');
 
-    $form
-        ->assertSee('Feito para crescimento viral.')
+    $form->assertSee('Feito para crescimento viral.')
         ->assertNoSmoke();
 });

@@ -5,7 +5,10 @@
  * (e.g. 4242 4242 4242 4242 success, 4000 0000 0000 0002 declined, 4000 0000 0000 9995 insufficient funds).
  */
 it('loads payment form with card element when Stripe is configured', function () {
-    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+    $cashierKey = config('cashier.key');
+    $cashierSecret = config('cashier.secret');
+
+    if (blank($cashierKey) || blank($cashierSecret)) {
         $this->markTestSkipped('Stripe test keys (STRIPE_KEY, STRIPE_SECRET) required. See docs/Setup/STRIPE_SETUP.md.');
     }
 
@@ -25,7 +28,10 @@ it('loads payment form with card element when Stripe is configured', function ()
 });
 
 it('keeps stripe card element visible after applying an invalid coupon', function () {
-    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+    $cashierKey = config('cashier.key');
+    $cashierSecret = config('cashier.secret');
+
+    if (blank($cashierKey) || blank($cashierSecret)) {
         $this->markTestSkipped('Stripe test keys (STRIPE_KEY, STRIPE_SECRET) required. See docs/Setup/STRIPE_SETUP.md.');
     }
 
@@ -45,7 +51,10 @@ it('keeps stripe card element visible after applying an invalid coupon', functio
 });
 
 it('shows payment declined error when card is declined', function () {
-    if (blank(config('cashier.key')) || blank(config('cashier.secret'))) {
+    $cashierKey = config('cashier.key');
+    $cashierSecret = config('cashier.secret');
+
+    if (blank($cashierKey) || blank($cashierSecret)) {
         $this->markTestSkipped('Stripe test keys required for declined card flow. See docs/Setup/STRIPE_SETUP.md.');
     }
 

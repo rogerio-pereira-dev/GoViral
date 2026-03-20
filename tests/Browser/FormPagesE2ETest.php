@@ -10,8 +10,8 @@ it('shows the start growth page with no javascript errors', function () {
 
 it('shows validation failed message when required fields are missing and does not show payment error', function () {
     $this->markTestSkipped(
-        'Submit button stays disabled until payment intent loads or fails; client-side validation runs on click. Feature tests cover 422 for missing aspiring_niche and validation_failed_message translation.'
-    );
+            'Submit button stays disabled until payment intent loads or fails; client-side validation runs on click. Feature tests cover 422 for missing aspiring_niche and validation_failed_message translation.'
+        );
 });
 
 it('shows form first then copy on mobile viewport', function () {

@@ -4,10 +4,14 @@ use App\Models\User;
 
 it('navigates sidebar and settings navigation', function () {
     /** @var \App\Models\User $user */
-    $user = User::factory()->create([
+    $hashedPassword = bcrypt('password');
+    $emailVerifiedAt = now();
+
+    $user = User::factory()
+                ->create([
                     'email' => 'nav-user@example.com',
-                    'password' => bcrypt('password'),
-                    'email_verified_at' => now(),
+                    'password' => $hashedPassword,
+                    'email_verified_at' => $emailVerifiedAt,
                 ]);
 
     $this->actingAs($user);

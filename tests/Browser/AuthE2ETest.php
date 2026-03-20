@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Models\User;
@@ -9,9 +8,12 @@ it('allows a user to register via the browser', function () {
 
 it('allows an existing user to log in via the browser', function () {
     /** @var \App\Models\User $user */
-    $user = User::factory()->create([
+    $hashedPassword = bcrypt('password');
+
+    $user = User::factory()
+                ->create([
                     'email' => 'browser-login@example.com',
-                    'password' => bcrypt('password'),
+                    'password' => $hashedPassword,
                 ]);
 
     $page = visit('/login');
