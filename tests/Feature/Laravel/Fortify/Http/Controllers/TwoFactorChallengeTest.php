@@ -22,33 +22,33 @@ test('two factor challenge can be rendered', function () {
     }
 
     Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-        ]);
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
 
-    $user                            = User::factory()
-                                            ->create();
-    $twoFactorSecret                 = encrypt('test-secret');
-    $twoFactorRecoveryCodes          = json_encode(['code1', 'code2']);
+    $user = User::factory()
+        ->create();
+    $twoFactorSecret = encrypt('test-secret');
+    $twoFactorRecoveryCodes = json_encode(['code1', 'code2']);
     $encryptedTwoFactorRecoveryCodes = encrypt($twoFactorRecoveryCodes);
-    $twoFactorConfirmedAt            = now();
-    $loginRoute                      = route('login');
-    $twoFactorLoginRoute             = route('two-factor.login');
+    $twoFactorConfirmedAt = now();
+    $loginRoute = route('login');
+    $twoFactorLoginRoute = route('two-factor.login');
 
     $user->forceFill([
-                'two_factor_secret' => $twoFactorSecret,
-                'two_factor_recovery_codes' => $encryptedTwoFactorRecoveryCodes,
-                'two_factor_confirmed_at' => $twoFactorConfirmedAt,
-            ])
-            ->save();
+        'two_factor_secret' => $twoFactorSecret,
+        'two_factor_recovery_codes' => $encryptedTwoFactorRecoveryCodes,
+        'two_factor_confirmed_at' => $twoFactorConfirmedAt,
+    ])
+        ->save();
 
     $this->post(
-            $loginRoute,
-            [
-                'email' => $user->email,
-                'password' => 'password',
-            ]
-        );
+        $loginRoute,
+        [
+            'email' => $user->email,
+            'password' => 'password',
+        ]
+    );
 
     $this->get($twoFactorLoginRoute)
         ->assertOk()

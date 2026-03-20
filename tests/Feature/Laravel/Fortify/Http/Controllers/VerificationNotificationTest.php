@@ -8,8 +8,8 @@ test('sends verification notification', function () {
     Notification::fake();
 
     $user = User::factory()
-                ->unverified()
-                ->create();
+        ->unverified()
+        ->create();
     $verificationSendRoute = route('verification.send');
     $homeRoute = route('home');
 
@@ -24,7 +24,7 @@ test('does not send verification notification if email is verified', function ()
     Notification::fake();
 
     $user = User::factory()
-                ->create();
+        ->create();
     $verificationSendRoute = route('verification.send');
     $dashboardRoute = route('dashboard', absolute: false);
 
