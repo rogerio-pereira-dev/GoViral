@@ -124,7 +124,8 @@ it('marks record as failed and deletes it when job fails after max attempts', fu
     ]);
 
     $job = new ProcessAnalysisRequest($analysisRequest->id);
-    $job->failed(new RuntimeException('Final failure'));
+    $exception = new RuntimeException('Final failure');
+    $job->failed($exception);
 
     expect(AnalysisRequest::find($analysisRequest->id))->toBeNull();
 });

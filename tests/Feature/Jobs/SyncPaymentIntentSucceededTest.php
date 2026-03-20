@@ -26,7 +26,8 @@ it('marks pending request paid, dispatches analysis job, and sets dedupe cache',
         'discount_coupon_id' => null,
     ]);
 
-    (new SyncPaymentIntentSucceeded('pi_sync_pending_1'))->handle();
+    $syncJob = new SyncPaymentIntentSucceeded('pi_sync_pending_1');
+    $syncJob->handle();
 
     $request->refresh();
     expect($request->payment_status)->toBe('paid')
@@ -50,7 +51,8 @@ it('increments coupon times_used when discount_coupon_id is set', function (): v
         'discount_coupon_id' => $coupon->id,
     ]);
 
-    (new SyncPaymentIntentSucceeded('pi_sync_coupon_1'))->handle();
+    $syncJob = new SyncPaymentIntentSucceeded('pi_sync_coupon_1');
+    $syncJob->handle();
 
     expect($coupon->fresh()->times_used)->toBe(3);
     Queue::assertPushed(ProcessAnalysisRequest::class);
@@ -66,7 +68,8 @@ it('dispatches analysis when already paid and queued but dedupe key is absent', 
         'processing_status' => 'queued',
     ]);
 
-    (new SyncPaymentIntentSucceeded('pi_sync_paid_queued_1'))->handle();
+    $syncJob = new SyncPaymentIntentSucceeded('pi_sync_paid_queued_1');
+    $syncJob->handle();
 
     Queue::assertPushed(ProcessAnalysisRequest::class, fn ($job) => $job->analysisRequestId === $request->id);
     expect(Cache::has('stripe:process-analysis-dispatched:pi_sync_paid_queued_1'))->toBeTrue();
@@ -84,7 +87,8 @@ it('does not dispatch again when paid and queued and dedupe key exists', functio
 
     Cache::put('stripe:process-analysis-dispatched:pi_sync_deduped_1', true, now()->addMinutes(30));
 
-    (new SyncPaymentIntentSucceeded('pi_sync_deduped_1'))->handle();
+    $syncJob = new SyncPaymentIntentSucceeded('pi_sync_deduped_1');
+    $syncJob->handle();
 
     Queue::assertNotPushed(ProcessAnalysisRequest::class);
 });
@@ -99,7 +103,8 @@ it('does not dispatch when paid but processing is not queued', function (): void
         'processing_status' => 'sent',
     ]);
 
-    (new SyncPaymentIntentSucceeded('pi_sync_sent_1'))->handle();
+    $syncJob = new SyncPaymentIntentSucceeded('pi_sync_sent_1');
+    $syncJob->handle();
 
     Queue::assertNotPushed(ProcessAnalysisRequest::class);
 });
@@ -108,7 +113,8 @@ it('logs warning on failed', function (): void {
     Log::spy();
 
     $job = new SyncPaymentIntentSucceeded('pi_sync_fail_1');
-    $job->failed(new \RuntimeException('temporary outage'));
+    $exception = new \RuntimeException('temporary outage');
+    $job->failed($exception);
 
     Log::shouldHaveReceived('warning')->with(
         'Stripe webhook sync failed',

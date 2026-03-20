@@ -71,10 +71,11 @@ class ProcessAnalysisRequest implements ShouldQueue
                 ]);
             }
 
+            $mailable = new GrowthReportMail($reportHtml, $locale);
+            $mailable->onQueue('emails');
+
             Mail::to($analysisRequest->email)
-                ->queue(
-                    (new GrowthReportMail($reportHtml, $locale))->onQueue('emails')
-                );
+                ->queue($mailable);
 
             $analysisRequest->update([
                 'processing_status' => 'sent',

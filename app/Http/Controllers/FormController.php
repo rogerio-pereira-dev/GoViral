@@ -113,12 +113,14 @@ class FormController extends Controller
         ];
 
         try {
-            $paymentIntent = Cashier::stripe()->paymentIntents->create([
-                'amount' => $amountCents,
-                'currency' => $currency,
-                'automatic_payment_methods' => ['enabled' => true],
-                'metadata' => $metadata,
-            ]);
+            $stripe = Cashier::stripe();
+            $paymentIntent = $stripe->paymentIntents
+                ->create([
+                    'amount' => $amountCents,
+                    'currency' => $currency,
+                    'automatic_payment_methods' => ['enabled' => true],
+                    'metadata' => $metadata,
+                ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -150,7 +152,9 @@ class FormController extends Controller
         $baseCents = (int) config('services.stripe.price_in_cents');
 
         try {
-            $paymentIntent = Cashier::stripe()->paymentIntents->retrieve($paymentIntentId);
+            $stripe = Cashier::stripe();
+            $paymentIntent = $stripe->paymentIntents
+                ->retrieve($paymentIntentId);
         } catch (\Throwable $e) {
             report($e);
 

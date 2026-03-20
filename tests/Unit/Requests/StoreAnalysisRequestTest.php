@@ -125,7 +125,8 @@ it('accepts nullable profile fields when omitted', function () {
         'payment_intent_id' => 'pi_test_init',
     ];
 
-    $validator = Validator::make($payload, (new StoreAnalysisRequest)->rules());
+    $storeRequest = new StoreAnalysisRequest;
+    $validator = Validator::make($payload, $storeRequest->rules());
 
     expect($validator->fails())->toBeFalse();
 });
