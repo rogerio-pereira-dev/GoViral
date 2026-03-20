@@ -256,6 +256,44 @@ Each feature is described in isolation; when there are dependencies, other featu
 
 ---
 
+## 15. Code style — remove redundant Eloquent `::query()`
+
+**Objective:** Keep builder entry points minimal: use `Model::where(...)` (and similar) instead of `Model::query()->where(...)` where equivalent, reducing noise across app, tests, and seeders.
+
+**Scope:**
+- Grep-driven refactor in first-party PHP (`app/`, `routes/`, `tests/`, `database/`).
+- Preserve one method per line on fluent chains; document rare exceptions if any.
+
+**Dependencies:** None (orthogonal refactor).  
+**Related to:** `.cursor/AGENTS.md`, `.cursor/skills/backend-laravel/SKILL.md`, FDR-016.
+
+---
+
+## 16. Code style — fluent chains and no nested calls in arguments
+
+**Objective:** Enforce one method call per line on fluent chains and avoid passing newly constructed objects or nested method calls as inline arguments when extraction to variables is clearer (e.g. Mailable + `onQueue` before `Mail::to(...)->queue($mailable)`).
+
+**Scope:**
+- Controllers, jobs, mail, tests, routes — same PHP roots as Feature 15.
+- Do not introduce ternary operators in PHP (existing project rule).
+
+**Dependencies:** None; implement after or together with Feature 15 as convenient.  
+**Related to:** FDR-017.
+
+---
+
+## 17. Code style — logical alignment for multiline calls
+
+**Objective:** Normalize indentation for multiline fluent calls and argument lists (especially Pest/PHPUnit HTTP helpers) so the first call may sit on the assignment line and continuations align logically with their context.
+
+**Scope:**
+- Align with `DiscountCouponController` as controller baseline per backend skill; apply to tests and other layers as needed.
+
+**Dependencies:** Feature 16 preferred first where the same lines need both extractions and formatting.  
+**Related to:** FDR-018.
+
+---
+
 ## Feature dependency summary
 
 | Feature | Depends on | Blocks / feeds |
@@ -274,5 +312,8 @@ Each feature is described in isolation; when there are dependencies, other featu
 | 12. Conversion tracking + shared layout | 2, 3 | — |
 | 13. Auth and dashboard Vuetify branding | 1 | — |
 | 14. Core discount coupons | 3, 4 (core auth) | — |
+| 15. Style — remove redundant `::query()` | — | — |
+| 16. Style — fluent chains / no nested args | — | 17 (preferred order) |
+| 17. Style — logical multiline alignment | 16 (preferred) | — |
 
 Living document: new features or refinements should be added here and, when applicable, reflected in ADRs.
