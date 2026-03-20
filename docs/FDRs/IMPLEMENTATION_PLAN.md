@@ -160,12 +160,12 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 - [x] Extend/update backend tests to cover the new date-based expiration behavior and to ensure no regressions for existing coupon types (never and usage-based).
 - [x] Extend/update Browser tests for the core coupon screens and checkout flow to cover creating, editing and using date-based coupons end to end.
 
-### Remove redundant Eloquent `::query()` (FDR-016)
+### Remove redundant Eloquent `::query()` (FDR-016) — done
 
-- [ ] Grep first-party PHP (`app/`, `routes/`, `tests/`, `database/`) for `::query()->`, `self::query()->`, `static::query()->`; replace with direct model entry (`Model::where`, `firstOrCreate`, scopes, etc.) where equivalent.
-- [ ] Refactor `DiscountCoupon::findValidByCode` (and any model helpers) to drop redundant `query()` while keeping one method per line.
-- [ ] Update seeders (`UserSeeder`, `DiscountCouponSeeder`) and tests (`DiscountCouponTest`, `DiscountCouponCrudTest`, `DiscountCouponsE2ETest`, any other hits) the same way.
-- [ ] Run Pint and full test suite; confirm no behavior change.
+- [x] Grep first-party PHP (`app/`, `routes/`, `tests/`, `database/`) for `::query()->`, `self::query()->`, `static::query()->`; replace with direct model entry (`Model::where`, `firstOrCreate`, scopes, etc.) where equivalent.
+- [x] Refactor `DiscountCoupon::findValidByCode` (and any model helpers) to drop redundant `query()` while keeping one method per line.
+- [x] Update seeders (`UserSeeder`, `DiscountCouponSeeder`) and tests (`DiscountCouponTest`, `DiscountCouponCrudTest`, `DiscountCouponsE2ETest`, any other hits) the same way.
+- [x] Run Pint and full test suite; confirm no behavior change.
 
 ### Fluent chains — one call per line; no nested calls in arguments (FDR-017)
 
@@ -188,7 +188,7 @@ Prioritized by dependency and value (docs/04 - Features.md). One line per task. 
 ## Notes
 
 - **FDRs fully done:** When all acceptance criteria of an FDR are met, move the FDR file from `docs/FDRs/ToDo/` to `docs/FDRs/Done/` (same filename) in a Building run.
-- **Current codebase:** FDR-015 done. FDRs in ToDo: FDR-016, FDR-017, FDR-018 (code style refactors). FDR-011, FDR-013 done.
+- **Current codebase:** FDR-015 and FDR-016 done. FDRs in ToDo: FDR-017, FDR-018 (code style refactors). FDR-011, FDR-013 done.
 - **Order:** Implement in the order above; within each section order by dependency.
 - **FDR-014:** See `docs/FDRs/Done/FDR_014_core_discount_coupons.md`; plan steps above kept for reference.
 - **FDR-010:** Closed; retention for case studies (ADR-020). No scheduler cleanup.

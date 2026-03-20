@@ -11,7 +11,7 @@
 - **Scope:** All first-party PHP under `app/`, `routes/`, `tests/`, `database/` (seeders, factories as applicable). Do not change `vendor/`.
 - **Pattern:** Replace `SomeModel::query()->where(...)` with `SomeModel::where(...)` (and equivalent for `firstOrCreate`, scopes, etc.), keeping **one method call per line** on fluent chains and existing line breaks where they already comply with project rules.
 - **Exceptions:** If a project convention or Laravel quirk requires `query()` (e.g. rare macro edge cases), document in the PR why that call site is exempt; default is to remove.
-- **Known starting points (non-exhaustive):** `DiscountCoupon::findValidByCode` uses `self::query()->...`; seeders and several Feature/Browser tests use `::query()->`; grep for `::query()` and `self::query()` to find the full set.
+- **Discovery:** First-party PHP had `::query()->` in `DiscountCoupon::findValidByCode`, seeders, and coupon-related tests; all were replaced with direct model entry.
 
 ---
 
@@ -24,9 +24,9 @@
 
 ## Acceptance criteria
 
-- [ ] No redundant `SomeModel::query()->` (or `self::query()->` / `static::query()->`) where direct `SomeModel::` / `self::` entry is equivalent and readable.
-- [ ] `grep`/`rg` over first-party PHP for `::query()->` returns no unnecessary usages (or only documented exceptions).
-- [ ] All tests pass; Pint passes.
+- [x] No redundant `SomeModel::query()->` (or `self::query()->` / `static::query()->`) where direct `SomeModel::` / `self::` entry is equivalent and readable.
+- [x] `grep`/`rg` over first-party PHP for `::query()->` returns no unnecessary usages (or only documented exceptions).
+- [x] All tests pass; Pint passes.
 
 ---
 
