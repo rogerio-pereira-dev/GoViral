@@ -1,11 +1,13 @@
 ---
-name: styleguide-refactor
-description: Apply styleguide refactoring with strict full-coverage validation for a target scope (specific folder, backend parts, frontend resources, or whole project). Use when the user asks to refactor code style and requires zero partial application.
+name: styleguide
+description: Default styleguide for day-to-day development and refactoring. For refactors, enforce strict full-coverage validation for the selected scope.
 ---
 
-# Styleguide Refactor
+# Styleguide
 
 ## Goal
+
+Use this skill as the default styleguide during development.
 
 Refactor code style for a chosen scope and guarantee that **all requested rules** are applied to **all files in scope**.
 
@@ -18,7 +20,7 @@ Partial refactoring is unacceptable.
 - Allowed antipatterns defined by owner rules are intentional and must be preserved.
 - Never declare success based only on formatter output.
 
-## Accepted Input Scope
+## Accepted Input Scope (Refactor Mode)
 
 The skill must accept exactly one scope mode per run:
 
@@ -34,12 +36,25 @@ The skill must accept exactly one scope mode per run:
 4. **Whole project** (workspace root)
 
 If the user asks for multiple modes at once, normalize to one explicit scope before editing.
+For regular feature development (non-refactor), the scope is the files being created or modified in the task.
 
 ## Mandatory Workflow
 
+### Development Mode (default)
+
+1. Read these rule files first, before any analysis or edit:
+   - `./rules/method-chains-alignment.mdc`
+   - `./rules/method-chains-no-nested-calls.mdc`
+2. Apply rules to every file touched during implementation.
+3. Before finishing, manually re-open changed files and audit indentation, chain depth, multiline call closings, and array structure.
+4. Run relevant tests/lint checks when applicable.
+5. Report validation status and remaining violations (must be zero in changed files).
+
+### Refactor Mode (strict full-coverage)
+
 1. Read these rule files first, before any other analysis or edit:
-   - `.cursor/rules/method-chains-alignment.mdc`
-   - `.cursor/rules/method-chains-no-nested-calls.mdc`
+   - `./rules/method-chains-alignment.mdc`
+   - `./rules/method-chains-no-nested-calls.mdc`
 2. Read all additional rule files explicitly requested by the user.
 3. Build the file list for the selected scope (recursive).
 4. Report file count before refactoring.
@@ -186,7 +201,7 @@ Features::twoFactorAuthentication([
 
 Why it is wrong:
 - The chain continuation (`->save()`) must keep consistent chain indentation.
-- Do not jump to deeper indentation after closing `])`.
+- Keep the same visual hierarchy depth used by multiline chain continuations in the local block.
 - Array with wrong identation
 
 Bad:
@@ -194,7 +209,7 @@ Bad:
 $user->forceFill([
     'two_factor_secret' => $twoFactorSecret,
 ])
-            ->save();
+    ->save();
 ```
 
 Good:
@@ -202,7 +217,7 @@ Good:
 $user->forceFill([
         'two_factor_secret' => $twoFactorSecret,
     ])
-    ->save();
+            ->save();
 ```
 
 ### Closing `)` must be one indentation level inside call start
@@ -248,7 +263,7 @@ $user->forceFill([
 
 Why it is wrong:
 - When a chain starts the next call must keep a consistent continuation depth.
-- Use deep jumps (for example 3 levels below) to maintain visual hierarchy 
+- Use deep jumps (for example 3 levels below) to maintain visual hierarchy.
 
 Bad:
 ```php

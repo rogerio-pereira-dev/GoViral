@@ -4,8 +4,8 @@ globs: **/*.php,**/*.js,**/*.ts,**/*.vue
 alwaysApply: false
 ai_change_policy: "AI must not alter this file directly. Any proposed change must be shown exactly (full diff/content) and only applied after explicit user confirmation of ALL changes.". Specially section `Rule of thumb for () and [].`
 required_pre_read_rules:
-  - .cursor/rules/method-chains-alignment.mdc
-  - .cursor/rules/method-chains-no-nested-calls.mdc
+  - ./method-chains-alignment.mdc
+  - ./method-chains-no-nested-calls.mdc
 ---
 
 # Method Chains and Alignment
@@ -26,7 +26,9 @@ Use these rules for readable and deterministic multiline chains in any language.
 - If a chain is multiline, split after the receiver/caller and keep every `->method()` in its own line.
 - Continuation indentation must follow **visual hierarchy** and be deterministic: one indentation step per nesting level (**4 spaces per level**).
 - For assigned and standalone chains, enforce hierarchy consistency in the local block.
-- In multiline function/method calls, closing `)` must align with the indentation of the line where the function name starts.
+- In multiline function/method calls, closing `)` must follow local visual hierarchy consistently:
+  - default: align with call-start line;
+  - owner-approved readability hierarchy: one indentation level inside the caller block.
 - In multiline arrays, closing `]` must align with the indentation of the line where `[` starts.
 - For multiline calls with array arguments, array items must be indented +4 spaces from the `[` line.
 - In assigned multiline calls, keep visual hierarchy: arguments one level deeper and closing `)` one level inside the caller block (not flattened to caller column).
@@ -317,7 +319,7 @@ expect($rules)
 1. Every multiline chain uses one call per line.
 2. Chain continuation lines follow visual hierarchy with 4-space indentation steps.
 3. Closing `]` aligns with `[` line.
-4. Closing `)` follows local hierarchy consistently (one level inside).
+4. Closing `)` follows local hierarchy consistently (call-start baseline or one level inside, but never mixed arbitrarily in the same local block).
 5. No nested formatting style variants inside the same file.
 
 # Rule of thumb for () and [].
