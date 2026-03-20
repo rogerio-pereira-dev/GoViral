@@ -23,6 +23,8 @@ Use these rules for readable and deterministic multiline chains in any language.
 - For Pest post-closure chains (`})->with(...)`, `})->throws(...)`), always break after `}` and continue as standalone chain.
 - In `expect(...)` chains, keep one matcher per line.
 
+### Examples
+
 ```php
 // Bad: inconsistent assigned continuation and closing parenthesis
 $response = $this->post(
@@ -111,7 +113,7 @@ expect($html)
 ```
 
 
-```
+```php
 // Bad: missing indentation
 $payload = [
     'email' => 'mass@example.com',
@@ -142,7 +144,21 @@ $payload = [
             ];
 ```
 
+```php
+// Bad: Chaining properties in line
+$prompt = $this->builder->build($payload, 'en');
+
+// Good: apply indentation to properties too
+$prompt = $this->builder
+            ->build($payload, 'en');
 ```
+
+#### Allowed antipatterns
+Those antipatterns are allowed to improve readability.
+
+**Visual hierarchy indentation has precedence over all other rules**
+
+```php
 // Bad: Difficult to read
 $validator = Validator::make($payload, $rules, $messages, $attributes);
 $errors = $validator->errors();
@@ -170,7 +186,7 @@ $payload = [
 
 
 
-// Good: (allowed antipattern) aligning equals makes readability easier (Use only with large volumes of text)
+// Good: aligning equals makes readability easier (Use only with large volumes of text)
 $validator              = Validator::make($payload, $rules, $messages, $attributes);
 $errors                 = $validator->errors();
 $emailError             = $errors->first('email');
@@ -196,7 +212,7 @@ $payload = [
             ];
 ```
 
-```
+```php
 // Bad: nested arrays
 expect($rules)
     ->toBe([
@@ -226,15 +242,6 @@ expect($rules)
             'payment_intent_id'     => ['required',     'string',   'max:255'                   ],
             'cf-turnstile-response' => ['nullable',     'string'                                ],
         ]);
-```
-
-```
-// Bad: Chaining properties in line
-$prompt = $this->builder->build($payload, 'en');
-
-// Good: apply indentation to properties too
-$prompt = $this->builder
-            ->build($payload, 'en');
 ```
 
 
