@@ -8,19 +8,27 @@ beforeEach(function (): void {
 });
 
 test('mailable accepts report HTML and locale', function (): void {
-    $mailable = new GrowthReportMail($this->sampleHtml, 'en');
+    $mailable   = new GrowthReportMail($this->sampleHtml, 'en');
+    $reportHtml = $mailable->reportHtml;
+    $locale     = $mailable->locale;
 
-    expect($mailable->reportHtml)->toBe($this->sampleHtml)
-        ->and($mailable->locale)->toBe('en');
+    expect($reportHtml)
+        ->toBe($this->sampleHtml)
+        ->and($locale)
+        ->toBe('en');
 });
 
 test('mailable envelope subject is translated per locale', function (string $locale, string $expectedSubject): void {
     App::setLocale($locale);
-    $mailable = new GrowthReportMail($this->sampleHtml, $locale);
-    $envelope = $mailable->envelope();
 
-    expect($envelope->subject)->toBe($expectedSubject);
-})->with([
+    $mailable   = new GrowthReportMail($this->sampleHtml, $locale);
+    $envelope   = $mailable->envelope();
+    $subject    = $envelope->subject;
+
+    expect($subject)
+        ->toBe($expectedSubject);
+})
+->with([
     ['en', 'Your GoViral Growth Report'],
     ['es', 'Tu informe de crecimiento GoViral'],
     ['pt', 'Seu relatório de crescimento GoViral'],
@@ -30,13 +38,17 @@ test('mailable HTML view contains report content', function (): void {
     $mailable = new GrowthReportMail($this->sampleHtml, 'en');
     $html = $mailable->render();
 
-    expect($html)->toContain('Test Report')
-        ->and($html)->toContain('<p>Content</p>');
+    expect($html)
+        ->toContain('Test Report')
+        ->and($html)
+        ->toContain('<p>Content</p>');
 });
 
 test('mailable has plain text view', function (): void {
-    $mailable = new GrowthReportMail($this->sampleHtml, 'en');
-    $content = $mailable->content();
+    $mailable   = new GrowthReportMail($this->sampleHtml, 'en');
+    $content    = $mailable->content();
+    $textView   = $content->text;
 
-    expect($content->text)->toBe('emails.growth-report-text');
+    expect($textView)
+        ->toBe('emails.growth-report-text');
 });
