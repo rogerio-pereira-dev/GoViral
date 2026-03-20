@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { type BreadcrumbItem } from '@/types';
-import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import { edit } from '@/routes/user-password';
+import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbItems: BreadcrumbItem[] = [
     {

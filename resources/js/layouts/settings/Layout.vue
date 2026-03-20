@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { type NavItem } from '@/types';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
+import { type NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {

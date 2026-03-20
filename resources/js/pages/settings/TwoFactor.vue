@@ -6,8 +6,8 @@ import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import type { BreadcrumbItem } from '@/types';
 import { disable, enable, show } from '@/routes/two-factor';
+import type { BreadcrumbItem } from '@/types';
 
 type Props = {
     requiresConfirmation?: boolean;
